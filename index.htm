@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SongScribe</title>
+</head>
+
+<body>
+  <h1>SongScribe Web Application</h1>
+
+  <!-- url disabled
+  <input id="enter-url" type="text">
+  <button onclick="handleURLChange()">Enter URL</button>
+  <p>or</p>
+  -->
+
+  <!-- file selection -->
+  <input id="choose-file" type="file" accept="audio" onchange="handleFileChange(this.files)">
+
+  <hr>
+
+  <!-- playback controls -->
+  <button id="prev-btn" onclick="handlePrev()" disabled>prev</button>
+  <button id="play-btn" onclick="handlePlayToggle()" disabled>play</button>
+  <button id="next-btn" onclick="handleNext()"  disabled>next</button>
+  <button id="slow-btn" onclick="handleSlow()" disabled>slow</button>
+
+  <hr>
+
+  <!-- waveform -->
+  <p id="source-status-text">No audio file selected.</p>
+  <div id="player"></div>
+
+  <hr>
+
+  <!-- marker controls -->
+  <button id="set-btn-1" onclick="handleSetStart(0)" disabled>set marker 1</button>
+  <button id="set-btn-2" onclick="handleSetEnd(0)" disabled>set marker 2</button>
+  <br>
+  <button id="goto-btn-1" onclick="handleGotoStart(0)" disabled>goto 1</button>
+  <button id="goto-btn-2" onclick="handleGotoEnd(0)" disabled>goto 2</button>
+  <br>
+  <button id="loop-btn-1-2" onclick="handleLoop(0)" disabled>loop (off)</button>
+</body>
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- Bootstrap javascript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+<!-- wavesurfer- provides waveform playback interface -->
+<script src="js/wavesurfer.min.js"></script>
+<script src="js/wavesurfer.regions.js"></script>
+
+<script>
+  var wavesurfer;
+  var isSlow = false;
+  var regions = [];
+  document.addEventListener('DOMContentLoaded', function() {
+  });
+
+  window.onbeforeunload = function() {
+    if (wavesurfer) {
+      wavesurfer.destroy();
+    }
+  };
+
+  function handleFileChange(files) {
+    if (files.length) {
+      var file = files[0];
+      var filename = file.name;
+      var filesize = file.size;
+      var statusText = filename + ' (' + filesize + ' bytes)';
+      document.getElementById('source-status-text').innerHTML = statusText;
+      initializePlayer();
+      wavesurfer.loadBlob(file);
+    }
+  }
+
+  function initializePlayer() {
+    console.log('initializing player...');
+
+    if (wavesurfer) {
+      wavesurfer.destroy();
+    }
+    /* reset the buttons as disabled */
+    $('#play-btn').prop('disabled', true);
+    $('#prev-btn').prop('disabled', true);
+    $('#next-btn').prop('disabled', true);
+    $('#slow-btn').prop('disabled', true);
+    $('#set-btn-1').prop('disabled', true);
+    $('#set-btn-2').prop('disabled', true);
+    $('#goto-btn-1').prop('disabled', true);
+    $('#goto-btn-2').prop('disabled', true);
+    $('#loop-btn-1-2').prop('disabled', true);
+
+    /* reset globals */
+    isSlow = false;
+    regions = [];
+
+    /* initialize the wavesurfer */
+    wavesurfer = Object.create(WaveSurfer);
+    var options = {
+      container     : document.querySelector('#player'),
+      waveColor     : '#444',
+      progressColor : '#666',
+      cursorColor   : 'red',
+      cursorWidth   : 2
+    };
+    wavesurfer.init(options);
+
+    /* event listeners */
+    wavesurfer.on('ready', handlePlayerReady());
+    wavesurfer.on('finish', handleEndOfFile());
+  }
+
+  function handlePlayerReady() {
+    return function() {
+      console.log('player ready');
+      $('#play-btn').removeAttr('disabled');
+      $('#prev-btn').removeAttr('disabled');
+      $('#next-btn').removeAttr('disabled');
+      $('#slow-btn').removeAttr('disabled');
+      $('#set-btn-1').removeAttr('disabled');
+      $('#set-btn-2').removeAttr('disabled');
+    }
+  }
+
+  function handleURLChange() {
+    var url = document.getElementById('enter-url').value;
+    document.getElementById('source-status-text').innerHTML = url;
+    wavesurfer.load(url);
+  }
+
+  function handleEndOfFile() {
+    return function() {
+      console.log('end of file');
+      $('#play-btn').html('play');
+    }
+  }
+
+  function handlePlayToggle() {
+    if (!wavesurfer) {
+      return;
+    }
+
+    if (wavesurfer.isPlaying()) {
+      wavesurfer.pause();
+      $('#play-btn').html('play');
+    } else {
+      wavesurfer.play();
+      $('#play-btn').html('pause');
+    }
+  }
+
+  function handlePrev() {
+    if (!wavesurfer) {
+      return;
+    }
+
+    wavesurfer.skipBackward();
+  }
+
+  function handleNext() {
+    if (!wavesurfer) {
+      return;
+    }
+
+    wavesurfer.skipForward();
+  }
+
+  function handleSlow() {
+    /* TODO: find a way to playback at original pitch */
+    if (!wavesurfer) {
+      return;
+    }
+
+    if(isSlow) {
+      isSlow = false;
+      wavesurfer.setPlaybackRate(1.0);
+      $('#slow-btn').html('slow');
+    } else {
+      isSlow = true;
+      wavesurfer.setPlaybackRate(0.5);
+      $('#slow-btn').html('normal');
+    }
+  }
+
+  function handleSetStart(regionId) {
+    if (!wavesurfer) {
+      return;
+    }
+
+    var pos = wavesurfer.getCurrentTime();
+
+    console.log('set start @ ' + pos);
+
+    if (!regions[regionId]) {
+      createRegion(regionId, pos, pos, null);
+      $('#goto-btn-1').removeAttr('disabled');
+      $('#goto-btn-2').removeAttr('disabled');
+      $('#loop-btn-1-2').removeAttr('disabled');
+      console.log('new region ' + regionId + ' created');
+    } else {
+      regions[regionId].update({start:pos});
+    }
+  }
+
+  function handleSetEnd(regionId) {
+    if (!wavesurfer) {
+      return;
+    }
+
+    var pos = wavesurfer.getCurrentTime();
+
+    console.log('set end @ ' + pos);
+
+    if (!regions[regionId]) {
+      createRegion(regionId, pos, pos, null);
+      $('#goto-btn-1').removeAttr('disabled');
+      $('#goto-btn-2').removeAttr('disabled');
+      $('#loop-btn-1-2').removeAttr('disabled');
+      console.log('new region ' + regionId + ' created');
+    } else {
+      regions[regionId].update({end:pos})
+    }
+  }
+
+  function handleGotoStart(regionId) {
+    if (!wavesurfer) {
+      return;
+    }
+
+    if (regions[regionId]) {
+      var goto = regions[regionId].getStart();
+      wavesurfer.play(goto);
+      $('#play-btn').html('pause');
+    }
+  }
+
+  function handleGotoEnd(regionId) {
+    if (!wavesurfer) {
+      return;
+    }
+
+    if (regions[regionId]) {
+      var goto = regions[regionId].getEnd();
+      wavesurfer.play(goto);
+      $('#play-btn').html('pause');
+    }
+  }
+
+  function handleLoop(regionId) {
+    if (!wavesurfer) {
+      return;
+    }
+
+    if (regions[regionId]) {
+      var isLoop = regions[regionId].getLoop();
+      var goto = regions[regionId].getStart();
+      if (isLoop){
+        isLoop = false;
+        $('#loop-btn-1-2').html('loop (off)');
+      } else {
+        isLoop = true;
+        $('#loop-btn-1-2').html('loop (on)');
+      }
+      regions[regionId].update({loop: isLoop})
+      if (isLoop) {
+        wavesurfer.play(goto);
+        $('#play-btn').html('pause');
+      }
+    }
+  }
+
+  function createRegion(id, startTime, endTime, color) {
+    var options = {
+      id: id,
+      start: startTime,
+      end: endTime,
+      color: 'rgba(255, 255, 0, 0.2)'
+    };
+    regions[id] = wavesurfer.addRegion(options);
+    console.log('new region created with options ' + options);
+  }
+
+</script>
+</html>
+
+<!-- test audio
+http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg
+-->
+
+<!-- This project makes use of a modified form of the wavesurfer.js
+library which is licensed under a Creative Commons Attribution 3.0 Unported
+License. Source: https://github.com/katspaugh/wavesurfer.js
+-->
