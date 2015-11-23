@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var port = 3000;
+var port = process.argv[2];
 
 app.use('/js', express.static(__dirname + '/js'));
 
