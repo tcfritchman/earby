@@ -33,6 +33,7 @@
 * Resize waveform with window
 * Settings (using cookies)
 * Help page
+* Volume control
 
 ### Ongoing improvements ###
 * Pretty UI
