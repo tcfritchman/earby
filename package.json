@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A web application to aid musicians in learning music by ear.",
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "less": "^2.5.3"
   }
 }

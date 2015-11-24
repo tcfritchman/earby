@@ -3,6 +3,7 @@ var app = express();
 var port = process.argv[2];
 
 app.use('/js', express.static(__dirname + '/js'));
+app.use('/css', express.static(__dirname + '/css'));
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.htm');
