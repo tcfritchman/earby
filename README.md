@@ -26,18 +26,22 @@
 * Dropbox support
 * Google Drive support
 * Youtube support
-* Save a playlist using cookies
+* Save a playlist using cache
+    * Ability to play through/not/repeat
 * Save a playlist to server? (would require registration)
 * Timeline in waveform view
 * Zoom into waveform
 * Resize waveform with window
-* Settings (using cookies)
+* Settings (using cache)
 * Help page
 * Volume control
 
 ### Ongoing improvements ###
 * Pretty UI
 * Correct pitch for slow-down
+
+### Bugs ###
+* Possible to place marker 2 before marker 1 causing interface glitch
 
 ### References ###
 * [wavesurfer.js](https://github.com/katspaugh/wavesurfer.js)

@@ -4,6 +4,7 @@
   "description": "A web application to aid musicians in learning music by ear.",
   "dependencies": {
     "express": "^4.13.3",
+    "grunt-cli": "^0.1.13",
     "less": "^2.5.3"
   }
 }
