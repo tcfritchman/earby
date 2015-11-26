@@ -75,7 +75,7 @@
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="local-panel">
-              <input id="choose-file" type="file" accept="audio" onchange="handleFileChange(this.files)">
+              <input id="choose-file" type="file" accept="audio" onchange="fileBrowseSession.setSelected(this.files, 'local')">
             </div>
             <div role="tabpanel" class="tab-pane" id="gdrive-panel">
               <p>Google Drive coming soon.</p>
@@ -90,7 +90,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary">Okay</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="fileBrowseSession.handleOK()">Okay</button>
         </div>
       </div>
     </div>
@@ -100,7 +100,6 @@
   <div class="container">
     <!-- playback controls -->
     <div class="container" id="playback-controls-container">
-      <div class="btn-group" role="group" aria-label="playback-controls">
         <button type="button" class="btn btn-player" aria-label="prev" id="prev-btn" onclick="handlePrev()" disabled>
           <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
         </button>
@@ -113,7 +112,6 @@
         <button type="button" class="btn btn-default" aria-label="slow" id="slow-btn" onclick="handleSlow()" disabled>
           slow
         </button>
-      </div>
     </div>
 
 

@@ -5,6 +5,36 @@
 var wavesurfer;
 var isSlow = false;
 var regions = [];
+var fileBrowseSession = {
+    selectedFiles: null,
+    selectedFileSource: null,
+    setSelected: function(files, source) {
+        this.selectedFiles = files;
+        this.selectedFileSource = source;
+    },
+    handleOK: function() {
+        switch(this.selectedFileSource) {
+            case 'local':
+                this.handleFileChange(this.selectedFiles);
+                break;
+            //case 'gdrive': ... etc.
+        }
+    },
+    handleCancel: function() {
+
+    },
+    handleFileChange: function(files) {
+        if (files.length) {
+            var file = files[0];
+            var filename = file.name;
+            var filesize = file.size;
+            var statusText = filename + ' (' + filesize + ' bytes)';
+            initializePlayer();
+            $('#source-status-text').html(statusText);
+            wavesurfer.loadBlob(file);
+        }
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
 });
@@ -14,18 +44,6 @@ if (wavesurfer) {
   wavesurfer.destroy();
 }
 };
-
-function handleFileChange(files) {
-if (files.length) {
-  var file = files[0];
-  var filename = file.name;
-  var filesize = file.size;
-  var statusText = filename + ' (' + filesize + ' bytes)';
-  $('#source-status-text').html(statusText);
-  initializePlayer();
-  wavesurfer.loadBlob(file);
-}
-}
 
 function initializePlayer() {
 console.log('initializing player...');

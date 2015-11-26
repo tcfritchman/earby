@@ -12,12 +12,11 @@
 * Goto start/end
 * Loop region
 * Load files from disk
+* iconified buttons
 
 ### Features to implement ###
 * URL Support
-* Pretty UI
 * Time position value indicator
-* iconified buttons
 * keyboard controls
 * tooltips
 
