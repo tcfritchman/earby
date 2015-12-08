@@ -98,46 +98,74 @@
 
   <!-- "Player" -->
   <div class="container">
-    <!-- playback controls -->
-    <div class="container" id="playback-controls-container">
-        <button type="button" class="btn btn-player" aria-label="prev" id="prev-btn" onclick="handlePrev()" disabled>
-          <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="btn btn-default" aria-label="play" id="play-btn" onclick="handlePlayToggle()" disabled>
-          <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="btn btn-default" aria-label="next" id="next-btn" onclick="handleNext()"  disabled>
-          <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="btn btn-default" aria-label="slow" id="slow-btn" onclick="handleSlow()" disabled>
-          slow
-        </button>
-    </div>
-
-
-    <!-- waveform -->
-    <div id="waveform-container">
-      <p id="source-status-text">No audio file selected.</p>
-      <div id="player"></div>
-    </div>
-
-    <!-- marker controls -->
-    <div class="container">
-      <div class="marker-control-group">
-        <div class="btn-group-vertical" role="group">
-          <button type="button" class="btn btn-default "id="set-btn-1" onclick="handleSetStart(0)" disabled>
-            <span class="glyphicon glyphicon-triangle-top"></span>
-          </button>
-          <button type="button" class="btn btn-default" id="goto-btn-1" onclick="handleGotoStart(0)" disabled>1</button>
+    <div class="row">
+      <div class="col-sm-9">
+        <!-- playback controls -->
+        <div id="playback-controls-container">
+            <button type="button" class="btn btn-player" aria-label="prev" id="prev-btn" onclick="handlePrev()" disabled>
+              <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default" aria-label="play" id="play-btn" onclick="handlePlayToggle()" disabled>
+              <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default" aria-label="next" id="next-btn" onclick="handleNext()"  disabled>
+              <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default" aria-label="slow" id="slow-btn" onclick="handleSlow()" disabled>
+              slow
+            </button>
         </div>
-        <button type="button" class="btn btn-default" id="loop-btn-1-2" onclick="handleLoop(0)" disabled>
-          <span class="glyphicon glyphicon-refresh"></span>
-        </button>
-        <div class="btn-group-vertical" role="group">
-          <button type="button" class="btn btn-default" id="set-btn-2" onclick="handleSetEnd(0)" disabled>
-            <span class="glyphicon glyphicon-triangle-top"></span>
+
+
+        <!-- waveform -->
+        <div id="waveform-container">
+          <p id="source-status-text">No audio file selected.</p>
+          <div id="player"></div>
+        </div>
+
+
+        <!-- marker controls -->
+        <div class="marker-control-group">
+          <div id="selected-region-label"></div>
+          <button type="button" class="btn btn-default" id="add-region-btn" onclick="handleNewRegion()" disabled>
+            <span class="glyphicon glyphicon-plus"></span>
           </button>
-          <button type="button" class="btn btn-default" id="goto-btn-2" onclick="handleGotoEnd(0)" disabled>2</button>
+          <div class="btn-group-vertical" role="group">
+            <button type="button" class="btn btn-default "id="set-btn-1" onclick="handleSetStart()" disabled>
+              <span class="glyphicon glyphicon-triangle-top"></span>
+            </button>
+            <button type="button" class="btn btn-default" id="goto-btn-1" onclick="handleGotoStart()" disabled>1</button>
+          </div>
+          <button type="button" class="btn btn-default" id="loop-btn-1-2" onclick="handleLoop()" disabled>
+            <span class="glyphicon glyphicon-refresh"></span>
+          </button>
+          <div class="btn-group-vertical" role="group">
+            <button type="button" class="btn btn-default" id="set-btn-2" onclick="handleSetEnd()" disabled>
+              <span class="glyphicon glyphicon-triangle-top"></span>
+            </button>
+            <button type="button" class="btn btn-default" id="goto-btn-2" onclick="handleGotoEnd()" disabled>2</button>
+          </div>
+        </div>
+
+
+
+      </div>
+      <div class="col-sm-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Regions</h3>
+          </div>
+          <div class="panel-body" id="region-list">
+            <script src="templates/regionList.stache" id="region-list-template" type="x-tmpl-mustache"></script>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Playlist</h3>
+          </div>
+          <div class="panel-body">
+            Panel content
+          </div>
         </div>
       </div>
     </div>
@@ -147,13 +175,23 @@
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <!-- Bootstrap javascript -->
-<script src="bootstrap/dist/js/bootstrap.min.js">
+<script src="bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Mustache template system -->
+<script src="js/mustache.js"></script>
+<!-- wavesurfer- provides waveform playback interface
+<script src="js/wavesurfer.js"></script>
+<script src="js/util.js"></script>
+<script src="js/html-init.js"></script>
+<script src="js/webaudio.js"></script>
+<script src="js/mediaelement.js"></script>
+<script src="js/drawer.js"></script>
+<script src="js/drawer.canvas.js"></script>
+-->
 
-</script>
-<!-- wavesurfer- provides waveform playback interface -->
 <script src="js/wavesurfer.min.js"></script>
 <script src="js/wavesurfer.regions.js"></script>
 <script src="js/player.js"></script>
+<script src="js/regions.js"></script>
 </html>
 
 <!-- test audio
