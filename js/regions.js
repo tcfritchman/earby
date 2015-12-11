@@ -2,70 +2,96 @@
  * Author: Thomas Fritchman
  */
 
-var regions = [];
-var currentRegion = null;
-var regionsAdded = 0;
+/* RegionManager - maintain the list of regions */
+function RegionManager(ws) {
+    this.WS = ws;
+    this.regions = [];
+    this.currentRegion = null;
+    this.loopingActive = false;
+    this.regionsAdded = 0;
+}
 
-function createRegion(options) {
-    options.id = regions.length;
-    regions[regions.length] = wavesurfer.addRegion(options);
+RegionManager.prototype.createRegion = function(options) {
+    if (this.loopingActive) {
+        console.log('cant create region, looping is active');
+        return;
+    }
+    id = this.regions.length;
+    var WSRegion = this.WS.addRegion(options);
+    this.regions.push(new Region(WSRegion, id, options.title));
     console.log('new region created with options ' + options);
 }
 
-function deleteRegion(id) {
-    if (id < regions.length) {
-        toDelete = regions[id];
-        if (regions.length == 1) {
-            regions = [];
+RegionManager.prototype.deleteRegion = function(id) {
+    if (this.loopingActive) {
+        console.log('cant delete region, looping is active');
+        return;
+    }
+    if (id < this.regions.length) {
+        var toDelete = this.regions[id];
+        if (this.regions.length == 1) {
+            this.regions = [];
             handleNoRegions();
         } else {
-            regions.splice(id, 1);
+            this.regions.splice(id, 1);
         }
-        toDelete.remove();
-        refreshIds(); // Ensure indexes match
+        toDelete.region.remove(); /* Remove from wavesurfer */
         console.log('region ' + id + ' deleted');
+    } else {
+        console.log('unable to delete region');
     }
-    console.log('unable to delete region');
+    this.refreshIds(); // Ensure indices match
 }
 
-function clearRegions() {
-    regions = []
-    wavesurfer.clearRegions();
-    // REMOVE REGIONS FROM LIST
+RegionManager.prototype.clearRegions = function() {
+    this.regions = []
+    this.WS.clearRegions();
     console.log('regions cleared');
     handleNoRegions();
 }
 
-function setCurrentRegion(id) {
-    if (regions.length > id) {
-        currentRegion = regions[id];
+RegionManager.prototype.setCurrentRegion = function(id) {
+    if (this.loopingActive) {
+        console.log('cant set region, looping is active');
+        return;
+    }
+    if (this.regions.length > id) {
+        this.currentRegion = this.regions[id];
         console.log('current region set to ' + id);
     }
 }
 
-function getCurrentRegion() {
-    return currentRegion;
+RegionManager.prototype.getCurrentRegion = function() {
+    return this.currentRegion;
 }
 
-function regionWithId(id) {
-    for (var i=0; i<regions.length; i++) {
-        if (regions[i].id == id) {
-            return regions[i];
+RegionManager.prototype.regionWithId = function(id) {
+    for (var i=0; i<this.regions.length; i++) {
+        if (this.regions[i].id == id) {
+            return this.regions[i];
         }
     }
     return null;
 }
 
-function refreshIds() {
-    for (var i=0; i<regions.length; i++) {
-        region[i].id = i;
+RegionManager.prototype.refreshIds = function() {
+    for (var i=0; i<this.regions.length; i++) {
+        this.regions[i].id = i;
     }
 }
 
+/* Region wrapper class used by RegionManager */
+function Region(WSRegion, id, title) {
+    this.region = WSRegion; /* A Wavesurfer region object */
+    this.id = id;
+    this.title = title;
+}
+
+/* Region event handlers */
 function handleNoRegions() {
     console.log('handling case 0 regions');
-    currentRegion = null;
-    regionsAdded = 0;
+    RM.currentRegion = null;
+    RM.regionsAdded = 0;
     $('#set-btn-1').prop('disabled', true);
     $('#set-btn-2').prop('disabled', true);
     $('#goto-btn-1').prop('disabled', true);
@@ -74,96 +100,122 @@ function handleNoRegions() {
 }
 
 function handleNewRegion() {
-    if (!wavesurfer) {
+    if (!WS || !RM) {
         return;
     }
 
-    var pos = wavesurfer.getCurrentTime();
+    var pos = WS.getCurrentTime();
 
     regionOptions = {
         start: pos,
         end: null,      /* Creates a very short region, ie. marker */
-        name: 'Region', /* Default name */
+        title: 'Region', /* Default title */
         color: null
     }
 
-    createRegion(regionOptions);
-    $('#goto-btn-1').removeAttr('disabled');
-    $('#goto-btn-2').removeAttr('disabled');
-    $('#loop-btn-1-2').removeAttr('disabled');
+    RM.createRegion(regionOptions);
+    renderRegionList();
+    $('#set-btn-1').prop('disabled', false);
+    $('#set-btn-2').prop('disabled', false);
+    $('#goto-btn-1').prop('disabled', false);
+    $('#goto-btn-2').prop('disabled', false);
+    $('#loop-btn-1-2').prop('disabled', false);
 }
 
 function handleDeleteRegion(id) {
-    deleteRegion(id);
+    if (!WS || !RM) {
+        return;
+    }
+
+    RM.deleteRegion(id);
     renderRegionList();
 }
 
 function handleSetCurrentRegion(id) {
-    setCurrentRegion(id);
-    $('#selected-region-label').html(currentRegion.id);
+    if (!WS || !RM) {
+        return;
+    }
+
+    if (RM.loopingActive) {
+        console.log('cant set region, looping is active');
+        return;
+    }
+
+    RM.setCurrentRegion(id);
+    if (RM.getCurrentRegion() != null) {
+        $('#selected-region-label').html(RM.currentRegion.id + ' - ' + RM.currentRegion.title);
+    } else {
+        $('#selected-region-label').html('No region selected');
+    }
 }
 
 function handleSetStart() {
-    if (!wavesurfer) {
+    if (!WS || !RM) {
         return;
     }
 
-    var pos = wavesurfer.getCurrentTime();
+    var pos = WS.getCurrentTime();
     console.log('set start @ ' + pos);
-    currentRegion.update({start:pos});
+    RM.currentRegion.region.update({start:pos});
 }
 
 function handleSetEnd() {
-    if (!wavesurfer) {
+    if (!WS || !RM) {
         return;
     }
 
-    var pos = wavesurfer.getCurrentTime();
+    var pos = WS.getCurrentTime();
     console.log('set end @ ' + pos);
-    currentRegion.update({end:pos})
+    RM.currentRegion.region.update({end:pos})
 }
 
 function handleGotoStart() {
-    if (!wavesurfer) {
+    if (!WS || !RM) {
         return;
     }
 
-    var goto = currentRegion.getStart();
-    wavesurfer.play(goto);
+    var goto = RM.currentRegion.region.getStart();
+    WS.play(goto);
     setPlayButtonStatus('pause');
 }
 
 function handleGotoEnd() {
-    if (!wavesurfer) {
+    if (!WS || !RM) {
         return;
     }
 
-    var goto = currentRegion.getEnd();
-    wavesurfer.play(goto);
+    var goto = RM.currentRegion.region.getEnd();
+    WS.play(goto);
     setPlayButtonStatus('pause');
 }
 
 function handleLoop() {
-    if (!wavesurfer) {
+    if (!WS || !RM || RM.currentRegion == null) {
         return;
     }
 
-    var isLoop = currentRegion.getLoop();
-    var goto = currentRegion.getStart();
-    if (isLoop){
+    var isLoop = RM.currentRegion.region.getLoop();
+    var goto = RM.currentRegion.region.getStart();
+    if (isLoop) {
         isLoop = false;
         setLoopButtonStatus('#loop-btn-1-2', 'off')
+        $('#add-region-btn').prop('disabled', false);
+        $('#region-list .list-item-controls button').prop('disabled', false);
     } else {
         isLoop = true;
         setLoopButtonStatus('#loop-btn-1-2', 'on')
+        $('#add-region-btn').prop('disabled', true);
+        $('#region-list .list-item-controls button').prop('disabled', true);
     }
-    currentRegion.update({loop: isLoop})
+    RM.currentRegion.region.update({loop: isLoop})
+    RM.loopingActive = isLoop;
     if (isLoop) {
-        wavesurfer.play(goto);
+        WS.play(goto);
         setPlayButtonStatus('pause');
     }
 }
 
+/*
 function handleRegionCreated() {
     return function() {
         renderRegionList();
@@ -181,10 +233,11 @@ function handleRegionRemoved() {
         renderRegionList();
     }
 }
+*/
 
 function handleRegionClick() {
     return function(region) {
-        setCurrentRegion(region.id);
+        RM.setCurrentRegion(region.id);
     }
 }
 
@@ -205,21 +258,14 @@ function setLoopButtonStatus(buttonId, status) {
 }
 
 function renderRegionList() {
-    if (regions.length < 1) {
+    if (RM.regions.length < 1) {
+        $('#region-list').html('No regions.');
         return;
     }
 
-    var template = '{{#items}} <div class="list-item" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
-    var view = {items: regions};
+    var template = '{{#items}} <div class="list-item" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
+    var view = {items: RM.regions};
     Mustache.parse(template);
     var rendered = Mustache.render(template, view);
     $('#region-list').html(rendered);
-
-    /* Async seems to really mess with this one... justifiably I guess...
-    $.get('templates/regionList.stache', function(template) {
-        var view = {items: regions};
-        var rendered = Mustache.render(template, view);
-        $('#region-list').html(rendered);
-    });
-    */
 }

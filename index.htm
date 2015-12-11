@@ -126,7 +126,7 @@
 
         <!-- marker controls -->
         <div class="marker-control-group">
-          <div id="selected-region-label"></div>
+          <div id="selected-region-label">No region selected</div>
           <button type="button" class="btn btn-default" id="add-region-btn" onclick="handleNewRegion()" disabled>
             <span class="glyphicon glyphicon-plus"></span>
           </button>
@@ -146,19 +146,21 @@
             <button type="button" class="btn btn-default" id="goto-btn-2" onclick="handleGotoEnd()" disabled>2</button>
           </div>
         </div>
-
-
-
       </div>
+
       <div class="col-sm-3">
+
+        <!-- regions list -->
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">Regions</h3>
           </div>
           <div class="panel-body" id="region-list">
-            <script src="templates/regionList.stache" id="region-list-template" type="x-tmpl-mustache"></script>
+            No regions.
           </div>
         </div>
+
+        <!-- playlist list
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">Playlist</h3>
@@ -167,6 +169,7 @@
             Panel content
           </div>
         </div>
+        -->
       </div>
     </div>
   </div>

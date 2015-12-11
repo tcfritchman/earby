@@ -1,10 +1,14 @@
-/* player.js - Logic for player controls and functions
+/* player.js - Logic for player controls and functions in earby
  * Author: Thomas Fritchman
  */
 
-var wavesurfer;
+/* Globals */
+var WS;                     /* wavesurfer */
+var RM;                     /* region manager */
 var isSlow = false;
 
+/* A session for when the user is choosing a music file to use in the app */
+// TODO: extract this class into its own file
 var fileBrowseSession = {
     selectedFiles: null,
     selectedFileSource: null,
@@ -31,7 +35,7 @@ var fileBrowseSession = {
             var statusText = filename + ' (' + filesize + ' bytes)';
             initializePlayer();
             $('#source-status-text').html(statusText);
-            wavesurfer.loadBlob(file);
+            WS.loadBlob(file);
         }
     }
 }
@@ -40,16 +44,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 window.onbeforeunload = function() {
-    if (wavesurfer) {
-        wavesurfer.destroy();
+    if (WS) {
+        /* Remove the wavesurfer when the window is closed to help
+            prevent audio glitches */
+        WS.destroy();
     }
 };
 
 function initializePlayer() {
     console.log('initializing player...');
 
-    if (wavesurfer) {
-        wavesurfer.destroy();
+    if (WS) {
+        WS.destroy();
     }
 
     /* reset the buttons as disabled */
@@ -72,11 +78,9 @@ function initializePlayer() {
 
     /* reset globals */
     isSlow = false;
-    regions = [];
-    currentRegion = null;
 
     /* initialize the wavesurfer */
-    wavesurfer = Object.create(WaveSurfer);
+    WS = Object.create(WaveSurfer);
     var options = {
         container     : document.querySelector('#player'),
         waveColor     : '#444',
@@ -84,11 +88,17 @@ function initializePlayer() {
         cursorColor   : 'red',
         cursorWidth   : 2
     };
-    wavesurfer.init(options);
+    WS.init(options);
+
+    /* create the region manager */
+    RM = new RegionManager(WS);
+
+    /* Reset region-related elements */
+    renderRegionList();
 
     /* event listeners */
-    wavesurfer.on('ready', handlePlayerReady());
-    wavesurfer.on('finish', handleEndOfFile());
+    WS.on('ready', handlePlayerReady());
+    WS.on('finish', handleEndOfFile());
 }
 
 function handlePlayerReady() {
@@ -98,22 +108,20 @@ function handlePlayerReady() {
         $('#prev-btn').removeAttr('disabled');
         $('#next-btn').removeAttr('disabled');
         $('#slow-btn').removeAttr('disabled');
-        $('#set-btn-1').removeAttr('disabled');
-        $('#set-btn-2').removeAttr('disabled');
         $('#add-region-btn').removeAttr('disabled');
 
         /* These seem to only work if declared after audio loads */
-        wavesurfer.on('region-created', handleRegionCreated());
-        wavesurfer.on('region-updated', handleRegionUpdated());
-        wavesurfer.on('region-removed', handleRegionRemoved());
-        wavesurfer.on('region-click', handleRegionClick());
+        /*WS.on('region-created', handleRegionCreated());
+        WS.on('region-updated', handleRegionUpdated());
+        WS.on('region-removed', handleRegionRemoved()); */
+        WS.on('region-click', handleRegionClick());
     }
 }
 
 function handleURLChange() {
     var url = document.getElementById('enter-url').value;
     $('#source-status-text').html(url);
-    wavesurfer.load(url);
+    WS.load(url);
 }
 
 function handleEndOfFile() {
@@ -124,49 +132,49 @@ function handleEndOfFile() {
 }
 
 function handlePlayToggle() {
-    if (!wavesurfer) {
+    if (!WS) {
         return;
     }
     console.log('play toggle');
 
-    if (wavesurfer.isPlaying()) {
-        wavesurfer.pause();
+    if (WS.isPlaying()) {
+        WS.pause();
         setPlayButtonStatus('play');
     } else {
-        wavesurfer.play();
+        WS.play();
         setPlayButtonStatus('pause');
     }
 }
 
 function handlePrev() {
-    if (!wavesurfer) {
+    if (!WS) {
         return;
     }
 
-    wavesurfer.skipBackward();
+    WS.skipBackward();
 }
 
 function handleNext() {
-    if (!wavesurfer) {
+    if (!WS) {
         return;
     }
 
-    wavesurfer.skipForward();
+    WS.skipForward();
 }
 
 function handleSlow() {
     /* TODO: find a way to playback at original pitch */
-    if (!wavesurfer) {
+    if (!WS) {
         return;
     }
 
     if(isSlow) {
         isSlow = false;
-        wavesurfer.setPlaybackRate(1.0);
+        WS.setPlaybackRate(1.0);
         $('#slow-btn').html('slow');
     } else {
         isSlow = true;
-        wavesurfer.setPlaybackRate(0.5);
+        WS.setPlaybackRate(0.5);
         $('#slow-btn').html('normal');
     }
 }
