@@ -18,8 +18,11 @@ RegionManager.prototype.createRegion = function(options) {
     }
     id = this.regions.length;
     var WSRegion = this.WS.addRegion(options);
-    this.regions.push(new Region(WSRegion, id, options.title));
+    var r = new Region(WSRegion, id, options.title + ++this.regionsAdded);
+    this.regions.push(r);
+    this.currentRegion = r; /* Set current as new region */
     console.log('new region created with options ' + options);
+    return r;
 }
 
 RegionManager.prototype.deleteRegion = function(id) {
@@ -29,6 +32,9 @@ RegionManager.prototype.deleteRegion = function(id) {
     }
     if (id < this.regions.length) {
         var toDelete = this.regions[id];
+        if (this.currentRegion == toDelete) {
+            this.clearCurrentRegion();
+        }
         if (this.regions.length == 1) {
             this.regions = [];
             handleNoRegions();
@@ -40,7 +46,7 @@ RegionManager.prototype.deleteRegion = function(id) {
     } else {
         console.log('unable to delete region');
     }
-    this.refreshIds(); // Ensure indices match
+    this.refreshIds(); /* Ensure indices match */
 }
 
 RegionManager.prototype.clearRegions = function() {
@@ -63,6 +69,15 @@ RegionManager.prototype.setCurrentRegion = function(id) {
 
 RegionManager.prototype.getCurrentRegion = function() {
     return this.currentRegion;
+}
+
+RegionManager.prototype.clearCurrentRegion = function () {
+    if (this.loopingActive) {
+        console.log('cant clear region, looping is active');
+        return;
+    }
+    this.currentRegion = null;
+    console.log('current region cleared');
 }
 
 RegionManager.prototype.regionWithId = function(id) {
@@ -113,8 +128,10 @@ function handleNewRegion() {
         color: null
     }
 
-    RM.createRegion(regionOptions);
+    var r = RM.createRegion(regionOptions);
+    updateRegionAnnotation(r, r.title);
     renderRegionList();
+    renderRegionLabel();
     $('#set-btn-1').prop('disabled', false);
     $('#set-btn-2').prop('disabled', false);
     $('#goto-btn-1').prop('disabled', false);
@@ -129,6 +146,7 @@ function handleDeleteRegion(id) {
 
     RM.deleteRegion(id);
     renderRegionList();
+    renderRegionLabel();
 }
 
 function handleSetCurrentRegion(id) {
@@ -142,11 +160,7 @@ function handleSetCurrentRegion(id) {
     }
 
     RM.setCurrentRegion(id);
-    if (RM.getCurrentRegion() != null) {
-        $('#selected-region-label').html(RM.currentRegion.id + ' - ' + RM.currentRegion.title);
-    } else {
-        $('#selected-region-label').html('No region selected');
-    }
+    renderRegionLabel();
 }
 
 function handleSetStart() {
@@ -257,6 +271,11 @@ function setLoopButtonStatus(buttonId, status) {
     }
 }
 
+function updateRegionAnnotation(region, text) {
+    $(region.region.element).prepend(text);
+
+}
+
 function renderRegionList() {
     if (RM.regions.length < 1) {
         $('#region-list').html('No regions.');
@@ -268,4 +287,12 @@ function renderRegionList() {
     Mustache.parse(template);
     var rendered = Mustache.render(template, view);
     $('#region-list').html(rendered);
+}
+
+function renderRegionLabel() {
+    if (RM.getCurrentRegion() != null) {
+        $('#selected-region-label').html(RM.currentRegion.id + ' - ' + RM.currentRegion.title);
+    } else {
+        $('#selected-region-label').html('No region selected');
+    }
 }
