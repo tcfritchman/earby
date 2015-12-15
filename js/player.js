@@ -107,6 +107,18 @@ function handlePlayerReady() {
         $('#slow-btn').removeAttr('disabled');
         $('#add-region-btn').removeAttr('disabled');
 
+        var timeline = Object.create(WaveSurfer.Timeline);
+
+        timeline.init({
+            wavesurfer: WS,
+            container: "#timeline-container",
+            notchPercentHeight: 40,
+            primaryColor: '#4d7eb2',
+            secondaryColor: '#375a7f',
+            primaryFontColor: '#4d7eb2',
+            secondaryFontColor: '#375a7f'
+        });
+
         /* These seem to only work if declared after audio loads */
         /*WS.on('region-created', handleRegionCreated());
         WS.on('region-updated', handleRegionUpdated());

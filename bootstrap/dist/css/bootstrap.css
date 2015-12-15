@@ -6856,6 +6856,9 @@ fieldset[disabled] .btn-player.active {
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
+.wavesurfer-region {
+  font-size: 10px;
+}
 .clearfix:before,
 .clearfix:after,
 .dl-horizontal dd:before,
