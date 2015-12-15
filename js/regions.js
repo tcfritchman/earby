@@ -7,6 +7,9 @@ var regionsAdded = 0;
 
 /* Region helpers */
 function setCurrentRegion (id) {
+    if (!WS || !WS.regions) {
+        return;
+    }
     if (getRegionIsLoop()) {
         console.log('cant set region, looping is active');
         return;
@@ -36,10 +39,13 @@ function getRegionWithId(id) {
 }
 
 function getRegionIsLoop() {
-    for (var r in WS.regions.list) {
-        if (WS.regions.list.hasOwnProperty(r)) {
-            if (r.loop) {
-                return r;
+    if (!WS || !WS.regions) {
+        return null;
+    }
+    for (var key in WS.regions.list) {
+        if (WS.regions.list.hasOwnProperty(key)) {
+            if (WS.regions.list[key].loop) {
+                return (WS.regions.list[key]);
             }
         }
     }
@@ -59,7 +65,7 @@ function handleNoRegions() {
 }
 
 function handleNewRegion() {
-    if (!WS || !WS.regions) {
+    if (!WS) {
         return;
     }
 
@@ -75,7 +81,7 @@ function handleNewRegion() {
         start: pos,
         end: null,      /* Creates a very short region, ie. marker */
         data: {
-            title: 'Region' /* Default title */
+            title: 'Region' + regionsAdded /* Default title */
         },
         color: null
     }
@@ -83,7 +89,7 @@ function handleNewRegion() {
     var r = WS.addRegion(options);
     setCurrentRegion(r.id);     /* Set current as new region */
 
-    updateRegionAnnotation(r, r.title);
+    updateRegionAnnotation(r, r.data.title);
     renderRegionList();
     renderRegionLabel();
     $('#set-btn-1').prop('disabled', false);
@@ -103,6 +109,10 @@ function handleDeleteRegion(id) {
         return;
     }
 
+    if (_.size(WS.regions.list) == 1) {
+        handleNoRegions();
+    }
+
     var toDelete = getRegionWithId(id);
 
     if (toDelete) {
@@ -111,10 +121,6 @@ function handleDeleteRegion(id) {
         }
         toDelete.remove();
         console.log('region ' + id + ' deleted');
-    }
-
-    if (WS.regions.list.length == 1) {
-        handleNoRegions();
     }
 
     renderRegionList();
@@ -226,13 +232,22 @@ function updateRegionAnnotation(r, text) {
 }
 
 function renderRegionList() {
-    if (!WS || !WS.regions || WS.regions.list.length < 1) {
+    if (!WS || !WS.regions || _.size(WS.regions.list) < 1) {
         $('#region-list').html('No regions.');
         return;
     }
 
-    var template = '{{#items}} <div class="list-item" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{data.title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
-    var view = {items: WS.regions.list};
+    var template = '{{#items}} <div class="list-item" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
+
+    var items = [];
+    for (var item in WS.regions.list) {
+        if (WS.regions.list.hasOwnProperty(item)) {
+            items.push({id: WS.regions.list[item].id,
+                        title: WS.regions.list[item].data.title});
+        }
+    }
+
+    var view = {'items': items};
     Mustache.parse(template);
     var rendered = Mustache.render(template, view);
     $('#region-list').html(rendered);
