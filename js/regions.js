@@ -2,111 +2,55 @@
  * Author: Thomas Fritchman
  */
 
-/* RegionManager - maintain the list of regions */
-function RegionManager(ws) {
-    this.WS = ws;
-    this.regions = [];
-    this.currentRegion = null;
-    this.loopingActive = false;
-    this.regionsAdded = 0;
-}
+var currentRegion = null;
+var regionsAdded = 0;
 
-RegionManager.prototype.createRegion = function(options) {
-    if (this.loopingActive) {
-        console.log('cant create region, looping is active');
-        return;
-    }
-    id = this.regions.length;
-    var WSRegion = this.WS.addRegion(options);
-    var r = new Region(WSRegion, id, options.title + ++this.regionsAdded);
-    this.regions.push(r);
-    this.currentRegion = r; /* Set current as new region */
-    console.log('new region created with options ' + options);
-    return r;
-}
-
-RegionManager.prototype.deleteRegion = function(id) {
-    if (this.loopingActive) {
-        console.log('cant delete region, looping is active');
-        return;
-    }
-    if (id < this.regions.length) {
-        var toDelete = this.regions[id];
-        if (this.currentRegion == toDelete) {
-            this.clearCurrentRegion();
-        }
-        if (this.regions.length == 1) {
-            this.regions = [];
-            handleNoRegions();
-        } else {
-            this.regions.splice(id, 1);
-        }
-        toDelete.region.remove(); /* Remove from wavesurfer */
-        console.log('region ' + id + ' deleted');
-    } else {
-        console.log('unable to delete region');
-    }
-    this.refreshIds(); /* Ensure indices match */
-}
-
-RegionManager.prototype.clearRegions = function() {
-    this.regions = []
-    this.WS.clearRegions();
-    console.log('regions cleared');
-    handleNoRegions();
-}
-
-RegionManager.prototype.setCurrentRegion = function(id) {
-    if (this.loopingActive) {
+/* Region helpers */
+function setCurrentRegion (id) {
+    if (getRegionIsLoop()) {
         console.log('cant set region, looping is active');
         return;
     }
-    if (this.regions.length > id) {
-        this.currentRegion = this.regions[id];
+    if (WS.Regions[id]) {
+        currentRegion = WS.Regions[id];
         console.log('current region set to ' + id);
+    } else {
+        console.log('Region with id ' + id + ' doesnt exist');
     }
 }
 
-RegionManager.prototype.getCurrentRegion = function() {
-    return this.currentRegion;
-}
-
-RegionManager.prototype.clearCurrentRegion = function () {
-    if (this.loopingActive) {
+function clearCurrentRegion() {
+    if (getRegionIsLoop()) {
         console.log('cant clear region, looping is active');
         return;
     }
-    this.currentRegion = null;
+    currentRegion = null;
     console.log('current region cleared');
 }
 
-RegionManager.prototype.regionWithId = function(id) {
-    for (var i=0; i<this.regions.length; i++) {
-        if (this.regions[i].id == id) {
-            return this.regions[i];
+function getRegionWithId(id) {
+    if (!WS || !WS.Regions) {
+        return;
+    }
+    return WS.Regions[id] || null;
+}
+
+function getRegionIsLoop()
+    for (var r in WS.Regions) {
+        if (object.hasOwnProperty(r)) {
+            if (r.loop) {
+                return r;
+            }
         }
     }
     return null;
 }
 
-RegionManager.prototype.refreshIds = function() {
-    for (var i=0; i<this.regions.length; i++) {
-        this.regions[i].id = i;
-    }
-}
-
-/* Region wrapper class used by RegionManager */
-function Region(WSRegion, id, title) {
-    this.region = WSRegion; /* A Wavesurfer region object */
-    this.id = id;
-    this.title = title;
-}
-
 /* Region event handlers */
 function handleNoRegions() {
     console.log('handling case 0 regions');
-    RM.currentRegion = null;
-    RM.regionsAdded = 0;
+    currentRegion = null;
+    regionsAdded = 0;
     $('#set-btn-1').prop('disabled', true);
     $('#set-btn-2').prop('disabled', true);
     $('#goto-btn-1').prop('disabled', true);
@@ -115,20 +59,30 @@ function handleNoRegions() {
 }
 
 function handleNewRegion() {
-    if (!WS || !RM) {
+    if (!WS || !WS.Regions) {
+        return;
+    }
+
+    if (getRegionIsLoop()) {
+        console.log('cant create region, looping is active');
         return;
     }
 
     var pos = WS.getCurrentTime();
 
-    regionOptions = {
+    var options = {
+        id: ++regionsAdded,
         start: pos,
         end: null,      /* Creates a very short region, ie. marker */
-        title: 'Region', /* Default title */
+        data: {
+            title: 'Region' /* Default title */
+        },
         color: null
     }
 
-    var r = RM.createRegion(regionOptions);
+    var r = WS.addRegion(options);
+    setCurrentRegion(r.id);     /* Set current as new region */
+
     updateRegionAnnotation(r, r.title);
     renderRegionList();
     renderRegionLabel();
@@ -140,76 +94,90 @@ function handleNewRegion() {
 }
 
 function handleDeleteRegion(id) {
-    if (!WS || !RM) {
+    if (!WS || !WS.Regions) {
         return;
     }
 
-    RM.deleteRegion(id);
+    if (getRegionIsLoop()) {
+        console.log('cant delete region, looping is active');
+        return;
+    }
+
+    var toDelete = getRegionWithId(id);
+
+    if (toDelete) {
+        if (toDelete == currentRegion) {
+            clearCurrentRegion();
+        }
+        toDelete.remove();
+        console.log('region ' + id + ' deleted');
+    }
+
+    if (WS.Regions.length == 1) {
+        handleNoRegions();
+    }
+
     renderRegionList();
     renderRegionLabel();
 }
 
 function handleSetCurrentRegion(id) {
-    if (!WS || !RM) {
+    if (!WS || !WS.Regions) {
         return;
     }
 
-    if (RM.loopingActive) {
-        console.log('cant set region, looping is active');
-        return;
-    }
-
-    RM.setCurrentRegion(id);
+    setCurrentRegion(id);
     renderRegionLabel();
 }
 
 function handleSetStart() {
-    if (!WS || !RM) {
+    if (!WS || !WS.Regions || !currentRegion) {
         return;
     }
 
     var pos = WS.getCurrentTime();
+    currentRegion.update({start:pos});
     console.log('set start @ ' + pos);
-    RM.currentRegion.region.update({start:pos});
 }
 
 function handleSetEnd() {
-    if (!WS || !RM) {
+    if (!WS || !WS.Regions || !currentRegion) {
         return;
     }
 
     var pos = WS.getCurrentTime();
+    currentRegion.update({end:pos})
     console.log('set end @ ' + pos);
-    RM.currentRegion.region.update({end:pos})
 }
 
 function handleGotoStart() {
-    if (!WS || !RM) {
+    if (!WS || !WS.Regions || !currentRegion) {
         return;
     }
 
-    var goto = RM.currentRegion.region.getStart();
+    var goto = currentRegion.start;
     WS.play(goto);
     setPlayButtonStatus('pause');
 }
 
 function handleGotoEnd() {
-    if (!WS || !RM) {
+    if (!WS || !WS.Regions || !currentRegion) {
         return;
     }
 
-    var goto = RM.currentRegion.region.getEnd();
+    var goto = currentRegion.end;
     WS.play(goto);
     setPlayButtonStatus('pause');
 }
 
 function handleLoop() {
-    if (!WS || !RM || RM.currentRegion == null) {
+    if (!WS || !WS.Regions || !currentRegion) {
         return;
     }
 
-    var isLoop = RM.currentRegion.region.getLoop();
-    var goto = RM.currentRegion.region.getStart();
+    var isLoop = getRegionIsLoop();
+    var goto = currentRegion.start;
+
     if (isLoop) {
         isLoop = false;
         setLoopButtonStatus('#loop-btn-1-2', 'off')
@@ -221,37 +189,18 @@ function handleLoop() {
         $('#add-region-btn').prop('disabled', true);
         $('#region-list .list-item-controls button').prop('disabled', true);
     }
-    RM.currentRegion.region.update({loop: isLoop})
-    RM.loopingActive = isLoop;
+
+    currentRegion.update({loop: isLoop})
+
     if (isLoop) {
         WS.play(goto);
         setPlayButtonStatus('pause');
     }
 }
 
-/*
-function handleRegionCreated() {
-    return function() {
-        renderRegionList();
-    }
-}
-
-function handleRegionUpdated() {
-    return function() {
-        renderRegionList();
-    }
-}
-
-function handleRegionRemoved() {
-    return function() {
-        renderRegionList();
-    }
-}
-*/
-
 function handleRegionClick() {
     return function(region) {
-        RM.setCurrentRegion(region.id);
+        setCurrentRegion(region.id);
     }
 }
 
@@ -271,27 +220,27 @@ function setLoopButtonStatus(buttonId, status) {
     }
 }
 
-function updateRegionAnnotation(region, text) {
-    $(region.region.element).prepend(text);
-
+/* View rendering */
+function updateRegionAnnotation(r, text) {
+    $(r.element).prepend(text);
 }
 
 function renderRegionList() {
-    if (RM.regions.length < 1) {
+    if (WS.Regions.length < 1) {
         $('#region-list').html('No regions.');
         return;
     }
 
-    var template = '{{#items}} <div class="list-item" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
-    var view = {items: RM.regions};
+    var template = '{{#items}} <div class="list-item" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{data.title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
+    var view = {items: WS.Regions};
     Mustache.parse(template);
     var rendered = Mustache.render(template, view);
     $('#region-list').html(rendered);
 }
 
 function renderRegionLabel() {
-    if (RM.getCurrentRegion() != null) {
-        $('#selected-region-label').html(RM.currentRegion.id + ' - ' + RM.currentRegion.title);
+    if (currentRegion != null) {
+        $('#selected-region-label').html(currentRegion.id + ' - ' + currentRegion.data.title);
     } else {
         $('#selected-region-label').html('No region selected');
     }

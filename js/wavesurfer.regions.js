@@ -112,20 +112,6 @@ WaveSurfer.Region = {
 
     },
 
-    /* Get region's start position */
-    getStart: function() {
-        return this.start;
-    },
-
-    /* Get region's end position */
-    getEnd: function() {
-        return this.end;
-    },
-
-    getLoop: function() {
-        return this.loop;
-    },
-
     /* Update region params. */
     update: function (params) {
         if (null != params.start) {

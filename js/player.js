@@ -4,7 +4,6 @@
 
 /* Globals */
 var WS;                     /* wavesurfer */
-var RM;                     /* region manager */
 var isSlow = false;
 
 /* A session for when the user is choosing a music file to use in the app */
