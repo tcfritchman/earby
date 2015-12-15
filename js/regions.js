@@ -11,8 +11,8 @@ function setCurrentRegion (id) {
         console.log('cant set region, looping is active');
         return;
     }
-    if (WS.Regions[id]) {
-        currentRegion = WS.Regions[id];
+    if (WS.regions.list[id]) {
+        currentRegion = WS.regions.list[id];
         console.log('current region set to ' + id);
     } else {
         console.log('Region with id ' + id + ' doesnt exist');
@@ -29,15 +29,15 @@ function clearCurrentRegion() {
 }
 
 function getRegionWithId(id) {
-    if (!WS || !WS.Regions) {
+    if (!WS || !WS.regions) {
         return;
     }
-    return WS.Regions[id] || null;
+    return WS.regions.list[id] || null;
 }
 
-function getRegionIsLoop()
-    for (var r in WS.Regions) {
-        if (object.hasOwnProperty(r)) {
+function getRegionIsLoop() {
+    for (var r in WS.regions.list) {
+        if (WS.regions.list.hasOwnProperty(r)) {
             if (r.loop) {
                 return r;
             }
@@ -59,7 +59,7 @@ function handleNoRegions() {
 }
 
 function handleNewRegion() {
-    if (!WS || !WS.Regions) {
+    if (!WS || !WS.regions) {
         return;
     }
 
@@ -94,7 +94,7 @@ function handleNewRegion() {
 }
 
 function handleDeleteRegion(id) {
-    if (!WS || !WS.Regions) {
+    if (!WS || !WS.regions) {
         return;
     }
 
@@ -113,7 +113,7 @@ function handleDeleteRegion(id) {
         console.log('region ' + id + ' deleted');
     }
 
-    if (WS.Regions.length == 1) {
+    if (WS.regions.list.length == 1) {
         handleNoRegions();
     }
 
@@ -122,7 +122,7 @@ function handleDeleteRegion(id) {
 }
 
 function handleSetCurrentRegion(id) {
-    if (!WS || !WS.Regions) {
+    if (!WS || !WS.regions) {
         return;
     }
 
@@ -131,7 +131,7 @@ function handleSetCurrentRegion(id) {
 }
 
 function handleSetStart() {
-    if (!WS || !WS.Regions || !currentRegion) {
+    if (!WS || !WS.regions || !currentRegion) {
         return;
     }
 
@@ -141,7 +141,7 @@ function handleSetStart() {
 }
 
 function handleSetEnd() {
-    if (!WS || !WS.Regions || !currentRegion) {
+    if (!WS || !WS.regions || !currentRegion) {
         return;
     }
 
@@ -151,7 +151,7 @@ function handleSetEnd() {
 }
 
 function handleGotoStart() {
-    if (!WS || !WS.Regions || !currentRegion) {
+    if (!WS || !WS.regions || !currentRegion) {
         return;
     }
 
@@ -161,7 +161,7 @@ function handleGotoStart() {
 }
 
 function handleGotoEnd() {
-    if (!WS || !WS.Regions || !currentRegion) {
+    if (!WS || !WS.regions || !currentRegion) {
         return;
     }
 
@@ -171,7 +171,7 @@ function handleGotoEnd() {
 }
 
 function handleLoop() {
-    if (!WS || !WS.Regions || !currentRegion) {
+    if (!WS || !WS.regions || !currentRegion) {
         return;
     }
 
@@ -226,13 +226,13 @@ function updateRegionAnnotation(r, text) {
 }
 
 function renderRegionList() {
-    if (WS.Regions.length < 1) {
+    if (!WS || !WS.regions || WS.regions.list.length < 1) {
         $('#region-list').html('No regions.');
         return;
     }
 
     var template = '{{#items}} <div class="list-item" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{data.title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
-    var view = {items: WS.Regions};
+    var view = {items: WS.regions.list};
     Mustache.parse(template);
     var rendered = Mustache.render(template, view);
     $('#region-list').html(rendered);

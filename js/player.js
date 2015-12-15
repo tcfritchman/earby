@@ -89,11 +89,9 @@ function initializePlayer() {
     };
     WS.init(options);
 
-    /* create the region manager */
-    RM = new RegionManager(WS);
-
     /* Reset region-related elements */
     renderRegionList();
+    renderRegionLabel();
 
     /* event listeners */
     WS.on('ready', handlePlayerReady());
@@ -113,7 +111,7 @@ function handlePlayerReady() {
         /*WS.on('region-created', handleRegionCreated());
         WS.on('region-updated', handleRegionUpdated());
         WS.on('region-removed', handleRegionRemoved()); */
-        WS.on('region-click', handleRegionClick());
+        //WS.on('region-click', handleRegionClick());
     }
 }
 
