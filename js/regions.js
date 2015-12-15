@@ -143,6 +143,7 @@ function handleSetStart() {
 
     var pos = WS.getCurrentTime();
     currentRegion.update({start:pos});
+    renderRegionList();
     console.log('set start @ ' + pos);
 }
 
@@ -153,6 +154,7 @@ function handleSetEnd() {
 
     var pos = WS.getCurrentTime();
     currentRegion.update({end:pos})
+    renderRegionList();
     console.log('set end @ ' + pos);
 }
 
@@ -207,6 +209,13 @@ function handleLoop() {
 function handleRegionClick() {
     return function(region) {
         setCurrentRegion(region.id);
+        renderRegionLabel();
+    }
+}
+
+function handleRegionUpdate() {
+    return function (region) {
+        renderRegionList();
     }
 }
 
@@ -243,9 +252,12 @@ function renderRegionList() {
     for (var item in WS.regions.list) {
         if (WS.regions.list.hasOwnProperty(item)) {
             items.push({id: WS.regions.list[item].id,
-                        title: WS.regions.list[item].data.title});
+                        title: WS.regions.list[item].data.title,
+                        start: WS.regions.list[item].start});
         }
     }
+
+    items = _.sortBy(items, 'start');
 
     var view = {'items': items};
     Mustache.parse(template);

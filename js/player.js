@@ -111,7 +111,8 @@ function handlePlayerReady() {
         /*WS.on('region-created', handleRegionCreated());
         WS.on('region-updated', handleRegionUpdated());
         WS.on('region-removed', handleRegionRemoved()); */
-        //WS.on('region-click', handleRegionClick());
+        WS.on('region-click', handleRegionClick());
+        WS.on('region-update-end', handleRegionUpdate());
     }
 }
 
