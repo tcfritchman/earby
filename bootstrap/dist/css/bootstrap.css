@@ -6836,6 +6836,7 @@ fieldset[disabled] .btn-player.active {
   display: inline-block;
   margin-bottom: 0;
   vertical-align: middle;
+  cursor: pointer;
 }
 .list-item-group .list-item-index {
   width: 50px;

@@ -13,6 +13,7 @@
 * Loop region
 * Load files from disk
 * iconified buttons
+* Timeline in waveform view
 
 ### Features to implement ###
 * URL Support
@@ -28,7 +29,6 @@
 * Save a playlist using cache
     * Ability to play through/not/repeat
 * Save a playlist to server? (would require registration)
-* Timeline in waveform view
 * Zoom into waveform
 * Resize waveform with window
 * Settings (using cache)

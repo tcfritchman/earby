@@ -219,6 +219,22 @@ function handleRegionUpdate() {
     }
 }
 
+$('.list-item-text').dblclick( function() {
+    console.log('list item dblclick event');
+    /*
+    var originalTitle = $(this).text();
+    $(this).html('');
+    $('<input></input>')
+        .attr({
+            'type': 'text',
+            'id': 'text-region-name',
+            'value': originalTitle
+        })
+        .appendTo(this);
+    $('#text-region-name').focus();
+    */
+});
+
 function setLoopButtonStatus(buttonId, status) {
     switch(status) {
       case 'on':
