@@ -5,6 +5,7 @@
 var currentRegion = null;
 var regionsAdded = 0;
 
+
 /* Region helpers */
 function setCurrentRegion (id) {
     if (!WS || !WS.regions) {
@@ -89,7 +90,8 @@ function handleNewRegion() {
     var r = WS.addRegion(options);
     setCurrentRegion(r.id);     /* Set current as new region */
 
-    updateRegionAnnotation(r, r.data.title);
+    $(r.element).prepend('<div class="region-annotation">' + r.data.title + '</div>');
+
     renderRegionList();
     renderRegionLabel();
     $('#set-btn-1').prop('disabled', false);
@@ -219,21 +221,6 @@ function handleRegionUpdate() {
     }
 }
 
-$('.list-item-text').dblclick( function() {
-    console.log('list item dblclick event');
-    /*
-    var originalTitle = $(this).text();
-    $(this).html('');
-    $('<input></input>')
-        .attr({
-            'type': 'text',
-            'id': 'text-region-name',
-            'value': originalTitle
-        })
-        .appendTo(this);
-    $('#text-region-name').focus();
-    */
-});
 
 function setLoopButtonStatus(buttonId, status) {
     switch(status) {
@@ -253,7 +240,7 @@ function setLoopButtonStatus(buttonId, status) {
 
 /* View rendering */
 function updateRegionAnnotation(r, text) {
-    $(r.element).prepend(text);
+    $(r.element).find('.region-annotation').text(text);
 }
 
 function renderRegionList() {
