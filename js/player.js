@@ -39,35 +39,15 @@ var fileBrowseSession = {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOMContentLoaded');
     /* Show text entry when title is double-clicked */
-    $(document).on('dblclick', '.list-item-text', function() {
-        console.log('dblclick event');
-        var originalTitle = $(this).text();
-        $(this).html('');
-        $('<input></input>')
-            .attr({
-                'type': 'text',
-                'id': 'text-region-name',
-                'value': originalTitle
-            })
-            .appendTo(this);
-        $('#text-region-name').focus();
-    });
-
-    $(document).on('blur', '#text-region-name', function() {
-        console.log('blur event');
-        var updatedTitle = $(this).val();
-        /* update the region title */
-        var updatedData = currentRegion.data;
-        updatedData.title = updatedTitle;
-        currentRegion.update({data: updatedData});
-        updateRegionAnnotation(currentRegion, updatedTitle);
-        renderRegionList();
-        renderRegionLabel();
-    });
-
+    $(document).on('dblclick', '.list-item-text', displayEditText);
+    /* Update region name on blur or enter pressed */
+    /*$(document).on('blur', '#text-region-name', updateRegionName);*/
+    /* Handle keyboard events */
+    $(document).bind('keyup', keyEvent);
 });
 
 window.onbeforeunload = function() {

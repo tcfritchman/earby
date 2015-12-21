@@ -297,6 +297,42 @@ function renderRegionLabel() {
     }
 }
 
+var displayEditText = function() {
+    console.log('dblclick event');
+    $(document).unbind('keyup', keyEvent); /* Stop listening for keyup while we type */
+    var originalTitle = $(this).text();
+    $(this).html('');
+    $('<input></input>')
+        .attr({
+            'type': 'text',
+            'id': 'text-region-name',
+            'value': originalTitle
+        })
+        .appendTo(this);
+    $('#text-region-name').focus();
+    $('#text-region-name').on('blur keyup', updateRegionName);
+};
+
+var updateRegionName = function(event) {
+    if (event.type == 'keyup') {
+        key = event.keyCode || event.which;
+        console.log(key);
+        if (key != 13) { /* Enter */
+            return;
+        }
+    }
+
+    var updatedTitle = $(this).val();
+    /* update the region title */
+    var updatedData = currentRegion.data;
+    updatedData.title = updatedTitle;
+    currentRegion.update({data: updatedData});
+    updateRegionAnnotation(currentRegion, updatedTitle);
+    renderRegionList();
+    renderRegionLabel();
+    $(document).bind('keyup', keyEvent); /* restore keyup listener */
+};
+
 // TODO: Extract to util file
 function randomRGB() {
     var bases = [Math.round(Math.random() * 255)];
