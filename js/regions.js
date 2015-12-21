@@ -77,20 +77,39 @@ function handleNewRegion() {
 
     var pos = WS.getCurrentTime();
 
+    var rRGB = randomRGB();
+    var lRGB = lightenRGB(rRGB, 0.1);
+    var alpha = 0.2;
+    var simpleColor = rRGB[0] + ','
+                    + rRGB[1] + ','
+                    + rRGB[2];
+
+    var lightColor = lRGB[0] + ','
+                    + lRGB[1] + ','
+                    + lRGB[2];
+
+
+    var baseRegionColor = 'rgb(' + simpleColor + ')';
+    var lightRegionColor = 'rgb(' + lightColor + ')';
+    var regionAreaColor = 'rgba(' + simpleColor + ',' + alpha + ')';
+
     var options = {
         id: ++regionsAdded,
         start: pos,
         end: null,      /* Creates a very short region, ie. marker */
         data: {
-            title: 'Region' + regionsAdded /* Default title */
+            title: 'Region' + regionsAdded, /* Default title */
+            color: baseRegionColor, /* Solid color */
+            lightColor: lightRegionColor  /* Lightened solid color */
         },
-        color: null
+        color: regionAreaColor /* Color of the actual region */
     }
 
     var r = WS.addRegion(options);
     setCurrentRegion(r.id);     /* Set current as new region */
 
-    $(r.element).prepend('<div class="region-annotation">' + r.data.title + '</div>');
+    /* Create the annotation on WS region */
+    $(r.element).prepend('<div class="region-annotation" style="color:' + r.data.lightColor + '">' + r.data.title + '</div>');
 
     renderRegionList();
     renderRegionLabel();
@@ -221,7 +240,6 @@ function handleRegionUpdate() {
     }
 }
 
-
 function setLoopButtonStatus(buttonId, status) {
     switch(status) {
       case 'on':
@@ -249,14 +267,17 @@ function renderRegionList() {
         return;
     }
 
-    var template = '{{#items}} <div class="list-item" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
+    var template = '{{#items}} <div class="list-item" style="color:{{color}}; opacity:1;" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
 
     var items = [];
     for (var item in WS.regions.list) {
         if (WS.regions.list.hasOwnProperty(item)) {
-            items.push({id: WS.regions.list[item].id,
-                        title: WS.regions.list[item].data.title,
-                        start: WS.regions.list[item].start});
+            items.push({
+                id: WS.regions.list[item].id,
+                title: WS.regions.list[item].data.title,
+                start: WS.regions.list[item].start,
+                color: WS.regions.list[item].data.lightColor
+            });
         }
     }
 
@@ -274,4 +295,19 @@ function renderRegionLabel() {
     } else {
         $('#selected-region-label').html('No region selected');
     }
+}
+
+// TODO: Extract to util file
+function randomRGB() {
+    var bases = [Math.round(Math.random() * 255)];
+    bases.push(Math.round(Math.random() * 255));
+    bases.push(Math.round(Math.random() * 255));
+    return bases;
+}
+
+function lightenRGB(RGB, amount) {
+    for (var i = 0; i < 3; i++) {
+        RGB[i] = Math.min(255, Math.round(RGB[i] + (255 * amount)));
+    }
+    return RGB;
 }
