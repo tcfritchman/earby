@@ -36,12 +36,6 @@
           <li class="nav-item">
             <a href="#" data-toggle="modal" data-target="#filePickerModal">Choose a file</a>
           </li>
-          <li class="nav-item">
-            <a href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Options</a>
-          </li>
         </ul>
       </div>
     </div>
@@ -63,29 +57,21 @@
             <li class="nav-item">
               <a href="#local-panel" class="nav-link active" role="tab" data-toggle="tab">Local File</a>
             </li>
-            <li class="nav-item">
-              <a href="#gdrive-panel" class="nav-link" role="tab" data-toggle="tab">Google Drive</a>
-            </li>
-            <li class="nav-item">
-              <a href="#dropbox-panel" class="nav-link" role="tab" data-toggle="tab">Dropbox</a>
-            </li>
+            <!--
             <li class="nav-item">
               <a href="#url-panel" class="nav-link" role="tab" data-toggle="tab">URL</a>
             </li>
+            -->
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="local-panel">
               <input id="choose-file" type="file" accept="audio" onchange="fileBrowseSession.setSelected(this.files, 'local')">
             </div>
-            <div role="tabpanel" class="tab-pane" id="gdrive-panel">
-              <p>Google Drive coming soon.</p>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="dropbox-panel">
-              <p>Dropbox coming soon.</p>
-            </div>
+            <!--
             <div role="tabpanel" class="tab-pane" id="url-panel">
               <p>URLs coming soon.</p>
             </div>
+            -->
           </div>
         </div>
         <div class="modal-footer">
@@ -111,11 +97,12 @@
             <button type="button" class="btn btn-default" aria-label="next" id="next-btn" onclick="handleNext()"  disabled>
               <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
             </button>
+            <!-- Add once implemented...
             <button type="button" class="btn btn-default" aria-label="slow" id="slow-btn" onclick="handleSlow()" disabled>
               slow
             </button>
+            -->
         </div>
-
 
         <!-- waveform -->
         <div id="waveform-container">
@@ -123,8 +110,6 @@
           <div id="player"></div>
         </div>
         <div id="timeline-container"></div>
-
-
         <!-- marker controls -->
         <div class="marker-control-group">
           <div id="selected-region-label">No region selected</div>
@@ -147,7 +132,7 @@
             <button type="button" class="btn btn-default" id="goto-btn-2" onclick="handleGotoEnd()" disabled>2</button>
           </div>
         </div>
-      </div>
+      </div> <!-- end left column -->
 
       <div class="col-sm-3">
 
@@ -161,17 +146,7 @@
           </div>
         </div>
 
-        <!-- playlist list
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Playlist</h3>
-          </div>
-          <div class="panel-body">
-            Panel content
-          </div>
-        </div>
-        -->
-      </div>
+      </div> <!-- end right column -->
     </div>
   </div>
 </body>
