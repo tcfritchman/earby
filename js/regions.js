@@ -23,6 +23,72 @@ function setCurrentRegion (id) {
     }
 }
 
+function getNextRegionId() {
+    if (!WS || !WS.regions || !currentRegion) {
+        return null;
+    }
+    var items = [];
+    for (var item in WS.regions.list) {
+        if (WS.regions.list.hasOwnProperty(item)) {
+            items.push({
+                id: WS.regions.list[item].id,
+                start: WS.regions.list[item].start,
+            });
+        }
+    }
+
+    items = _.sortBy(items, 'start');
+
+    for (var i=0; i<items.length; i++) {
+        if (items[i].id == currentRegion.id) {
+            var currentIndex = i;
+        }
+    }
+
+    if (currentIndex == undefined) {
+        console.log('next region not found');
+        return null;
+    }
+
+    var nextIndex = (currentIndex == items.length - 1 ? 0 : ++currentIndex);
+    var nextRegionId = items[nextIndex].id;
+    console.log('next region = ' + nextRegionId);
+    return nextRegionId;
+}
+
+function getPrevRegionId() {
+    if (!WS || !WS.regions || !currentRegion) {
+        return null;
+    }
+    var items = [];
+    for (var item in WS.regions.list) {
+        if (WS.regions.list.hasOwnProperty(item)) {
+            items.push({
+                id: WS.regions.list[item].id,
+                start: WS.regions.list[item].start,
+            });
+        }
+    }
+
+    items = _.sortBy(items, 'start');
+
+    for (var i=0; i<items.length; i++) {
+        if (items[i].id == currentRegion.id) {
+            var currentIndex = i;
+        }
+    }
+
+    if (currentIndex == undefined) {
+        console.log('next region not found');
+        return null;
+    }
+
+    var prevIndex = (currentIndex == 0 ? items.length-1 : --currentIndex);
+    var prevRegionId = items[prevIndex].id;
+    console.log('prev region = ' + prevRegionId);
+    return prevRegionId;
+}
+
 function clearCurrentRegion() {
     if (getRegionIsLoop()) {
         console.log('cant clear region, looping is active');
@@ -156,6 +222,26 @@ function handleSetCurrentRegion(id) {
     setCurrentRegion(id);
     renderRegionLabel();
 }
+
+function handleNextRegion() {
+    if (!WS || !WS.regions || !currentRegion) {
+        return;
+    }
+    var nextId = getNextRegionId()
+    if (nextId == null) return;
+    handleSetCurrentRegion(nextId);
+}
+
+function handlePrevRegion() {
+    if (!WS || !WS.regions || !currentRegion) {
+        return;
+    }
+    var prevId = getPrevRegionId()
+    if (prevId == null) return;
+    handleSetCurrentRegion(prevId);
+}
+
+
 
 function handleSetStart() {
     if (!WS || !WS.regions || !currentRegion) {
