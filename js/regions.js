@@ -353,7 +353,7 @@ function renderRegionList() {
         return;
     }
 
-    var template = '{{#items}} <div class="list-item" style="color:{{color}}; opacity:1;" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-text">{{title}}</div> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">X</button> </div> </div> {{/items}}'
+    var template = '{{#items}} <div class="list-item" style="color:{{color}}; opacity:1;" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-text">{{title}}</div> <div class="list-item-controls"> <button class="btn btn-default btn-xs" type="button" onclick="handleDeleteRegion({{id}})">X</button> </div> </div> {{/items}}'
 
     var items = [];
     for (var item in WS.regions.list) {
@@ -377,7 +377,7 @@ function renderRegionList() {
 
 function renderRegionLabel() {
     if (currentRegion != null) {
-        $('#selected-region-label').html(currentRegion.id + ' - ' + currentRegion.data.title);
+        $('#selected-region-label').html('<span style="color:' + currentRegion.data.color + '">' + currentRegion.data.title + '</span>');
     } else {
         $('#selected-region-label').html('No region selected');
     }
