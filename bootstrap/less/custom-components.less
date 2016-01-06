@@ -11,19 +11,25 @@
     right: 50%;
 }
 
-.list-item-group {
+.list-item {
+    position: relative;
+    height: 40px;
+    margin-bottom: 0;
+    vertical-align: middle;
+    cursor: default;
+
+    .list-item-text {
+      width: 80%;
       display: inline-block;
-      margin-bottom: 0;
-      vertical-align: middle;
-      cursor: pointer;
+      overflow: hidden;
+    }
 
-      .list-item-index {
-          width: 50px;
-      }
+    .list-item-controls {
+      display: inline;
+      position: absolute;
+      right: 0px;
+    }
 
-      .list-item-text {
-          width: auto;
-      }
 }
 
 #waveform-container {

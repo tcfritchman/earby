@@ -6832,17 +6832,22 @@ fieldset[disabled] .btn-player.active {
   left: 50%;
   right: 50%;
 }
-.list-item-group {
-  display: inline-block;
+.list-item {
+  position: relative;
+  height: 40px;
   margin-bottom: 0;
   vertical-align: middle;
-  cursor: pointer;
+  cursor: default;
 }
-.list-item-group .list-item-index {
-  width: 50px;
+.list-item .list-item-text {
+  width: 80%;
+  display: inline-block;
+  overflow: hidden;
 }
-.list-item-group .list-item-text {
-  width: auto;
+.list-item .list-item-controls {
+  display: inline;
+  position: absolute;
+  right: 0px;
 }
 #waveform-container {
   height: 160px;

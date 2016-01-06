@@ -353,7 +353,7 @@ function renderRegionList() {
         return;
     }
 
-    var template = '{{#items}} <div class="list-item" style="color:{{color}}; opacity:1;" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-group"> <div class="list-item-index">{{id}}</div> </div> <div class="list-item-group"> <div class="list-item-text">{{title}}</div> </div> <div class="list-item-group"> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">Delete</button> </div> </div> </div> {{/items}}'
+    var template = '{{#items}} <div class="list-item" style="color:{{color}}; opacity:1;" onclick="handleSetCurrentRegion({{id}})"> <div class="list-item-text">{{title}}</div> <div class="list-item-controls"> <button class="btn btn-default btn-sm" type="button" onclick="handleDeleteRegion({{id}})">X</button> </div> </div> {{/items}}'
 
     var items = [];
     for (var item in WS.regions.list) {
