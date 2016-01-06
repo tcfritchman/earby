@@ -113,9 +113,6 @@
         <!-- marker controls -->
         <div class="marker-control-group">
           <div id="selected-region-label">No region selected</div>
-          <button type="button" class="btn btn-default" id="add-region-btn" onclick="handleNewRegion()" disabled>
-            <span class="glyphicon glyphicon-plus"></span>
-          </button>
           <div class="btn-group-vertical" role="group">
             <button type="button" class="btn btn-default "id="set-btn-1" onclick="handleSetStart()" disabled>
               <span class="glyphicon glyphicon-triangle-top"></span>
@@ -140,6 +137,9 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">Regions</h3>
+            <button type="button" class="btn btn-default btn-sm" id="add-region-btn" onclick="handleNewRegion()" disabled>
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
           </div>
           <div class="panel-body" id="region-list">
             No regions.

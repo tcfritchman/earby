@@ -6825,28 +6825,35 @@ fieldset[disabled] .btn-player.active {
   background-color: #ffffff;
 }
 .marker-control-group {
-  padding: 10px 15px;
-  position: absolute;
-  width: 300px;
-  margin: 0 0 0 -150px;
-  left: 50%;
-  right: 50%;
+  position: relative;
+  left: 38%;
 }
-.list-item-group {
-  display: inline-block;
+#playback-controls-container {
+  position: relative;
+  left: 38%;
+}
+.list-item {
+  position: relative;
+  height: 34px;
   margin-bottom: 0;
   vertical-align: middle;
-  cursor: pointer;
+  cursor: default;
 }
-.list-item-group .list-item-index {
-  width: 50px;
+.list-item .list-item-text {
+  width: 80%;
+  display: inline-block;
+  overflow: hidden;
 }
-.list-item-group .list-item-text {
-  width: auto;
+.list-item .list-item-controls {
+  display: inline;
+  position: absolute;
+  right: 0px;
+}
+.panel-title {
+  display: inline-block;
 }
 #waveform-container {
-  height: 160px;
-  padding-top: 10px;
+  height: 156px;
 }
 #timeline-container {
   height: 20px;
@@ -6857,8 +6864,15 @@ fieldset[disabled] .btn-player.active {
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
+#selected-region-label {
+  width: 156px;
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap;
+}
 .wavesurfer-region {
   font-size: 10px;
+  white-space: nowrap;
 }
 .clearfix:before,
 .clearfix:after,

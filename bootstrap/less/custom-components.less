@@ -3,32 +3,43 @@
 }
 
 .marker-control-group {
-    padding: @padding-base-vertical @padding-base-horizontal;
-    position: absolute;
-    width: 300px;
-    margin: 0 0 0 -150px;
-    left: 50%;
-    right: 50%;
+    position: relative;
+    left: 38%;
 }
 
-.list-item-group {
+#playback-controls-container {
+    position: relative;
+    left: 38%;
+}
+
+
+.list-item {
+    position: relative;
+    height: 34px;
+    margin-bottom: 0;
+    vertical-align: middle;
+    cursor: default;
+
+    .list-item-text {
+      width: 80%;
       display: inline-block;
-      margin-bottom: 0;
-      vertical-align: middle;
-      cursor: pointer;
+      overflow: hidden;
+    }
 
-      .list-item-index {
-          width: 50px;
-      }
+    .list-item-controls {
+      display: inline;
+      position: absolute;
+      right: 0px;
+    }
 
-      .list-item-text {
-          width: auto;
-      }
+}
+
+.panel-title {
+    display: inline-block;
 }
 
 #waveform-container {
-    height: 160px;
-    padding-top: @padding-base-vertical;
+    height: 156px;
 }
 
 #timeline-container {
@@ -42,6 +53,14 @@
     font-size: 12px;
 }
 
+#selected-region-label {
+    width: 156px;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+}
+
 .wavesurfer-region {
     font-size: 10px;
+    white-space: nowrap;
 }

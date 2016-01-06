@@ -208,7 +208,7 @@ WaveSurfer.Region = {
                 maxWidth: '4px',
                 height: '100%',
                 borderLeftStyle: 'solid',
-                borderLeftWidth: '1px'
+                borderLeftWidth: '0px'
             };
             this.style(handleLeft, css);
             this.style(handleRight, css);
@@ -216,7 +216,7 @@ WaveSurfer.Region = {
                 left: '100%',
                 borderLeftWidth: '0px',
                 borderRightStyle: 'solid',
-                borderRightWidth: '1px'
+                borderRightWidth: '0px'
             });
         }
 
