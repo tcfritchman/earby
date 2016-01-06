@@ -6826,11 +6826,12 @@ fieldset[disabled] .btn-player.active {
 }
 .marker-control-group {
   padding: 10px 15px;
-  position: absolute;
-  width: 300px;
-  margin: 0 0 0 -150px;
-  left: 50%;
-  right: 50%;
+  position: relative;
+  left: 34%;
+}
+#playback-controls-container {
+  position: relative;
+  left: 38%;
 }
 .list-item {
   position: relative;
@@ -6850,8 +6851,7 @@ fieldset[disabled] .btn-player.active {
   right: 0px;
 }
 #waveform-container {
-  height: 160px;
-  padding-top: 10px;
+  height: 156px;
 }
 #timeline-container {
   height: 20px;

@@ -396,6 +396,7 @@ var displayEditText = function() {
         })
         .appendTo(this);
     $('#text-region-name').focus();
+    $('#text-region-name').select();
     $('#text-region-name').on('blur keyup', updateRegionName);
 };
 
@@ -407,6 +408,7 @@ var updateRegionName = function(event) {
             return;
         }
     }
+    event.stopPropagation();
 
     var updatedTitle = $(this).val();
     /* update the region title */
