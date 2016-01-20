@@ -81,6 +81,25 @@
     </div>
   </div>
 
+  <!-- Document modal -->
+  <div class="modal fade" id="document-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+          </button>
+        </div>
+        <div class="modal-body" id="document-modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- "Player" -->
   <div class="container">
     <div class="row">
@@ -153,7 +172,7 @@
       <p class="text-muted">&copy
         <a target="_blank" href="http://tcfritchman.com">Thomas Fritchman</a>
         &#9679 <a target="_blank" href="https://github.com/tcfritchman/earby">GitHub</a>
-        &#9679 <a href="#">Help</a>
+        &#9679 <a href="#" data-toggle="modal" data-target="#document-modal" onclick="loadHelp()">Help</a>
       </p>
     </div>
   </footer>
@@ -182,6 +201,7 @@
 <script src="js/player.js"></script>
 <script src="js/regions.js"></script>
 <script src="js/keys.js"></script>
+<script src="js/document.js"></script>
 </html>
 
 <!-- test audio
