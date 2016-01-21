@@ -1,12 +1,39 @@
 {
   "name": "earby",
-  "version": "0.0.1",
   "description": "A web application to aid musicians in learning music by ear.",
   "dependencies": {
-    "express": "^4.13.3",
-    "grunt-cli": "^0.1.13",
-    "less": "^2.5.3",
     "mustache": "^2.2.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "bootstrap": "^3.3.6",
+    "uglify-js": "latest"
+  },
+  "devDependencies": {
+    "express": "^4.13.3",
+    "jshint": "latest"
+  },
+  "scripts": {
+    "env": "env",
+    "lint": "jshint **",
+
+    "prebuild": "npm run clean",
+    "postbuild": "echo \"Build process completed.\"",
+    "build:tbs": "cd node_modules/bootstrap && npm install && cd ../..",
+    "build:js": "mkdir dist/js/ && uglifyjs js/*.js > dist/js/earbyapp.min.js",
+    "build:cp-src": "cp index.htm dist/index.htm && cp -R templates/ dist/templates/ && cp -R img/ dist/img/ && cp -R custom-styles/ node_modules/bootstrap/less/",
+    "build:compile-tbs": "cd node_modules/bootstrap && grunt dist && cd ../..",
+    "build:cp-scripts": "cp node_modules/bootstrap/dist/js/bootstrap.min.js dist/js/bootstrap.min.js && cp node_modules/mustache/mustache.min.js dist/js/mustache.min.js && cp node_modules/underscore/underscore-min.js dist/js/underscore-min.js",
+    "build:cp-css": "mkdir dist/css/ && cp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/bootstrap.min.css",
+    "build:cp-fonts": "mkdir dist/fonts/ && cp -R node_modules/bootstrap/dist/fonts/ dist/fonts/",
+    "build": "npm run build:tbs && npm run build:js && npm run build:cp-src && npm run build:compile-tbs && npm run build:cp-scripts && npm run build:cp-css && npm run build:cp-fonts",
+
+    "predev-build": "npm run clean",
+    "postdev-build": "echo \"Build process completed.\"",
+    "dev-build:js": "mkdir dist/js/ && cat js/*.js > dist/js/earbyapp.min.js",
+    "dev-build:compile-tbs": "cd node_modules/bootstrap && grunt --force && cd ../..",
+    "dev-build:cp-scripts": "cp node_modules/bootstrap/dist/js/bootstrap.js dist/js/bootstrap.min.js && cp node_modules/mustache/mustache.js dist/js/mustache.min.js && cp node_modules/underscore/underscore.js dist/js/underscore-min.js",
+    "dev-build:cp-css": "mkdir dist/css/ && cp node_modules/bootstrap/dist/css/bootstrap.css dist/css/bootstrap.min.css",
+    "dev-build": "npm run build:tbs && npm run dev-build:js && npm run build:cp-src && npm run dev-build:compile-tbs && npm run dev-build:cp-scripts && npm run dev-build:cp-css && npm run build:cp-fonts",
+
+    "clean": "rm -rf dist/*"
   }
 }
