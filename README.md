@@ -2,7 +2,7 @@
 
 A web application to aid musicians in learning music by ear.
 
-[Live Demo](www.earby.tcfritchman.com)
+[Live Demo](http://www.earby.tcfritchman.com)
 
 ### Features ###
 
