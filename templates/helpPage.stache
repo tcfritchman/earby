@@ -11,10 +11,10 @@
   a file from your filesystem. Currently, only local files are supported.
 <h2>Keyboard controls</h2>
 <table>
-  <th>
+  <tr>
     <td>Key</td>
     <td>Description</td>
-  </th>
+  </tr>
   <tr>
     <td>Space</td>
     <td>Play/Pause playback.</td>
