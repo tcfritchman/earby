@@ -19,7 +19,7 @@
     "postbuild": "echo \"Build process completed.\"",
     "build:tbs": "cd node_modules/bootstrap && npm install -g grunt-cli && npm install && cd ../..",
     "build:js": "mkdir dist/ && mkdir dist/js/ && uglifyjs js/*.js > dist/js/earbyapp.min.js",
-    "build:cp-src": "cp index.htm dist/index.htm && cp -R templates/ dist/templates/ && cp -R custom-styles/ node_modules/bootstrap/less/",
+    "build:cp-src": "cp index.htm dist/index.htm && cp -R templates/ dist/templates/ && cp -R custom-styles/* node_modules/bootstrap/less/",
     "build:compile-tbs": "cd node_modules/bootstrap && grunt dist && cd ../..",
     "build:cp-scripts": "cp node_modules/bootstrap/dist/js/bootstrap.min.js dist/js/bootstrap.min.js && cp node_modules/mustache/mustache.min.js dist/js/mustache.min.js && cp node_modules/underscore/underscore-min.js dist/js/underscore-min.js",
     "build:cp-css": "mkdir dist/css/ && cp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/bootstrap.min.css",
