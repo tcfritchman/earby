@@ -23,7 +23,7 @@
     "build:compile-tbs": "cd node_modules/bootstrap && grunt dist && cd ../..",
     "build:cp-scripts": "cp node_modules/bootstrap/dist/js/bootstrap.min.js dist/js/bootstrap.min.js && cp node_modules/mustache/mustache.min.js dist/js/mustache.min.js && cp node_modules/underscore/underscore-min.js dist/js/underscore-min.js",
     "build:cp-css": "mkdir dist/css/ && cp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/bootstrap.min.css",
-    "build:cp-fonts": "mkdir dist/fonts/ && cp -R node_modules/bootstrap/dist/fonts/ dist/fonts/",
+    "build:cp-fonts": "cp -R node_modules/bootstrap/dist/fonts/ dist/fonts/",
     "build": "npm run build:tbs && npm run build:js && npm run build:cp-src && npm run build:compile-tbs && npm run build:cp-scripts && npm run build:cp-css && npm run build:cp-fonts",
 
     "clean": "rm -rfd dist"
