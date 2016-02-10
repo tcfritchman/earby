@@ -26,6 +26,6 @@
     "build:cp-fonts": "mkdir dist/fonts/ && cp -R node_modules/bootstrap/dist/fonts/ dist/fonts/",
     "build": "npm run build:tbs && npm run build:js && npm run build:cp-src && npm run build:compile-tbs && npm run build:cp-scripts && npm run build:cp-css && npm run build:cp-fonts",
 
-    "clean": "rm -rf dist/* && rmdir dist"
+    "clean": "rm -rfd dist"
   }
 }
