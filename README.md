@@ -30,6 +30,8 @@ A web application to aid musicians in learning music by ear.
 * Zoom
 * Change playback rate at correct pitch
 * Highlight selected region
+* Pitch correction (fine tuning)
+* Accessibility with ARIA
 
 ### Possible features ###
 * Dropbox support
@@ -41,6 +43,8 @@ A web application to aid musicians in learning music by ear.
 * Save a playlist to server? (would require registration)
 * Resize waveform with window
 * Settings (using cache)
+* Eq filter (to hide or bring out certain instruments)
+* Pitch identification tool
 
 ### Other tasks ###
 * Improve the UI appearance and usability
@@ -51,6 +55,10 @@ A web application to aid musicians in learning music by ear.
 * Wavesurfer encounters errors in Firefox (on Mac)
 * Selected region not always in foreground making it impossible to edit using the mouse
 * Keyboard controls conflict with shortcuts in some browsers
+
+### Installation ###
+1. `npm install`
+2. `npm run build`
 
 ### References ###
 * [wavesurfer.js](https://github.com/katspaugh/wavesurfer.js)
