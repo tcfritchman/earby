@@ -1,6 +1,6 @@
-# Earby. #
+# Earby #
 
-A web application to aid musicians in learning music by ear.
+A music player web app for musicians who learn songs by ear.
 
 [Live Demo](http://www.earby.tcfritchman.com)
 
