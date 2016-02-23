@@ -10,8 +10,7 @@
   <!--link rel="icon" href="favicon.ico"> -->
 
   <!-- Bootstrap core CSS -->
-  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css">
-
+  <link rel="stylesheet" href="css/bootstrap.min.css">
   <!-- Custom stylesheets -->
 </head>
 
@@ -77,6 +76,26 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="fileBrowseSession.handleOK()">Okay</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document modal -->
+  <div class="modal fade" id="document-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title" id="document-title"></h4>
+        </div>
+        <div class="modal-body" id="document-modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -149,36 +168,23 @@
       </div> <!-- end right column -->
     </div>
   </div>
+  <footer class="footer">
+    <div class="container">
+      <p class="text-muted">&copy
+        <a target="_blank" href="http://tcfritchman.com">Thomas Fritchman</a>
+        &#9679 <a target="_blank" href="https://github.com/tcfritchman/earby">GitHub</a>
+        &#9679 <a href="#" data-toggle="modal" data-target="#document-modal" onclick="loadHelp()">Help</a>
+      </p>
+    </div>
+  </footer>
 </body>
 
-<!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<!-- Bootstrap javascript -->
-<script src="bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- Mustache template system -->
-<script src="js/mustache.js"></script>
-<!-- wavesurfer- provides waveform playback interface
-<script src="js/wavesurfer.js"></script>
-<script src="js/util.js"></script>
-<script src="js/html-init.js"></script>
-<script src="js/webaudio.js"></script>
-<script src="js/mediaelement.js"></script>
-<script src="js/drawer.js"></script>
-<script src="js/drawer.canvas.js"></script>
--->
-
-<script src="js/wavesurfer.min.js"></script>
-<script src="js/wavesurfer.regions.js"></script>
-<script src="js/wavesurfer.timeline.js"></script>
-<script src="js/underscore.js"></script>
-<script src="js/player.js"></script>
-<script src="js/regions.js"></script>
-<script src="js/keys.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/mustache.min.js"></script>
+<script src="js/underscore-min.js"></script>
+<script src="js/earbyapp.min.js"></script>
 </html>
-
-<!-- test audio
-http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg
--->
 
 <!-- This project makes use of a modified form of the wavesurfer.js
 library which is licensed under a Creative Commons Attribution 3.0 Unported
