@@ -6130,7 +6130,6 @@ exports.default = {
   desktopToolbarHeight: 56
 };
 module.exports = exports['default'];
-
 },{}],31:[function(require,module,exports){
 'use strict';
 
@@ -32542,8 +32541,9 @@ var List = require('material-ui/lib/lists/list.js');
 var ListItem = require('material-ui/lib/lists/list-item.js');
 
 var styles = {
-  itemStyle: {
-    paddingRight: 150
+  /* Override the ListItem styling to accomodate extra button */
+  itemDiv: {
+    paddingRight: 80
   }
 };
 
@@ -32551,24 +32551,30 @@ var RegionItem = React.createClass({
   displayName: 'RegionItem',
 
   render: function () {
-    return React.createElement(ListItem, {
-      primaryText: this.props.region.data.title,
-      style: styles.itemStyle,
-      rightIconButton: React.createElement(
-        'span',
-        null,
-        React.createElement(
-          IconButton,
+    return React.createElement(
+      ListItem,
+      {
+        rightIconButton: React.createElement(
+          'span',
           null,
-          React.createElement(EditIcon, null)
-        ),
-        React.createElement(
-          IconButton,
-          null,
-          React.createElement(DeleteIcon, null)
+          React.createElement(
+            IconButton,
+            null,
+            React.createElement(EditIcon, null)
+          ),
+          React.createElement(
+            IconButton,
+            null,
+            React.createElement(DeleteIcon, null)
+          )
         )
+      },
+      React.createElement(
+        'div',
+        { style: styles.itemDiv },
+        this.props.region.data.title
       )
-    });
+    );
   }
 });
 

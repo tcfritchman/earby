@@ -7,23 +7,27 @@ var List = require('material-ui/lib/lists/list.js');
 var ListItem = require('material-ui/lib/lists/list-item.js');
 
 var styles = {
-  itemStyle: {
-  },
+  /* Override the ListItem styling to accomodate extra button */
+  itemDiv: {
+    paddingRight: 80
+  }
 };
 
 var RegionItem = React.createClass({
   render: function() {
     return (
       <ListItem
-        primaryText={this.props.region.data.title}
-        style={styles.itemStyle}
         rightIconButton={
           <span>
             <IconButton><EditIcon /></IconButton>
             <IconButton><DeleteIcon /></IconButton>
           </span>
         }
-      />
+      >
+        <div style={styles.itemDiv}>
+          {this.props.region.data.title}
+        </div>
+      </ListItem>
     );
   }
 });
