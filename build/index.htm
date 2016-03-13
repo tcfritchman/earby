@@ -5,13 +5,36 @@
   <title>earby</title>
   <meta name="description" content="A music player for musicians.">
   <meta name="author" content="Thomas Fritchman">
+  <link rel="stylesheet" type="text/css" href="style.css">
   <!--[if lt IE 9]>
   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 </head>
 
 <body>
-  <div id="react-application"></div>
-  <script src="./earbyapp.js"></script>
+  <!-- Add the Google Roboto font -->
+  <script>
+    var WebFontConfig = {
+      google: { families: [ 'Roboto:400,300,500:latin' ] }
+    };
+    (function() {
+      var wf = document.createElement('script');
+      wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+      wf.type = 'text/javascript';
+      wf.async = 'true';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(wf, s);
+    })();
+  </script>
+
+  <script src="wavesurfer.js"></script>
+  <script src="wavesurfer.regions.js"></script>
+
+  <!-- React application -->
+  <div id="react-application">
+    <script src="./earbyapp.js"></script>
+  </div>
+
 </body>
 </html>

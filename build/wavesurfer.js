@@ -1606,5 +1606,3 @@ WaveSurfer.util.extend(WaveSurfer.Drawer.Canvas, {
         window.addEventListener('load', init);
     }
 }());
-
-module.exports = WaveSurfer;

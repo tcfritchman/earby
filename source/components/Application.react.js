@@ -1,15 +1,32 @@
 var React = require('react');
 var Transport = require('./Transport.react');
 var Wavesurfer = require('./Wavesurfer.react');
-var WaveSurfer = require('../wavesurfer.dev');
+var AppToolbar = require('./AppToolbar.react');
+//var WaveSurfer = require('../wavesurfer');
+var ThemeManager = require('material-ui/lib/styles/theme-manager');
+var RawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
+var AppBar = require('material-ui/lib/app-bar');
+var Toggle = require('material-ui/lib/toggle');
 
 var Application = React.createClass({
+
+  //the key passed through context must be called "muiTheme"
+  childContextTypes : {
+    muiTheme: React.PropTypes.object
+  },
+
+  getChildContext: function() {
+    return {
+      muiTheme: ThemeManager.getMuiTheme(RawTheme),
+    };
+  },
   getInitialState: function() {
     return {
       playing: false,
       paused: false,
       finished: false,
-      looping: false
+      looping: false,
+      currentRegion: null
     };
   },
   createWaveSurfer: function() {
@@ -54,9 +71,27 @@ var Application = React.createClass({
   handleSkipFwdClick: function() {
     this.props.wavesurfer.skipForward();
   },
+  handleAddRegionClick: function() {
+    var regionOptions = {
+      start: this.props.wavesurfer.getCurrentTime(),
+
+    };
+    this.state.currentRegion = this.props.wavesurfer
+      .addRegion(regionOptions);
+  },
+  handleSetRegionEndClick: function() {
+    this.state.currentRegion.update({
+      end: this.props.wavesurfer.getCurrentTime()
+    });
+  },
   render: function() {
     return (
       <div>
+        <AppBar title="earby" />
+        <AppToolbar
+          onAddRegionClick={this.handleAddRegionClick}
+          onSetRegionEndClick={this.handleSetRegionEndClick}
+        />
         <Wavesurfer onMount={this.createWaveSurfer}></Wavesurfer>
         <Transport
           playing={this.state.playing}
