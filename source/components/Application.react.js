@@ -26,14 +26,20 @@ var Application = React.createClass({
       paused: false,
       finished: false,
       looping: false,
-      currentRegion: null
+      currentRegion: null,
+      regions: []
     };
   },
   createWaveSurfer: function() {
-    this.props.wavesurfer = WaveSurfer.create({
-      container: '#wavesurfer',
-      waveColor: 'black'
-    });
+    try {
+        this.props.wavesurfer = WaveSurfer.create({
+          container: '#wavesurfer',
+          waveColor: 'black'
+        });
+    } catch(e) {
+        console.log(e);
+        return;
+    }
     this.props.wavesurfer.on('finish', this.handleFinish);
     this.props.wavesurfer.on('play', this.handlePlay);
     this.props.wavesurfer.on('pause', this.handlePause);
@@ -76,8 +82,11 @@ var Application = React.createClass({
       start: this.props.wavesurfer.getCurrentTime(),
 
     };
-    this.state.currentRegion = this.props.wavesurfer
+    var newRegion = this.props.wavesurfer
       .addRegion(regionOptions);
+    this.state.currentRegion = newRegion;
+    this.state.regions.push(newRegion);
+    newRegion.data = {title: 'Region ' + newRegion.id};
   },
   handleSetRegionEndClick: function() {
     this.state.currentRegion.update({
@@ -91,6 +100,7 @@ var Application = React.createClass({
         <AppToolbar
           onAddRegionClick={this.handleAddRegionClick}
           onSetRegionEndClick={this.handleSetRegionEndClick}
+          regions={this.state.regions}
         />
         <Wavesurfer onMount={this.createWaveSurfer}></Wavesurfer>
         <Transport

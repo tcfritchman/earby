@@ -1,5 +1,6 @@
 var React = require('react');
 var SetRegionControls = require('./SetRegionControls.react');
+var RegionsPane = require('./RegionsPane.react');
 var Toolbar = require('material-ui/lib/toolbar/toolbar');
 var ToolbarGroup = require ('material-ui/lib/toolbar/toolbar-group');
 var ToolbarSeparator = require('material-ui/lib/toolbar/toolbar-separator');
@@ -18,22 +19,29 @@ var styles = {
 var AppToolbar = React.createClass({
   getInitialState: function() {
     return {
-      open: false
+      addRegionOpen: false,
+      regionPaneOpen: false
     };
   },
   handleAddClick: function(event) {
     this.setState({
-      open: true,
+      addRegionOpen: true,
       anchorEl: event.currentTarget
     });
     this.props.onAddRegionClick();
   },
+  handleShowRegionsPane: function(event) {
+    this.setState({
+      regionPaneOpen: true,
+      anchorEl: event.currentTarget
+    });
+  },
   handleSetEndClick: function() {
-    this.setState({open: false});
+    this.setState({addRegionOpen: false});
     this.props.onSetRegionEndClick();
   },
   handleRequestClose: function() {
-    this.setState({open: false});
+    this.setState({addRegionOpen: false, regionPaneOpen: false});
   },
   render: function() {
     return (
@@ -48,7 +56,7 @@ var AppToolbar = React.createClass({
             onTouchTap={this.handleAddClick}
           />
           <Popover
-            open={this.state.open}
+            open={this.state.addRegionOpen}
             anchorEl={this.state.anchorEl}
             anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
             targetOrigin={{horizontal: 'center', vertical: 'top'}}
@@ -62,9 +70,18 @@ var AppToolbar = React.createClass({
               />
             </div>
           </Popover>
-          <IconButton touch={true}>
+          <IconButton touch={true} onTouchTap={this.handleShowRegionsPane}>
             <ViewListIcon />
           </IconButton>
+          <Popover
+            open={this.state.regionPaneOpen}
+            anchorEl={this.state.anchorEl}
+            anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+            targetOrigin={{horizontal: 'right', vertical: 'top'}}
+            onRequestClose={this.handleRequestClose}
+          >
+            <RegionsPane regions={this.props.regions} />
+          </Popover>
         </ToolbarGroup>
       </Toolbar>
     );
