@@ -1,5 +1,6 @@
 var React = require('react');
-var PositionSlider = require('./PositionSlider.react');
+//var PositionSlider = require('./PositionSlider.react');
+var SimpleSlider = require('./SimpleSlider.react');
 
 var WaveformUI = React.createClass({
   componentDidMount: function() {
@@ -9,7 +10,7 @@ var WaveformUI = React.createClass({
     return (
       <div>
         <div id="wavesurfer"></div>
-        <PositionSlider />
+        <SimpleSlider />
       </div>
     );
   }

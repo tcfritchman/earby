@@ -6130,6 +6130,7 @@ exports.default = {
   desktopToolbarHeight: 56
 };
 module.exports = exports['default'];
+
 },{}],31:[function(require,module,exports){
 'use strict';
 
@@ -32411,7 +32412,7 @@ var AppToolbar = React.createClass({
 
 module.exports = AppToolbar;
 
-},{"./RegionsPane.react":286,"./SetRegionControls.react":287,"material-ui/lib/icon-button":10,"material-ui/lib/popover/popover":19,"material-ui/lib/raised-button":20,"material-ui/lib/svg-icons/action/view-list":41,"material-ui/lib/toolbar/toolbar":57,"material-ui/lib/toolbar/toolbar-group":54,"material-ui/lib/toolbar/toolbar-separator":55,"material-ui/lib/toolbar/toolbar-title":56,"react":281}],284:[function(require,module,exports){
+},{"./RegionsPane.react":285,"./SetRegionControls.react":286,"material-ui/lib/icon-button":10,"material-ui/lib/popover/popover":19,"material-ui/lib/raised-button":20,"material-ui/lib/svg-icons/action/view-list":41,"material-ui/lib/toolbar/toolbar":57,"material-ui/lib/toolbar/toolbar-group":54,"material-ui/lib/toolbar/toolbar-separator":55,"material-ui/lib/toolbar/toolbar-title":56,"react":281}],284:[function(require,module,exports){
 var React = require('react');
 var Transport = require('./Transport.react');
 var WaveformUI = require('./WaveformUI.react');
@@ -32533,162 +32534,6 @@ module.exports = Application;
 
 },{"./AppToolbar.react":283,"./Transport.react":288,"./WaveformUI.react":289,"material-ui/lib/app-bar":2,"material-ui/lib/styles/raw-themes/light-raw-theme":29,"material-ui/lib/styles/theme-manager":31,"material-ui/lib/toggle":53,"react":281}],285:[function(require,module,exports){
 var React = require('react');
-var ReactDOM = require('react-dom');
-var TempHandle = require('material-ui/lib/svg-icons/navigation/arrow-drop-up');
-
-styles = {
-  root: {},
-  track: {},
-  handle: {}
-};
-
-var PositionSlider = React.createClass({
-  displayName: 'PositionSlider',
-
-  getDefaultProps: function () {
-    return {
-      disabled: false,
-      max: 1,
-      min: 0,
-      step: 0.0001
-    };
-  },
-  getInitialState: function () {
-    var value = this.props.value;
-    if (value === undefined) {
-      value = this.props.min;
-    }
-    return {
-      active: false,
-      dragging: false,
-      focused: false,
-      hovered: false,
-      value: value
-    };
-  },
-
-  setValue: function (i) {
-    // calculate percentage
-    var percent = (i - this.props.min) / (this.props.max - this.props.min);
-    if (isNaN(percent)) percent = 0;
-    // update state
-    this.setState({
-      value: i,
-      percent: percent
-    });
-  },
-
-  setPercent: function (percent, callback) {
-    var value = this._alignValue(this._percentToValue(percent));
-    var min = this.props.min;
-    var max = thix.props.max;
-    var alignedPercent = (value - min) / (max - min);
-    if (this.state.value !== value) {
-      this.setState({ value: value, percent: alignedPercent }, callback);
-    }
-  },
-
-  _alignValue: function (val) {
-    var step = this.props.step;
-    var min = this.props.min;
-    var alignValue = Math.round((val - min) / step) * step + min;
-    return parseFloat(alignValue.toFixed(5));
-  },
-  _updateAnimationFrame: function (e) {
-    this._onDragUpdate(e, e.clientX - this._getTrackLeft());
-    this._dragRunning = false;
-  },
-  _dragHandler: function (e) {
-    if (this._dragRunning) {
-      return;
-    }
-    this._dragRunning = true;
-    requestAnimationFrame(this._updateAnimationFrame(e));
-  },
-  _getTrackLeft: function () {
-    return ReactDOM.findDOMNode(this.refs.track).getBoundingClientRect().left;
-  },
-  _dragEndHandler: function (e) {
-    if (document) {
-      document.removeEventListener('mousemove', this._dragHandler, false);
-      document.removeEventListener('mouseup', this._dragEndHandler, false);
-    }
-
-    this._onDragStop(e);
-  },
-  _onMouseDown: function (e) {
-    if (this.props.disabled) return;
-    if (document) {
-      document.addEventListener('mousemove', this._dragHandler, false);
-      document.addEventListener('mouseup', this._dragEndHandler, false);
-    }
-    this._onDragStart(e);
-  },
-  _onMouseLeave: function () {
-    this.setState({ hovered: false });
-  },
-  _onMouseEnter: function () {
-    this.setState({ hovered: true });
-  },
-  _onDragStart: function (e) {
-    this.setState({
-      dragging: true,
-      active: true
-    });
-    if (this.props.onDragStart) this.props.onDragStart(e);
-  },
-  _onDragStop: function (e) {
-    this.setState({
-      dragging: false,
-      active: true
-    });
-    if (this.props.onDragStop) this.props.onDragStop(e);
-  },
-  _onDragUpdate: function (e, pos) {
-    if (!this.state.dragging) return;
-    if (!this.props.disabled) this._dragX(e, pos);
-  },
-
-  _dragX: function (e, pos) {
-    var max = ReactDOM.findDOMNode(this.refs.track).clientWidth;
-    if (pos < 0) pos = 0;else if (pos > max) pos = max;
-    this._updateWithChangeEvent(e, pos / max);
-  },
-
-  _updateWithChangeEvent: function (e, percent) {
-    this.setPercent(percent, function () {
-      if (this.props.onChange) this.props.onChange(e, this.state.value);
-    });
-  },
-
-  render: function () {
-    var percent = this.state.percent;
-    if (percent > 1) percent = 1;else if (percent < 0) percent = 0;
-    styles.handle.left = percent * 100 + '%';
-    return React.createElement(
-      'div',
-      { style: styles.root },
-      React.createElement(
-        'div',
-        {
-          style: styles.handle,
-          onFocus: this._onFocus,
-          onBlur: this._onBlur,
-          onMouseDown: this._onMouseDown,
-          onMouseEnter: this._onMouseEnter,
-          onMouseLeave: this._onMouseLeave,
-          onMouseUp: this._onMouseUp
-        },
-        React.createElement(TempHandle, null)
-      )
-    );
-  }
-});
-
-module.exports = PositionSlider;
-
-},{"material-ui/lib/svg-icons/navigation/arrow-drop-up":51,"react":281,"react-dom":114}],286:[function(require,module,exports){
-var React = require('react');
 var EditIcon = require('material-ui/lib/svg-icons/editor/mode-edit');
 var DeleteIcon = require('material-ui/lib/svg-icons/action/delete');
 var IconButton = require('material-ui/lib/icon-button');
@@ -32752,7 +32597,7 @@ var RegionsPane = React.createClass({
 
 module.exports = RegionsPane;
 
-},{"material-ui/lib/flat-button":8,"material-ui/lib/icon-button":10,"material-ui/lib/lists/list-item.js":11,"material-ui/lib/lists/list.js":12,"material-ui/lib/svg-icons/action/delete":40,"material-ui/lib/svg-icons/editor/mode-edit":49,"react":281}],287:[function(require,module,exports){
+},{"material-ui/lib/flat-button":8,"material-ui/lib/icon-button":10,"material-ui/lib/lists/list-item.js":11,"material-ui/lib/lists/list.js":12,"material-ui/lib/svg-icons/action/delete":40,"material-ui/lib/svg-icons/editor/mode-edit":49,"react":281}],286:[function(require,module,exports){
 var React = require('react');
 var Popover = require('material-ui/lib/popover/popover');
 var RaisedButton = require('material-ui/lib/raised-button');
@@ -32819,7 +32664,194 @@ var SetRegionControls = React.createClass({
 
 module.exports = SetRegionControls;
 
-},{"material-ui/lib/popover/popover":19,"material-ui/lib/raised-button":20,"react":281}],288:[function(require,module,exports){
+},{"material-ui/lib/popover/popover":19,"material-ui/lib/raised-button":20,"react":281}],287:[function(require,module,exports){
+/* Most of the logic for this slider interface is borrowed from
+   the material-ui slider component code
+   http://www.material-ui.com/#/components/slider
+  */
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var styles = {
+  root: {
+    userSelect: 'none',
+    cursor: 'default',
+    position: 'relative',
+    marginBottom: 24
+  },
+  track: {
+    position: 'absolute',
+    left: 0,
+    width: '100%'
+  },
+  handle: {
+    boxSizing: 'border-box',
+    position: 'absolute',
+    cursor: 'pointer',
+    top: 0,
+    left: '0%',
+    overflow: 'visible'
+  },
+  defaultHandleEl: {
+    backgroundColor: 'black',
+    width: 24,
+    height: 24
+  }
+};
+
+var SimpleSlider = React.createClass({
+  displayName: 'SimpleSlider',
+
+  getDefaultProps: function () {
+    return {
+      disabled: false,
+      max: 1,
+      min: 0,
+      step: 0.0001
+    };
+  },
+  getInitialState: function () {
+    var value = this.props.value;
+    if (value === undefined) {
+      value = this.props.min;
+    }
+    return {
+      active: false,
+      dragging: false,
+      focused: false,
+      hovered: false,
+      value: value
+    };
+  },
+
+  setValue: function (i) {
+    // calculate percentage
+    var percent = (i - this.props.min) / (this.props.max - this.props.min);
+    if (isNaN(percent)) percent = 0;
+    // update state
+    this.setState({
+      value: i,
+      percent: percent
+    });
+  },
+
+  setPercent: function (percent, callback) {
+    var value = this._alignValue(this._percentToValue(percent));
+    var min = this.props.min;
+    var max = this.props.max;
+    var alignedPercent = (value - min) / (max - min);
+    if (this.state.value !== value) {
+      this.setState({ value: value, percent: alignedPercent }, callback);
+    }
+  },
+
+  _alignValue: function (val) {
+    var step = this.props.step;
+    var min = this.props.min;
+    var alignValue = Math.round((val - min) / step) * step + min;
+    return parseFloat(alignValue.toFixed(5));
+  },
+  _getTrackLeft: function () {
+    return ReactDOM.findDOMNode(this.refs.track).getBoundingClientRect().left;
+  },
+  _dragHandler: function (e) {
+    var _this = this;
+    if (this._dragRunning) {
+      return;
+    }
+    this._dragRunning = true;
+    requestAnimationFrame(function () {
+      _this._onDragUpdate(e, e.clientX - _this._getTrackLeft());
+      _this._dragRunning = false;
+    });
+  },
+  _dragEndHandler: function (e) {
+    if (document) {
+      document.removeEventListener('mousemove', this._dragHandler, false);
+      document.removeEventListener('mouseup', this._dragEndHandler, false);
+    }
+    this._onDragStop(e);
+  },
+  _onMouseDown: function (e) {
+    if (this.props.disabled) return;
+    if (document) {
+      document.addEventListener('mousemove', this._dragHandler, false);
+      document.addEventListener('mouseup', this._dragEndHandler, false);
+    }
+    this._onDragStart(e);
+  },
+  _onMouseLeave: function () {
+    this.setState({ hovered: false });
+  },
+  _onMouseEnter: function () {
+    this.setState({ hovered: true });
+  },
+  _onDragStart: function (e) {
+    this.setState({
+      dragging: true,
+      active: true
+    });
+    if (this.props.onDragStart) this.props.onDragStart(e);
+  },
+  _onDragStop: function (e) {
+    this.setState({
+      dragging: false,
+      active: true
+    });
+    if (this.props.onDragStop) this.props.onDragStop(e);
+  },
+  _onDragUpdate: function (e, pos) {
+    if (!this.state.dragging) return;
+    if (!this.props.disabled) this._dragX(e, pos);
+  },
+
+  _dragX: function (e, pos) {
+    var max = ReactDOM.findDOMNode(this.refs.track).clientWidth;
+    if (pos < 0) pos = 0;else if (pos > max) pos = max;
+    this._updateWithChangeEvent(e, pos / max);
+  },
+
+  _updateWithChangeEvent: function (e, percent) {
+    this.setPercent(percent, function () {
+      if (this.props.onChange) this.props.onChange(e, this.state.value);
+    });
+  },
+
+  _percentToValue: function (percent) {
+    return percent * (this.props.max - this.props.min) + this.props.min;
+  },
+
+  render: function () {
+    var percent = this.state.percent;
+    if (percent > 1) percent = 1;else if (percent < 0) percent = 0;
+    styles.handle.left = percent * 100 + '%';
+    return React.createElement(
+      'div',
+      { style: styles.root },
+      React.createElement(
+        'div',
+        { ref: 'track', style: styles.track },
+        React.createElement(
+          'div',
+          {
+            style: styles.handle,
+            onFocus: this._onFocus,
+            onBlur: this._onBlur,
+            onMouseDown: this._onMouseDown,
+            onMouseEnter: this._onMouseEnter,
+            onMouseLeave: this._onMouseLeave,
+            onMouseUp: this._onMouseUp
+          },
+          this.props.handleEl || React.createElement('div', { style: styles.defaultHandleEl })
+        )
+      )
+    );
+  }
+});
+
+module.exports = SimpleSlider;
+
+},{"react":281,"react-dom":114}],288:[function(require,module,exports){
 var React = require('react');
 var IconButton = require('material-ui/lib/icon-button');
 var AvPlay = require('material-ui/lib/svg-icons/av/play-arrow');
@@ -32894,7 +32926,8 @@ module.exports = Transport;
 
 },{"material-ui/lib/icon-button":10,"material-ui/lib/svg-icons/av/fast-forward":42,"material-ui/lib/svg-icons/av/fast-rewind":43,"material-ui/lib/svg-icons/av/loop":44,"material-ui/lib/svg-icons/av/pause":45,"material-ui/lib/svg-icons/av/play-arrow":46,"material-ui/lib/svg-icons/av/skip-next":47,"material-ui/lib/svg-icons/av/skip-previous":48,"react":281}],289:[function(require,module,exports){
 var React = require('react');
-var PositionSlider = require('./PositionSlider.react');
+//var PositionSlider = require('./PositionSlider.react');
+var SimpleSlider = require('./SimpleSlider.react');
 
 var WaveformUI = React.createClass({
   displayName: 'WaveformUI',
@@ -32907,11 +32940,11 @@ var WaveformUI = React.createClass({
       'div',
       null,
       React.createElement('div', { id: 'wavesurfer' }),
-      React.createElement(PositionSlider, null)
+      React.createElement(SimpleSlider, null)
     );
   }
 });
 
 module.exports = WaveformUI;
 
-},{"./PositionSlider.react":285,"react":281}]},{},[282]);
+},{"./SimpleSlider.react":287,"react":281}]},{},[282]);
