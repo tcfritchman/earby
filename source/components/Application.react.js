@@ -1,6 +1,6 @@
 var React = require('react');
 var Transport = require('./Transport.react');
-var Wavesurfer = require('./Wavesurfer.react');
+var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
 //var WaveSurfer = require('../wavesurfer');
 var ThemeManager = require('material-ui/lib/styles/theme-manager');
@@ -102,7 +102,7 @@ var Application = React.createClass({
           onSetRegionEndClick={this.handleSetRegionEndClick}
           regions={this.state.regions}
         />
-        <Wavesurfer onMount={this.createWaveSurfer}></Wavesurfer>
+        <WaveformUI onMount={this.createWaveSurfer}></WaveformUI>
         <Transport
           playing={this.state.playing}
           onPlayClick={this.handlePlayClick}
