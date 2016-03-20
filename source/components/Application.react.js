@@ -2,6 +2,7 @@ var React = require('react');
 var Transport = require('./Transport.react');
 var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
+var AppMainMenu = require('./AppMainMenu.react');
 //var WaveSurfer = require('../wavesurfer');
 var ThemeManager = require('material-ui/lib/styles/theme-manager');
 var RawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
@@ -22,6 +23,7 @@ var Application = React.createClass({
   },
   getInitialState: function() {
     return {
+      menuOpen: false,
       playing: false,
       paused: false,
       finished: false,
@@ -44,6 +46,17 @@ var Application = React.createClass({
     this.props.wavesurfer.on('play', this.handlePlay);
     this.props.wavesurfer.on('pause', this.handlePause);
     this.props.wavesurfer.load('example/getlucky.mp3');
+  },
+  handleTapMenuButton: function() {
+    (this.state.menuOpen ? this.closeMenu : this.openMenu)();
+  },
+  openMenu: function() {
+    this.setState({menuOpen: true});
+    console.log('open');
+  },
+  closeMenu: function() {
+    this.setState({menuOpen: false});
+    console.log('close');
   },
   handlePlay: function() {
     console.log('play');
@@ -96,7 +109,13 @@ var Application = React.createClass({
   render: function() {
     return (
       <div>
-        <AppBar title="earby" />
+        <AppBar title="earby"
+          onLeftIconButtonTouchTap={this.handleTapMenuButton} />
+        <AppMainMenu
+          open={this.state.menuOpen}
+          setMenuOpen={this.openMenu}
+          setMenuClosed={this.closeMenu}
+        />
         <AppToolbar
           onAddRegionClick={this.handleAddRegionClick}
           onSetRegionEndClick={this.handleSetRegionEndClick}
