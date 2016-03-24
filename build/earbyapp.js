@@ -9026,7 +9026,6 @@ exports.default = {
   desktopToolbarHeight: 56
 };
 module.exports = exports['default'];
-
 },{}],40:[function(require,module,exports){
 'use strict';
 
@@ -35490,7 +35489,7 @@ var AppToolbar = React.createClass({
 
 module.exports = AppToolbar;
 
-},{"./RegionsPane.react":299,"./SetRegionControls.react":300,"material-ui/lib/icon-button":10,"material-ui/lib/popover/popover":28,"material-ui/lib/raised-button":29,"material-ui/lib/svg-icons/action/view-list":50,"material-ui/lib/toolbar/toolbar":67,"material-ui/lib/toolbar/toolbar-group":64,"material-ui/lib/toolbar/toolbar-separator":65,"material-ui/lib/toolbar/toolbar-title":66,"react":294}],298:[function(require,module,exports){
+},{"./RegionsPane.react":300,"./SetRegionControls.react":301,"material-ui/lib/icon-button":10,"material-ui/lib/popover/popover":28,"material-ui/lib/raised-button":29,"material-ui/lib/svg-icons/action/view-list":50,"material-ui/lib/toolbar/toolbar":67,"material-ui/lib/toolbar/toolbar-group":64,"material-ui/lib/toolbar/toolbar-separator":65,"material-ui/lib/toolbar/toolbar-title":66,"react":294}],298:[function(require,module,exports){
 var React = require('react');
 var Transport = require('./Transport.react');
 var WaveformUI = require('./WaveformUI.react');
@@ -35519,6 +35518,10 @@ var Application = React.createClass({
   getInitialState: function () {
     return {
       menuOpen: false,
+      loading: false,
+      loadProgress: 0.0,
+      duration: 0.0,
+      currentTime: 0.0,
       playing: false,
       paused: false,
       finished: false,
@@ -35540,18 +35543,36 @@ var Application = React.createClass({
     this.props.wavesurfer.on('finish', this.handleFinish);
     this.props.wavesurfer.on('play', this.handlePlay);
     this.props.wavesurfer.on('pause', this.handlePause);
+    this.props.wavesurfer.on('ready', this.handleReady);
+    this.props.wavesurfer.on('audioprocess', this.handleAudioprocess);
+    this.props.wavesurfer.on('loading', this.handleLoading);
+    this.props.wavesurfer.on('seek', this.handleSeek);
+    this.props.wavesurfer.on('error', this.handleError);
     this.props.wavesurfer.load('example/getlucky.mp3');
   },
-  handleTapMenuButton: function () {
-    (this.state.menuOpen ? this.closeMenu : this.openMenu)();
+
+  /* Wavesurfer event handlers */
+  handleReady: function () {
+    this.setState({
+      loading: false,
+      duration: this.props.wavesurfer.getDuration()
+    });
+    // TODO: enable the ui.
   },
-  openMenu: function () {
-    this.setState({ menuOpen: true });
-    console.log('open');
+  handleAudioprocess: function (time) {
+    this.setState({
+      currentTime: time
+    });
   },
-  closeMenu: function () {
-    this.setState({ menuOpen: false });
-    console.log('close');
+  handleLoading: function (progress) {
+    this.setState({
+      loading: true,
+      loadProgress: progress
+    });
+  },
+  handleSeek: function (progress) {},
+  handleError: function (err) {
+    console.log(err);
   },
   handlePlay: function () {
     console.log('play');
@@ -35576,6 +35597,21 @@ var Application = React.createClass({
       finished: true
     });
   },
+
+  /* Menu Handlers */
+  handleTapMenuButton: function () {
+    (this.state.menuOpen ? this.closeMenu : this.openMenu)();
+  },
+  openMenu: function () {
+    this.setState({ menuOpen: true });
+    console.log('open');
+  },
+  closeMenu: function () {
+    this.setState({ menuOpen: false });
+    console.log('close');
+  },
+
+  /* Transport Handlers */
   handlePlayClick: function () {
     this.props.wavesurfer.playPause();
   },
@@ -35585,6 +35621,12 @@ var Application = React.createClass({
   handleSkipFwdClick: function () {
     this.props.wavesurfer.skipForward();
   },
+  handlePositionSliderChange: function (e, value) {
+    console.log(value);
+    this.props.wavesurfer.seekTo(value);
+  },
+
+  /* Region Control Handlers */
   handleAddRegionClick: function () {
     var regionOptions = {
       start: this.props.wavesurfer.getCurrentTime()
@@ -35600,6 +35642,7 @@ var Application = React.createClass({
       end: this.props.wavesurfer.getCurrentTime()
     });
   },
+
   render: function () {
     return React.createElement(
       'div',
@@ -35616,7 +35659,14 @@ var Application = React.createClass({
         onSetRegionEndClick: this.handleSetRegionEndClick,
         regions: this.state.regions
       }),
-      React.createElement(WaveformUI, { onMount: this.createWaveSurfer }),
+      React.createElement(WaveformUI, {
+        onMount: this.createWaveSurfer,
+        loading: this.state.loading,
+        loadProgress: this.state.loadProgress,
+        duration: this.state.duration,
+        currentTime: this.state.currentTime,
+        onPositionSliderChange: this.handlePositionSliderChange
+      }),
       React.createElement(Transport, {
         playing: this.state.playing,
         onPlayClick: this.handlePlayClick,
@@ -35629,7 +35679,77 @@ var Application = React.createClass({
 
 module.exports = Application;
 
-},{"./AppMainMenu.react":296,"./AppToolbar.react":297,"./Transport.react":302,"./WaveformUI.react":303,"material-ui/lib/app-bar":2,"material-ui/lib/styles/raw-themes/light-raw-theme":38,"material-ui/lib/styles/theme-manager":40,"material-ui/lib/toggle":63,"react":294}],299:[function(require,module,exports){
+},{"./AppMainMenu.react":296,"./AppToolbar.react":297,"./Transport.react":303,"./WaveformUI.react":304,"material-ui/lib/app-bar":2,"material-ui/lib/styles/raw-themes/light-raw-theme":38,"material-ui/lib/styles/theme-manager":40,"material-ui/lib/toggle":63,"react":294}],299:[function(require,module,exports){
+var React = require('react');
+
+var PositionSliderHandle = React.createClass({
+   displayName: 'PositionSliderHandle',
+
+   styles: {
+      width: 48,
+      height: 48,
+      verticalAlign: 'middle'
+   },
+   render: function () {
+      return React.createElement(
+         'svg',
+         {
+            style: this.styles, viewBox: '0 0 440.00001 291.4947', preserveAspectRatio: 'xMidYMid meet', fit: true },
+         React.createElement(
+            'g',
+            {
+               transform: 'translate(0,-760.86751)',
+               id: 'layer1' },
+            React.createElement('path', {
+               id: 'rect3336',
+               d: 'm 131.75,836.86223 -88.25,0 c -23.822,0 -43,19.178 -43,43 l 0,128.99997 c 0,23.822 19.178,43 43,43 l 353,0 c 23.822,0 43,-19.178 43,-43 l 0,-128.99997 c 0,-23.822 -19.178,-43 -43,-43 l -88.25,0 c -51.48045,-2.13449 -78.12973,-34.91482 -88.25,-74 -10.12027,39.08518 -36.76955,71.86551 -88.25,74 z',
+               fill: '#808080' }),
+            React.createElement('path', {
+               id: 'path4162',
+               d: 'm 139.18522,383.80267 c 3.3e-4,-11.27835 0.098,-15.79321 0.21695,-10.03301 0.11899,5.76019 0.11872,14.98794 -6.1e-4,20.50609 -0.11932,5.51816 -0.21668,0.80528 -0.21634,-10.47308 z',
+               fill: '#b3b3b3' }),
+            React.createElement('path', {
+               id: 'path4164',
+               d: 'm 139.82729,393.34861 c 0,-3.30572 0.1218,-4.65806 0.27067,-3.0052 0.14887,1.65286 0.14887,4.35755 0,6.01041 -0.14887,1.65286 -0.27067,0.30052 -0.27067,-3.00521 z',
+               fill: '#b3b3b3' })
+         ),
+         React.createElement(
+            'g',
+            {
+               transform: 'translate(0,-760.86751)',
+               id: 'layer2' },
+            React.createElement('rect', {
+               ry: '0',
+               y: '868.86224',
+               x: '209.60808',
+               height: '150.20238',
+               width: '21.391916',
+               id: 'rect4188',
+               fill: '#4d4d4d' }),
+            React.createElement('rect', {
+               fill: '#4d4d4d',
+               id: 'rect4190',
+               width: '21.391916',
+               height: '150.20238',
+               x: '267.26617',
+               y: '868.86224',
+               ry: '0' }),
+            React.createElement('rect', {
+               fill: '#4d4d4d',
+               id: 'rect4192',
+               width: '21.391916',
+               height: '150.20238',
+               x: '151.95001',
+               y: '868.86224',
+               ry: '0' })
+         )
+      );
+   }
+});
+
+module.exports = PositionSliderHandle;
+
+},{"react":294}],300:[function(require,module,exports){
 var React = require('react');
 var EditIcon = require('material-ui/lib/svg-icons/editor/mode-edit');
 var DeleteIcon = require('material-ui/lib/svg-icons/action/delete');
@@ -35694,7 +35814,7 @@ var RegionsPane = React.createClass({
 
 module.exports = RegionsPane;
 
-},{"material-ui/lib/flat-button":8,"material-ui/lib/icon-button":10,"material-ui/lib/lists/list-item.js":12,"material-ui/lib/lists/list.js":13,"material-ui/lib/svg-icons/action/delete":49,"material-ui/lib/svg-icons/editor/mode-edit":58,"react":294}],300:[function(require,module,exports){
+},{"material-ui/lib/flat-button":8,"material-ui/lib/icon-button":10,"material-ui/lib/lists/list-item.js":12,"material-ui/lib/lists/list.js":13,"material-ui/lib/svg-icons/action/delete":49,"material-ui/lib/svg-icons/editor/mode-edit":58,"react":294}],301:[function(require,module,exports){
 var React = require('react');
 var Popover = require('material-ui/lib/popover/popover');
 var RaisedButton = require('material-ui/lib/raised-button');
@@ -35761,7 +35881,7 @@ var SetRegionControls = React.createClass({
 
 module.exports = SetRegionControls;
 
-},{"material-ui/lib/popover/popover":28,"material-ui/lib/raised-button":29,"react":294}],301:[function(require,module,exports){
+},{"material-ui/lib/popover/popover":28,"material-ui/lib/raised-button":29,"react":294}],302:[function(require,module,exports){
 /* Most of the logic for this slider interface is borrowed from
    the material-ui slider component code
    http://www.material-ui.com/#/components/slider
@@ -35774,7 +35894,8 @@ var styles = {
     userSelect: 'none',
     cursor: 'default',
     position: 'relative',
-    marginBottom: 24
+    marginBottom: 24,
+    marginRight: 48
   },
   track: {
     position: 'absolute',
@@ -35820,7 +35941,11 @@ var SimpleSlider = React.createClass({
       value: value
     };
   },
-
+  componentWillReceiveProps: function (nextProps) {
+    if (nextProps.value !== undefined && !this.state.dragging) {
+      this.setValue(nextProps.value);
+    }
+  },
   setValue: function (i) {
     // calculate percentage
     var percent = (i - this.props.min) / (this.props.max - this.props.min);
@@ -35948,7 +36073,7 @@ var SimpleSlider = React.createClass({
 
 module.exports = SimpleSlider;
 
-},{"react":294,"react-dom":127}],302:[function(require,module,exports){
+},{"react":294,"react-dom":127}],303:[function(require,module,exports){
 var React = require('react');
 var IconButton = require('material-ui/lib/icon-button');
 var AvPlay = require('material-ui/lib/svg-icons/av/play-arrow');
@@ -36021,10 +36146,21 @@ var Transport = React.createClass({
 
 module.exports = Transport;
 
-},{"material-ui/lib/icon-button":10,"material-ui/lib/svg-icons/av/fast-forward":51,"material-ui/lib/svg-icons/av/fast-rewind":52,"material-ui/lib/svg-icons/av/loop":53,"material-ui/lib/svg-icons/av/pause":54,"material-ui/lib/svg-icons/av/play-arrow":55,"material-ui/lib/svg-icons/av/skip-next":56,"material-ui/lib/svg-icons/av/skip-previous":57,"react":294}],303:[function(require,module,exports){
+},{"material-ui/lib/icon-button":10,"material-ui/lib/svg-icons/av/fast-forward":51,"material-ui/lib/svg-icons/av/fast-rewind":52,"material-ui/lib/svg-icons/av/loop":53,"material-ui/lib/svg-icons/av/pause":54,"material-ui/lib/svg-icons/av/play-arrow":55,"material-ui/lib/svg-icons/av/skip-next":56,"material-ui/lib/svg-icons/av/skip-previous":57,"react":294}],304:[function(require,module,exports){
 var React = require('react');
 //var PositionSlider = require('./PositionSlider.react');
 var SimpleSlider = require('./SimpleSlider.react');
+var PositionSliderHandle = require('./PositionSliderHandle.react');
+
+var styles = {
+  container: {
+    margin: 20
+  },
+  wavesurfer: {
+    marginRight: 24,
+    marginLeft: 24
+  }
+};
 
 var WaveformUI = React.createClass({
   displayName: 'WaveformUI',
@@ -36032,16 +36168,32 @@ var WaveformUI = React.createClass({
   componentDidMount: function () {
     this.props.onMount();
   },
+  calculateProgress: function () {
+    if (this.props.duration === 0.0) {
+      return 0;
+    } else {
+      return this.props.currentTime / this.props.duration;
+    }
+  },
+  handlePositionSliderChange: function (e, value) {
+    this.props.onPositionSliderChange(e, value);
+  },
   render: function () {
     return React.createElement(
       'div',
-      null,
-      React.createElement('div', { id: 'wavesurfer' }),
-      React.createElement(SimpleSlider, null)
+      { style: styles.container },
+      React.createElement('div', { id: 'wavesurfer', style: styles.wavesurfer }),
+      React.createElement(SimpleSlider, {
+        handleEl: React.createElement(PositionSliderHandle, null),
+        handleHeight: 48,
+        handleWidth: 48,
+        onChange: this.handlePositionSliderChange,
+        value: this.props.currentTime / this.props.duration
+      })
     );
   }
 });
 
 module.exports = WaveformUI;
 
-},{"./SimpleSlider.react":301,"react":294}]},{},[295]);
+},{"./PositionSliderHandle.react":299,"./SimpleSlider.react":302,"react":294}]},{},[295]);

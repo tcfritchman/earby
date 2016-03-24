@@ -10,12 +10,13 @@ var styles = {
     userSelect: 'none',
     cursor: 'default',
     position: 'relative',
-    marginBottom: 24
+    marginBottom: 24,
+    marginRight: 48
   },
   track: {
     position: 'absolute',
     left: 0,
-    width: '100%',
+    width: '100%'
   },
   handle: {
     boxSizing: 'border-box',
@@ -54,7 +55,11 @@ var SimpleSlider = React.createClass ({
       value: value,
     };
   },
-
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.value !== undefined && !this.state.dragging) {
+      this.setValue(nextProps.value);
+    }
+  },
   setValue: function(i) {
     // calculate percentage
     var percent = (i - this.props.min) / (this.props.max - this.props.min);

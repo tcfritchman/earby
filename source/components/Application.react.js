@@ -24,6 +24,10 @@ var Application = React.createClass({
   getInitialState: function() {
     return {
       menuOpen: false,
+      loading: false,
+      loadProgress: 0.0,
+      duration: 0.0,
+      currentTime: 0.0,
       playing: false,
       paused: false,
       finished: false,
@@ -45,18 +49,37 @@ var Application = React.createClass({
     this.props.wavesurfer.on('finish', this.handleFinish);
     this.props.wavesurfer.on('play', this.handlePlay);
     this.props.wavesurfer.on('pause', this.handlePause);
+    this.props.wavesurfer.on('ready', this.handleReady);
+    this.props.wavesurfer.on('audioprocess', this.handleAudioprocess);
+    this.props.wavesurfer.on('loading', this.handleLoading);
+    this.props.wavesurfer.on('seek', this.handleSeek);
+    this.props.wavesurfer.on('error', this.handleError);
     this.props.wavesurfer.load('example/getlucky.mp3');
   },
-  handleTapMenuButton: function() {
-    (this.state.menuOpen ? this.closeMenu : this.openMenu)();
+
+  /* Wavesurfer event handlers */
+  handleReady: function() {
+    this.setState({
+      loading: false,
+      duration: this.props.wavesurfer.getDuration()
+    });
+    // TODO: enable the ui.
   },
-  openMenu: function() {
-    this.setState({menuOpen: true});
-    console.log('open');
+  handleAudioprocess: function(time) {
+    this.setState({
+      currentTime: time
+    });
   },
-  closeMenu: function() {
-    this.setState({menuOpen: false});
-    console.log('close');
+  handleLoading: function(progress) {
+    this.setState({
+      loading: true,
+      loadProgress: progress
+    });
+  },
+  handleSeek: function(progress) {
+  },
+  handleError: function(err) {
+    console.log(err);
   },
   handlePlay: function() {
     console.log('play');
@@ -81,6 +104,21 @@ var Application = React.createClass({
         finished: true
       });
   },
+
+  /* Menu Handlers */
+  handleTapMenuButton: function() {
+    (this.state.menuOpen ? this.closeMenu : this.openMenu)();
+  },
+  openMenu: function() {
+    this.setState({menuOpen: true});
+    console.log('open');
+  },
+  closeMenu: function() {
+    this.setState({menuOpen: false});
+    console.log('close');
+  },
+
+  /* Transport Handlers */
   handlePlayClick: function() {
     this.props.wavesurfer.playPause();
   },
@@ -90,6 +128,11 @@ var Application = React.createClass({
   handleSkipFwdClick: function() {
     this.props.wavesurfer.skipForward();
   },
+  handlePositionSliderChange: function(e, value) {
+    this.props.wavesurfer.seekTo(value);
+  },
+
+  /* Region Control Handlers */
   handleAddRegionClick: function() {
     var regionOptions = {
       start: this.props.wavesurfer.getCurrentTime(),
@@ -106,6 +149,7 @@ var Application = React.createClass({
       end: this.props.wavesurfer.getCurrentTime()
     });
   },
+
   render: function() {
     return (
       <div>
@@ -121,7 +165,14 @@ var Application = React.createClass({
           onSetRegionEndClick={this.handleSetRegionEndClick}
           regions={this.state.regions}
         />
-        <WaveformUI onMount={this.createWaveSurfer}></WaveformUI>
+        <WaveformUI
+          onMount={this.createWaveSurfer}
+          loading={this.state.loading}
+          loadProgress={this.state.loadProgress}
+          duration={this.state.duration}
+          currentTime={this.state.currentTime}
+          onPositionSliderChange={this.handlePositionSliderChange}
+        />
         <Transport
           playing={this.state.playing}
           onPlayClick={this.handlePlayClick}
