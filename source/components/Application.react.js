@@ -32,6 +32,7 @@ var Application = React.createClass({
       paused: false,
       finished: false,
       looping: false,
+      volume: 1.0,
       currentRegion: null,
       regions: []
     };
@@ -134,6 +135,12 @@ var Application = React.createClass({
   handlePositionSliderChange: function(e, value) {
     this.props.wavesurfer.seekTo(value);
   },
+  handlePositionSliderDragStart: function() {
+    this.props.wavesurfer.pause();
+  },
+  handlePositionSliderDragStop: function() {
+    this.props.wavesurfer.play();
+  },
 
   /* Region Control Handlers */
   handleAddRegionClick: function() {
@@ -175,6 +182,8 @@ var Application = React.createClass({
           duration={this.state.duration}
           currentTime={this.state.currentTime}
           onPositionSliderChange={this.handlePositionSliderChange}
+          onPositionSliderDragStart={this.handlePositionSliderDragStart}
+          onPositionSliderDragStop={this.handlePositionSliderDragStop}
         />
         <Transport
           playing={this.state.playing}

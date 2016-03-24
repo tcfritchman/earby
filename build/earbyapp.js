@@ -37076,6 +37076,7 @@ var Application = React.createClass({
       paused: false,
       finished: false,
       looping: false,
+      volume: 1.0,
       currentRegion: null,
       regions: []
     };
@@ -37178,6 +37179,14 @@ var Application = React.createClass({
   handlePositionSliderChange: function (e, value) {
     this.props.wavesurfer.seekTo(value);
   },
+  handlePositionSliderDragStart: function () {
+    //this.props.wavesurfer.setVolume(0);
+    this.props.wavesurfer.pause();
+  },
+  handlePositionSliderDragStop: function () {
+    //this.props.wavesurfer.setVolume(this.state.volume);
+    this.props.wavesurfer.play();
+  },
 
   /* Region Control Handlers */
   handleAddRegionClick: function () {
@@ -37218,7 +37227,9 @@ var Application = React.createClass({
         loadProgress: this.state.loadProgress,
         duration: this.state.duration,
         currentTime: this.state.currentTime,
-        onPositionSliderChange: this.handlePositionSliderChange
+        onPositionSliderChange: this.handlePositionSliderChange,
+        onPositionSliderDragStart: this.handlePositionSliderDragStart,
+        onPositionSliderDragStop: this.handlePositionSliderDragStop
       }),
       React.createElement(Transport, {
         playing: this.state.playing,
@@ -37631,6 +37642,12 @@ var WaveformUI = React.createClass({
   handlePositionSliderChange: function (e, value) {
     this.props.onPositionSliderChange(e, value);
   },
+  handlePositionSliderDragStart: function () {
+    this.props.onPositionSliderDragStart();
+  },
+  handlePositionSliderDragStop: function () {
+    this.props.onPositionSliderDragStop();
+  },
   render: function () {
     return React.createElement(
       'div',
@@ -37640,6 +37657,8 @@ var WaveformUI = React.createClass({
         handleHeight: 48,
         handleWidth: 48,
         onChange: this.handlePositionSliderChange,
+        onDragStart: this.handlePositionSliderDragStart,
+        onDragStop: this.handlePositionSliderDragStop,
         value: this.props.currentTime / this.props.duration || 0.0
       })
     );

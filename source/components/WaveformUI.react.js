@@ -26,6 +26,12 @@ var WaveformUI = React.createClass({
   handlePositionSliderChange: function(e, value) {
     this.props.onPositionSliderChange(e, value);
   },
+  handlePositionSliderDragStart: function() {
+    this.props.onPositionSliderDragStart();
+  },
+  handlePositionSliderDragStop: function() {
+    this.props.onPositionSliderDragStop();
+  },
   render: function() {
     return (
       <div style={styles.container}>
@@ -34,6 +40,8 @@ var WaveformUI = React.createClass({
           handleHeight={48}
           handleWidth={48}
           onChange={this.handlePositionSliderChange}
+          onDragStart={this.handlePositionSliderDragStart}
+          onDragStop={this.handlePositionSliderDragStop}
           value={this.props.currentTime / this.props.duration || 0.0}
         />
       </div>
