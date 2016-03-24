@@ -1,7 +1,6 @@
 var React = require('react');
-//var PositionSlider = require('./PositionSlider.react');
-var SimpleSlider = require('./SimpleSlider.react');
-var PositionSliderHandle = require('./PositionSliderHandle.react');
+//var SimpleSlider = require('./SimpleSlider.react');
+var PositionSlider = require('./PositionSlider.react');
 
 var styles = {
   container: {
@@ -31,12 +30,11 @@ var WaveformUI = React.createClass({
     return (
       <div style={styles.container}>
         <div id="wavesurfer" style={styles.wavesurfer}></div>
-        <SimpleSlider
-          handleEl={<PositionSliderHandle />}
+        <PositionSlider
           handleHeight={48}
           handleWidth={48}
           onChange={this.handlePositionSliderChange}
-          value={this.props.currentTime / this.props.duration}
+          value={this.props.currentTime / this.props.duration || 0.0}
         />
       </div>
     );

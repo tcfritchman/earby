@@ -77,6 +77,9 @@ var Application = React.createClass({
     });
   },
   handleSeek: function(progress) {
+    this.setState({
+      currentTime: this.props.wavesurfer.getCurrentTime()
+    });
   },
   handleError: function(err) {
     console.log(err);
