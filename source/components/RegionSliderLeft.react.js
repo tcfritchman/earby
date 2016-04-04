@@ -9,7 +9,7 @@ var styles = {
     position: 'relative',
     marginBottom: 0,
     marginRight: 48,
-    height: 24
+    height: 0
   },
   track: {
     position: 'absolute',
@@ -24,7 +24,6 @@ var styles = {
     boxSizing: 'border-box',
     position: 'absolute',
     cursor: 'pointer',
-    top: 0,
     left: '0%',
     overflow: 'visible'
   },

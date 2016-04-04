@@ -38,7 +38,6 @@ var RegionItem = React.createClass({
 
 var RegionsPane = React.createClass({
   handleRegionClick: function(region) {
-    console.log('test');
     this.props.onRegionClick(region);
   },
   mapRegionsToItems: function(region) {

@@ -9,7 +9,7 @@ var styles = {
     position: 'relative',
     marginBottom: 0,
     marginRight: 48,
-    height: 24
+    height: 0
   },
   track: {
     position: 'absolute',

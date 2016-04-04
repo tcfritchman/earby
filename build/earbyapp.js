@@ -37471,7 +37471,7 @@ var styles = {
     position: 'relative',
     marginBottom: 0,
     marginRight: 48,
-    height: 24
+    height: 0
   },
   track: {
     position: 'absolute',
@@ -37486,7 +37486,6 @@ var styles = {
     boxSizing: 'border-box',
     position: 'absolute',
     cursor: 'pointer',
-    top: 0,
     left: '0%',
     overflow: 'visible'
   }
@@ -37559,7 +37558,7 @@ var styles = {
     position: 'relative',
     marginBottom: 0,
     marginRight: 48,
-    height: 24
+    height: 0
   },
   track: {
     position: 'absolute',
@@ -37690,7 +37689,6 @@ var RegionsPane = React.createClass({
   displayName: 'RegionsPane',
 
   handleRegionClick: function (region) {
-    console.log('test');
     this.props.onRegionClick(region);
   },
   mapRegionsToItems: function (region) {
