@@ -24,7 +24,7 @@ var styles = {
     boxSizing: 'border-box',
     position: 'absolute',
     cursor: 'pointer',
-    top: 0,
+    bottom: 0,
     left: '0%',
     overflow: 'visible'
   },

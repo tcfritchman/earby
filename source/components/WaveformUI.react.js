@@ -10,10 +10,15 @@ var styles = {
   },
   headerDiv: {
   },
+  timeline: {
+    position: 'relative',
+    top: 24,
+    left: 24
+  },
   regionSliderDiv: {
   },
   regionSliderHidden: {
-    //display: 'none'
+    display: 'none'
   },
   wavesurfer: {
     paddingTop: 24,
@@ -58,6 +63,7 @@ var WaveformUI = React.createClass({
     return (
       <div style={styles.container}>
         <div style={styles.headerDiv}>
+          <div id="wavesurfer-timeline" style={styles.timeline}></div>
           <div style={regionStyle}>
             <RegionSliderLeft
               value={regionStart / this.props.duration}

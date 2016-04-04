@@ -65,6 +65,11 @@ var Application = React.createClass({
       loading: false,
       duration: this.props.wavesurfer.getDuration()
     });
+    this.props.timeline = Object.create(WaveSurfer.Timeline);
+    this.props.timeline.init({
+      wavesurfer: this.props.wavesurfer,
+      container: '#wavesurfer-timeline'
+    });
     // TODO: enable the ui.
   },
   handleAudioprocess: function(time) {

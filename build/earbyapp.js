@@ -37115,6 +37115,11 @@ var Application = React.createClass({
       loading: false,
       duration: this.props.wavesurfer.getDuration()
     });
+    this.props.timeline = Object.create(WaveSurfer.Timeline);
+    this.props.timeline.init({
+      wavesurfer: this.props.wavesurfer,
+      container: '#wavesurfer-timeline'
+    });
     // TODO: enable the ui.
   },
   handleAudioprocess: function (time) {
@@ -37486,6 +37491,7 @@ var styles = {
     boxSizing: 'border-box',
     position: 'absolute',
     cursor: 'pointer',
+    bottom: 0,
     left: '0%',
     overflow: 'visible'
   }
@@ -37573,7 +37579,7 @@ var styles = {
     boxSizing: 'border-box',
     position: 'absolute',
     cursor: 'pointer',
-    top: 0,
+    bottom: 0,
     left: '0%',
     overflow: 'visible'
   }
@@ -37860,9 +37866,14 @@ var styles = {
     margin: 20
   },
   headerDiv: {},
+  timeline: {
+    position: 'relative',
+    top: 24,
+    left: 24
+  },
   regionSliderDiv: {},
   regionSliderHidden: {
-    //display: 'none'
+    display: 'none'
   },
   wavesurfer: {
     paddingTop: 24,
@@ -37912,6 +37923,7 @@ var WaveformUI = React.createClass({
       React.createElement(
         'div',
         { style: styles.headerDiv },
+        React.createElement('div', { id: 'wavesurfer-timeline', style: styles.timeline }),
         React.createElement(
           'div',
           { style: regionStyle },
