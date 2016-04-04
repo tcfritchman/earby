@@ -166,6 +166,11 @@ var Application = React.createClass({
     });
     this.updateRegionState();
   },
+  handleRegionClick: function(region) {
+    this.setState({
+      currentRegion: region
+    });
+  },
   handleRegionSliderLeftChange: function(e, value) {
     var reg = this.state.currentRegion;
     if (!reg) return;
@@ -200,7 +205,8 @@ var Application = React.createClass({
     return (
       <div>
         <AppBar title="earby"
-          onLeftIconButtonTouchTap={this.handleTapMenuButton} />
+          onLeftIconButtonTouchTap={this.handleTapMenuButton}
+        />
         <AppMainMenu
           open={this.state.menuOpen}
           setMenuOpen={this.openMenu}
@@ -209,6 +215,7 @@ var Application = React.createClass({
         <AppToolbar
           onAddRegionClick={this.handleAddRegionClick}
           onSetRegionEndClick={this.handleSetRegionEndClick}
+          onRegionClick={this.handleRegionClick}
           regions={this.state.regions}
         />
         <WaveformUI

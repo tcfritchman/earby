@@ -36983,6 +36983,9 @@ var AppToolbar = React.createClass({
   handleRequestClose: function () {
     this.setState({ addRegionOpen: false, regionPaneOpen: false });
   },
+  handleRegionClick: function (region) {
+    this.props.onRegionClick(region);
+  },
   render: function () {
     return React.createElement(
       Toolbar,
@@ -37030,7 +37033,10 @@ var AppToolbar = React.createClass({
             targetOrigin: { horizontal: 'right', vertical: 'top' },
             onRequestClose: this.handleRequestClose
           },
-          React.createElement(RegionsPane, { regions: this.props.regions })
+          React.createElement(RegionsPane, {
+            regions: this.props.regions,
+            onRegionClick: this.handleRegionClick
+          })
         )
       )
     );
@@ -37209,6 +37215,11 @@ var Application = React.createClass({
     });
     this.updateRegionState();
   },
+  handleRegionClick: function (region) {
+    this.setState({
+      currentRegion: region
+    });
+  },
   handleRegionSliderLeftChange: function (e, value) {
     var reg = this.state.currentRegion;
     if (!reg) return;
@@ -37244,7 +37255,8 @@ var Application = React.createClass({
       'div',
       null,
       React.createElement(AppBar, { title: 'earby',
-        onLeftIconButtonTouchTap: this.handleTapMenuButton }),
+        onLeftIconButtonTouchTap: this.handleTapMenuButton
+      }),
       React.createElement(AppMainMenu, {
         open: this.state.menuOpen,
         setMenuOpen: this.openMenu,
@@ -37253,6 +37265,7 @@ var Application = React.createClass({
       React.createElement(AppToolbar, {
         onAddRegionClick: this.handleAddRegionClick,
         onSetRegionEndClick: this.handleSetRegionEndClick,
+        onRegionClick: this.handleRegionClick,
         regions: this.state.regions
       }),
       React.createElement(WaveformUI, {
@@ -37641,10 +37654,14 @@ var styles = {
 var RegionItem = React.createClass({
   displayName: 'RegionItem',
 
+  handleClick: function () {
+    this.props.onRegionClick(this.props.region);
+  },
   render: function () {
     return React.createElement(
       ListItem,
       {
+        onTouchTap: this.handleClick,
         rightIconButton: React.createElement(
           'span',
           null,
@@ -37672,15 +37689,21 @@ var RegionItem = React.createClass({
 var RegionsPane = React.createClass({
   displayName: 'RegionsPane',
 
+  handleRegionClick: function (region) {
+    console.log('test');
+    this.props.onRegionClick(region);
+  },
+  mapRegionsToItems: function (region) {
+    return React.createElement(RegionItem, {
+      region: region,
+      onRegionClick: this.handleRegionClick
+    });
+  },
   render: function () {
     return React.createElement(
       List,
       null,
-      this.props.regions.map(function (region) {
-        return React.createElement(RegionItem, {
-          region: region
-        });
-      })
+      this.props.regions.map(this.mapRegionsToItems)
     );
   }
 });

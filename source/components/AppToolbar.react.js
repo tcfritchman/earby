@@ -43,6 +43,9 @@ var AppToolbar = React.createClass({
   handleRequestClose: function() {
     this.setState({addRegionOpen: false, regionPaneOpen: false});
   },
+  handleRegionClick: function(region) {
+    this.props.onRegionClick(region);
+  },
   render: function() {
     return (
       <Toolbar>
@@ -80,7 +83,10 @@ var AppToolbar = React.createClass({
             targetOrigin={{horizontal: 'right', vertical: 'top'}}
             onRequestClose={this.handleRequestClose}
           >
-            <RegionsPane regions={this.props.regions} />
+            <RegionsPane
+              regions={this.props.regions}
+              onRegionClick={this.handleRegionClick}
+            />
           </Popover>
         </ToolbarGroup>
       </Toolbar>

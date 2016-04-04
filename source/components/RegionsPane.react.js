@@ -14,9 +14,13 @@ var styles = {
 };
 
 var RegionItem = React.createClass({
+  handleClick: function() {
+    this.props.onRegionClick(this.props.region);
+  },
   render: function() {
     return (
       <ListItem
+        onTouchTap={this.handleClick}
         rightIconButton={
           <span>
             <IconButton><EditIcon /></IconButton>
@@ -33,14 +37,20 @@ var RegionItem = React.createClass({
 });
 
 var RegionsPane = React.createClass({
+  handleRegionClick: function(region) {
+    console.log('test');
+    this.props.onRegionClick(region);
+  },
+  mapRegionsToItems: function(region) {
+    return <RegionItem
+      region={region}
+      onRegionClick={this.handleRegionClick}
+    />;
+  },
   render: function() {
     return (
       <List>
-        {this.props.regions.map(function(region) {
-          return <RegionItem
-            region={region}
-          />;
-      })}
+        {this.props.regions.map(this.mapRegionsToItems)}
       </List>
     );
   }
