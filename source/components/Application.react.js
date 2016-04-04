@@ -1,4 +1,5 @@
 var React = require('react');
+var _ = require('underscore');
 var Transport = require('./Transport.react');
 var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
@@ -86,7 +87,6 @@ var Application = React.createClass({
     console.log(err);
   },
   handlePlay: function() {
-    console.log('play');
     this.setState({
       playing: true,
       paused: false,
@@ -94,18 +94,17 @@ var Application = React.createClass({
     });
   },
   handlePause: function() {
-    console.log('pause');
       this.setState({
         playing:false,
         paused: true,
       });
   },
   handleFinish: function() {
-    console.log('finished');
       this.setState({
         playing:false,
         paused: false,
-        finished: true
+        finished: true,
+        currentTime: 0.0
       });
   },
 
@@ -115,16 +114,18 @@ var Application = React.createClass({
   },
   openMenu: function() {
     this.setState({menuOpen: true});
-    console.log('open');
   },
   closeMenu: function() {
     this.setState({menuOpen: false});
-    console.log('close');
   },
 
   /* Transport Handlers */
   handlePlayClick: function() {
-    this.props.wavesurfer.playPause();
+    if (this.state.playing) {
+      this.props.wavesurfer.pause();
+    } else {
+      this.props.wavesurfer.play(this.state.currentTime);
+    }
   },
   handleSkipBackClick: function() {
     this.props.wavesurfer.skipBackward();
@@ -133,31 +134,66 @@ var Application = React.createClass({
     this.props.wavesurfer.skipForward();
   },
   handlePositionSliderChange: function(e, value) {
-    this.props.wavesurfer.seekTo(value);
+    var time = value * this.state.duration;
+    this.setState({currentTime: time});
   },
   handlePositionSliderDragStart: function() {
-    this.props.wavesurfer.pause();
+    if (this.state.playing) {
+      /* unsubscribe pause event to 'trick' app into thinking it's still playing */
+      this.props.wavesurfer.un('pause');
+      this.props.wavesurfer.pause();
+      this.props.wavesurfer.on('pause', this.handlePause);
+    }
   },
   handlePositionSliderDragStop: function() {
-    this.props.wavesurfer.play();
+    //this.props.wavesurfer.seekTo(this.state.currentTime);
+    if (this.state.playing) this.props.wavesurfer.play(this.state.currentTime);
   },
 
   /* Region Control Handlers */
   handleAddRegionClick: function() {
-    var regionOptions = {
-      start: this.props.wavesurfer.getCurrentTime(),
-
-    };
+    var start = this.props.wavesurfer.getCurrentTime();
+    var regionOptions = {start: start};
     var newRegion = this.props.wavesurfer
       .addRegion(regionOptions);
-    this.state.currentRegion = newRegion;
-    this.state.regions.push(newRegion);
-    newRegion.data = {title: 'Region ' + newRegion.id};
+    newRegion.update({data: {title: 'Region ' + newRegion.id}});
+    this.setState({currentRegion: newRegion});
+    this.updateRegionState();
   },
   handleSetRegionEndClick: function() {
     this.state.currentRegion.update({
       end: this.props.wavesurfer.getCurrentTime()
     });
+    this.updateRegionState();
+  },
+  handleRegionSliderLeftChange: function(e, value) {
+    var reg = this.state.currentRegion;
+    if (!reg) return;
+    var time = value * this.state.duration;
+    var options = {start: time};
+    if (time > reg.end) {
+      options.end = time;
+    }
+    reg.update(options);
+  },
+  handleRegionSliderRightChange: function(e, value) {
+    var reg = this.state.currentRegion;
+    if (!reg) return;
+    var time = value * this.state.duration;
+    var options = {end: time};
+    if (time < reg.start) {
+      options.start = time;
+    }
+    reg.update(options);
+  },
+  handleRegionSliderDragStop: function() {
+    this.updateRegionState();
+  },
+  updateRegionState: function() {
+    var stateChange = {
+      regions: _.values(this.props.wavesurfer.regions.list),
+    };
+    this.setState(stateChange);
   },
 
   render: function() {
@@ -181,9 +217,13 @@ var Application = React.createClass({
           loadProgress={this.state.loadProgress}
           duration={this.state.duration}
           currentTime={this.state.currentTime}
+          currentRegion={this.state.currentRegion}
           onPositionSliderChange={this.handlePositionSliderChange}
           onPositionSliderDragStart={this.handlePositionSliderDragStart}
           onPositionSliderDragStop={this.handlePositionSliderDragStop}
+          onRegionSliderLeftChange={this.handleRegionSliderLeftChange}
+          onRegionSliderRightChange={this.handleRegionSliderRightChange}
+          onRegionSliderDragStop={this.handleRegionSliderDragStop}
         />
         <Transport
           playing={this.state.playing}
