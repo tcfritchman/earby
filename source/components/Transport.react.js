@@ -30,14 +30,13 @@ var Transport = React.createClass({
   render: function() {
     return (
       <div>
-        <IconButton>
+        <IconButton onTouchTap={this.props.onPrevRegionClick}>
           <AvSkipPrevious />
         </IconButton>
         <IconButton onClick={this.props.onSkipBackClick}>
           <AvFastRewind />
         </IconButton>
-        <PlayButton
-          onClick={this.props.onPlayClick}
+        <PlayButton onClick={this.props.onPlayClick}
           playing={this.props.playing}
         />
         <IconButton>
@@ -46,7 +45,7 @@ var Transport = React.createClass({
         <IconButton onClick={this.props.onSkipFwdClick}>
           <AvFastForward />
         </IconButton>
-        <IconButton>
+        <IconButton onTouchTap={this.props.onNextRegionClick}>
           <AvSkipNext />
         </IconButton>
       </div>

@@ -175,6 +175,7 @@ var Application = React.createClass({
     this.setState({
       currentRegion: region
     });
+    this.props.wavesurfer.play(region.start);
   },
   handleRegionDeleteClick: function(region) {
     if (region.id === this.state.currentRegion.id) {
@@ -182,6 +183,40 @@ var Application = React.createClass({
     }
     region.remove();
     this.updateRegionState();
+  },
+  handleNextRegionClick: function() {
+    var newRegion = this.cycleCurrentRegion(1);
+    if (this.state.currentRegion) {
+      this.props.wavesurfer.play(newRegion.start);
+    }
+  },
+  handlePrevRegionClick: function() {
+    var newRegion = this.cycleCurrentRegion(-1);
+    if (this.state.currentRegion) {
+      this.props.wavesurfer.play(newRegion.start);
+    }
+  },
+  cycleCurrentRegion: function(val) {
+    /* val must be 1 or -1 (to cycle forward or backward) */
+    var numRegions = this.state.regions.length;
+    if (numRegions === 0) return;
+    var _this = this;
+    var isCurrentRegion = function(region) {
+        return region.id === _this.state.currentRegion.id;
+    };
+    var currentIndex = _.indexOf(
+      this.state.regions,
+       _.find(this.state.regions, isCurrentRegion)
+    );
+    var newIndex = currentIndex + val;
+    if (newIndex < 0) {
+      newIndex = numRegions - 1;
+    } else if (newIndex >= numRegions) {
+      newIndex = 0;
+    }
+    var newRegion = this.state.regions[newIndex];
+    this.setState({currentRegion: newRegion});
+    return newRegion;
   },
   handleRegionSliderLeftChange: function(e, value) {
     var reg = this.state.currentRegion;
@@ -252,6 +287,8 @@ var Application = React.createClass({
           onPlayClick={this.handlePlayClick}
           onSkipFwdClick={this.handleSkipFwdClick}
           onSkipBackClick={this.handleSkipBackClick}
+          onPrevRegionClick={this.handlePrevRegionClick}
+          onNextRegionClick={this.handleNextRegionClick}
         />
       </div>
     );
