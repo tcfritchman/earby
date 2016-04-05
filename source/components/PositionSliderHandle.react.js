@@ -6,6 +6,7 @@ var PositionSliderHandle = React.createClass({
     height: 48,
     verticalAlign: 'middle'
   },
+  
   render: function() {
     return (
       <svg

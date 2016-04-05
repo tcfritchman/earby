@@ -60,7 +60,6 @@ var RegionSliderRight = React.createClass(_.extend(SliderMixin, {
     var percent = this.state.percent;
     if (percent > 1) percent = 1; else if (percent <0) percent = 0;
     styles.handle.left = percent * 100 + '%';
-
     return (
       <div style={styles.root}>
         <div ref="track" style={styles.track}>
@@ -79,7 +78,6 @@ var RegionSliderRight = React.createClass(_.extend(SliderMixin, {
       </div>
     );
   }
-
 }));
 
 module.exports = RegionSliderRight;

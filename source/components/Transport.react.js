@@ -36,7 +36,8 @@ var Transport = React.createClass({
         <IconButton onClick={this.props.onSkipBackClick}>
           <AvFastRewind />
         </IconButton>
-        <PlayButton onClick={this.props.onPlayClick}
+        <PlayButton
+          onClick={this.props.onPlayClick}
           playing={this.props.playing}
         />
         <IconButton>

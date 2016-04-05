@@ -1,6 +1,4 @@
-// don't need this file
 var React = require('react');
-//var ReactDOM = require('react-dom');
 var _ = require('underscore');
 var SliderMixin = require('./mixins/SliderMixin');
 var PositionSliderHandle = require('./PositionSliderHandle.react');

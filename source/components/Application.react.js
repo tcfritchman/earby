@@ -4,7 +4,6 @@ var Transport = require('./Transport.react');
 var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
 var AppMainMenu = require('./AppMainMenu.react');
-//var WaveSurfer = require('../wavesurfer');
 var ThemeManager = require('material-ui/lib/styles/theme-manager');
 var RawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
 var AppBar = require('material-ui/lib/app-bar');
@@ -12,7 +11,6 @@ var Toggle = require('material-ui/lib/toggle');
 
 var Application = React.createClass({
 
-  //the key passed through context must be called "muiTheme"
   childContextTypes : {
     muiTheme: React.PropTypes.object
   },
@@ -22,6 +20,7 @@ var Application = React.createClass({
       muiTheme: ThemeManager.getMuiTheme(RawTheme),
     };
   },
+
   getInitialState: function() {
     return {
       menuOpen: false,
@@ -38,6 +37,7 @@ var Application = React.createClass({
       regions: []
     };
   },
+
   createWaveSurfer: function() {
     try {
         this.props.wavesurfer = WaveSurfer.create({
@@ -59,7 +59,9 @@ var Application = React.createClass({
     this.props.wavesurfer.load('example/getlucky.mp3');
   },
 
-  /* Wavesurfer event handlers */
+  /* Wavesurfer event handlers
+   ****************************/
+
   handleReady: function() {
     this.setState({
       loading: false,
@@ -72,25 +74,30 @@ var Application = React.createClass({
     });
     // TODO: enable the ui.
   },
+
   handleAudioprocess: function(time) {
     this.setState({
       currentTime: time
     });
   },
+
   handleLoading: function(progress) {
     this.setState({
       loading: true,
       loadProgress: progress
     });
   },
+
   handleSeek: function(progress) {
     this.setState({
       currentTime: this.props.wavesurfer.getCurrentTime()
     });
   },
+
   handleError: function(err) {
     console.log(err);
   },
+
   handlePlay: function() {
     this.setState({
       playing: true,
@@ -98,12 +105,14 @@ var Application = React.createClass({
       finished: false
     });
   },
+
   handlePause: function() {
       this.setState({
         playing:false,
         paused: true,
       });
   },
+
   handleFinish: function() {
       this.setState({
         playing:false,
@@ -113,18 +122,24 @@ var Application = React.createClass({
       });
   },
 
-  /* Menu Handlers */
+  /* Menu Handlers
+  *********************/
+
   handleTapMenuButton: function() {
     (this.state.menuOpen ? this.closeMenu : this.openMenu)();
   },
+
   openMenu: function() {
     this.setState({menuOpen: true});
   },
+
   closeMenu: function() {
     this.setState({menuOpen: false});
   },
 
-  /* Transport Handlers */
+  /* Transport Handlers
+  ***********************/
+
   handlePlayClick: function() {
     if (this.state.playing) {
       this.props.wavesurfer.pause();
@@ -132,51 +147,59 @@ var Application = React.createClass({
       this.props.wavesurfer.play(this.state.currentTime);
     }
   },
+
   handleSkipBackClick: function() {
     this.props.wavesurfer.skipBackward();
   },
+
   handleSkipFwdClick: function() {
     this.props.wavesurfer.skipForward();
   },
+
   handlePositionSliderChange: function(e, value) {
     var time = value * this.state.duration;
     this.setState({currentTime: time});
   },
+
   handlePositionSliderDragStart: function() {
     if (this.state.playing) {
-      /* unsubscribe pause event to 'trick' app into thinking it's still playing */
+      /* unsubscribe pause event to 'trick' app
+         into thinking it's still playing */
       this.props.wavesurfer.un('pause');
       this.props.wavesurfer.pause();
       this.props.wavesurfer.on('pause', this.handlePause);
     }
   },
+
   handlePositionSliderDragStop: function() {
-    //this.props.wavesurfer.seekTo(this.state.currentTime);
     if (this.state.playing) this.props.wavesurfer.play(this.state.currentTime);
   },
 
-  /* Region Control Handlers */
+  /* Region Control Handlers
+  ****************************/
+
   handleAddRegionClick: function() {
     var start = this.props.wavesurfer.getCurrentTime();
     var regionOptions = {start: start};
-    var newRegion = this.props.wavesurfer
-      .addRegion(regionOptions);
+    var newRegion = this.props.wavesurfer.addRegion(regionOptions);
+
     newRegion.update({data: {title: 'Region ' + newRegion.id}});
     this.setState({currentRegion: newRegion});
     this.updateRegionState();
   },
+
   handleSetRegionEndClick: function() {
-    this.state.currentRegion.update({
-      end: this.props.wavesurfer.getCurrentTime()
-    });
+    this.state.currentRegion.update({end: this.props.wavesurfer.getCurrentTime()});
     this.updateRegionState();
   },
+
   handleRegionClick: function(region) {
     this.setState({
       currentRegion: region
     });
     this.props.wavesurfer.play(region.start);
   },
+
   handleRegionDeleteClick: function(region) {
     if (region.id === this.state.currentRegion.id) {
       this.setState({currentRegion: null});
@@ -184,23 +207,28 @@ var Application = React.createClass({
     region.remove();
     this.updateRegionState();
   },
+
   handleNextRegionClick: function() {
     var newRegion = this.cycleCurrentRegion(1);
     if (this.state.currentRegion) {
       this.props.wavesurfer.play(newRegion.start);
     }
   },
+
   handlePrevRegionClick: function() {
     var newRegion = this.cycleCurrentRegion(-1);
     if (this.state.currentRegion) {
       this.props.wavesurfer.play(newRegion.start);
     }
   },
+
   cycleCurrentRegion: function(val) {
     /* val must be 1 or -1 (to cycle forward or backward) */
     var numRegions = this.state.regions.length;
     if (numRegions === 0) return;
+
     var _this = this;
+
     var isCurrentRegion = function(region) {
         return region.id === _this.state.currentRegion.id;
     };
@@ -218,6 +246,7 @@ var Application = React.createClass({
     this.setState({currentRegion: newRegion});
     return newRegion;
   },
+
   handleRegionSliderLeftChange: function(e, value) {
     var reg = this.state.currentRegion;
     if (!reg) return;
@@ -228,6 +257,7 @@ var Application = React.createClass({
     }
     reg.update(options);
   },
+
   handleRegionSliderRightChange: function(e, value) {
     var reg = this.state.currentRegion;
     if (!reg) return;
@@ -238,9 +268,11 @@ var Application = React.createClass({
     }
     reg.update(options);
   },
+
   handleRegionSliderDragStop: function() {
     this.updateRegionState();
   },
+
   updateRegionState: function() {
     var stateChange = {
       regions:_.sortBy( _.values(this.props.wavesurfer.regions.list), function(region){

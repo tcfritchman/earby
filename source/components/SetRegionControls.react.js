@@ -14,6 +14,7 @@ var SetRegionControls = React.createClass({
       open: false
     };
   },
+
   handleAddClick: function(event) {
     this.setState({
       open: true,
@@ -21,13 +22,16 @@ var SetRegionControls = React.createClass({
     });
     this.props.onAddRegionClick();
   },
+
   handleSetEndClick: function() {
     this.setState({open: false});
     this.props.onSetRegionEndClick();
   },
+
   handleRequestClose: function() {
     this.setState({open: false});
   },
+
   render: function() {
     return (
       <span>

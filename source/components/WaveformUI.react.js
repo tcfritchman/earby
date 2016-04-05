@@ -1,5 +1,4 @@
 var React = require('react');
-//var SimpleSlider = require('./SimpleSlider.react');
 var PositionSlider = require('./PositionSlider.react');
 var RegionSliderLeft = require('./RegionSliderLeft.react');
 var RegionSliderRight = require('./RegionSliderRight.react');
@@ -31,27 +30,35 @@ var WaveformUI = React.createClass({
   componentDidMount: function() {
     this.props.onMount();
   },
+
   handlePositionSliderChange: function(e, value) {
     this.props.onPositionSliderChange(e, value);
   },
+
   handlePositionSliderDragStart: function() {
     this.props.onPositionSliderDragStart();
   },
+
   handlePositionSliderDragStop: function() {
     this.props.onPositionSliderDragStop();
   },
+
   handleRegionSliderLeftChange: function(e, value) {
     this.props.onRegionSliderLeftChange(e, value);
   },
+
   handleRegionSliderRightChange: function(e, value) {
     this.props.onRegionSliderRightChange(e, value);
   },
+
   handleRegionSliderDragStop: function() {
     this.props.onRegionSliderDragStop();
   },
+
   render: function() {
     var regionStart, regionEnd;
     var regionStyle = styles.regionSliderDiv;
+
     if (this.props.currentRegion) {
       regionStart = this.props.currentRegion.start;
       regionEnd   = this.props.currentRegion.end;
@@ -60,6 +67,7 @@ var WaveformUI = React.createClass({
       regionEnd   = 0.0;
       regionStyle = styles.regionSliderHidden;
     }
+
     return (
       <div style={styles.container}>
         <div style={styles.headerDiv}>

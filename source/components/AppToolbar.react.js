@@ -23,6 +23,7 @@ var AppToolbar = React.createClass({
       regionPaneOpen: false
     };
   },
+
   handleAddClick: function(event) {
     this.setState({
       addRegionOpen: true,
@@ -30,25 +31,31 @@ var AppToolbar = React.createClass({
     });
     this.props.onAddRegionClick();
   },
+
   handleShowRegionsPane: function(event) {
     this.setState({
       regionPaneOpen: true,
       anchorEl: event.currentTarget
     });
   },
+
   handleSetEndClick: function() {
     this.setState({addRegionOpen: false});
     this.props.onSetRegionEndClick();
   },
+
   handleRequestClose: function() {
     this.setState({addRegionOpen: false, regionPaneOpen: false});
   },
+
   handleRegionClick: function(region) {
     this.props.onRegionClick(region);
   },
+
   handleRegionDeleteClick: function(region) {
     this.props.onRegionDeleteClick(region);
   },
+
   render: function() {
     return (
       <Toolbar>
@@ -76,7 +83,10 @@ var AppToolbar = React.createClass({
               />
             </div>
           </Popover>
-          <IconButton touch={true} onTouchTap={this.handleShowRegionsPane}>
+          <IconButton
+            touch={true}
+            onTouchTap={this.handleShowRegionsPane}
+          >
             <ViewListIcon />
           </IconButton>
           <Popover

@@ -1,3 +1,9 @@
+/* SliderMixin.js **************************************************
+   Most of the logic for this slider interface is borrowed from
+   the material-ui slider component code
+   http://www.material-ui.com/#/components/slider
+*******************************************************************/
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -7,16 +13,17 @@ var SliderMixin = {
       this.setValue(nextProps.value);
     }
   },
+
   setValue: function(i) {
-    // calculate percentage
+    /* calculate percentage */
     var percent = (i - this.props.min) / (this.props.max - this.props.min);
     if (isNaN(percent)) percent = 0;
-    // update state
     this.setState({
       value: i,
       percent: percent,
     });
   },
+
   setPercent: function(percent, callback) {
     var value = this._alignValue(this._percentToValue(percent));
     var min = this.props.min;
@@ -26,15 +33,18 @@ var SliderMixin = {
       this.setState({value: value, percent: alignedPercent}, callback);
     }
   },
+
   _alignValue: function(val) {
     var step = this.props.step;
     var min = this.props.min;
     var alignValue = Math.round((val - min) / step) * step + min;
     return parseFloat(alignValue.toFixed(5));
   },
+
   _getTrackLeft: function() {
     return ReactDOM.findDOMNode(this.refs.track).getBoundingClientRect().left;
   },
+
   _dragHandler: function(e) {
     var _this = this;
     if (this._dragRunning) {
@@ -46,6 +56,7 @@ var SliderMixin = {
       _this._dragRunning = false;
     });
   },
+
   _dragEndHandler: function(e) {
     if (document) {
       document.removeEventListener('mousemove', this._dragHandler, false);
@@ -53,6 +64,7 @@ var SliderMixin = {
     }
     this._onDragStop(e);
   },
+
   _onMouseDown: function(e) {
     if (this.props.disabled) return;
     if (document) {
@@ -61,12 +73,15 @@ var SliderMixin = {
     }
     this._onDragStart(e);
   },
+
   _onMouseLeave: function() {
     this.setState({hovered: false});
   },
+
   _onMouseEnter: function() {
     this.setState({hovered: true});
   },
+
   _onDragStart: function(e) {
     var handleRect = ReactDOM.findDOMNode(this.refs.handle).getBoundingClientRect();
     this.setState({
@@ -76,6 +91,7 @@ var SliderMixin = {
     });
     if (this.props.onDragStart) this.props.onDragStart(e);
   },
+
   _onDragStop: function(e) {
     this.setState({
       dragging: false,
@@ -83,6 +99,7 @@ var SliderMixin = {
     });
     if (this.props.onDragStop) this.props.onDragStop(e);
   },
+
   _onDragUpdate: function(e, pos) {
     if (!this.state.dragging) return;
     if (!this.props.disabled) this._dragX(e, pos);

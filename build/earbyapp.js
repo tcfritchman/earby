@@ -36904,8 +36904,8 @@ var AppMainMenu = React.createClass({
 
   handleRequestChange: function (open) {
     (open ? this.props.setMenuOpen : this.props.setMenuClosed)();
-    console.log('requestchange');
   },
+
   render: function () {
     return React.createElement(
       'div',
@@ -36963,6 +36963,7 @@ var AppToolbar = React.createClass({
       regionPaneOpen: false
     };
   },
+
   handleAddClick: function (event) {
     this.setState({
       addRegionOpen: true,
@@ -36970,25 +36971,31 @@ var AppToolbar = React.createClass({
     });
     this.props.onAddRegionClick();
   },
+
   handleShowRegionsPane: function (event) {
     this.setState({
       regionPaneOpen: true,
       anchorEl: event.currentTarget
     });
   },
+
   handleSetEndClick: function () {
     this.setState({ addRegionOpen: false });
     this.props.onSetRegionEndClick();
   },
+
   handleRequestClose: function () {
     this.setState({ addRegionOpen: false, regionPaneOpen: false });
   },
+
   handleRegionClick: function (region) {
     this.props.onRegionClick(region);
   },
+
   handleRegionDeleteClick: function (region) {
     this.props.onRegionDeleteClick(region);
   },
+
   render: function () {
     return React.createElement(
       Toolbar,
@@ -37024,7 +37031,10 @@ var AppToolbar = React.createClass({
         ),
         React.createElement(
           IconButton,
-          { touch: true, onTouchTap: this.handleShowRegionsPane },
+          {
+            touch: true,
+            onTouchTap: this.handleShowRegionsPane
+          },
           React.createElement(ViewListIcon, null)
         ),
         React.createElement(
@@ -37056,7 +37066,6 @@ var Transport = require('./Transport.react');
 var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
 var AppMainMenu = require('./AppMainMenu.react');
-//var WaveSurfer = require('../wavesurfer');
 var ThemeManager = require('material-ui/lib/styles/theme-manager');
 var RawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
 var AppBar = require('material-ui/lib/app-bar');
@@ -37066,7 +37075,6 @@ var Application = React.createClass({
   displayName: 'Application',
 
 
-  //the key passed through context must be called "muiTheme"
   childContextTypes: {
     muiTheme: React.PropTypes.object
   },
@@ -37076,6 +37084,7 @@ var Application = React.createClass({
       muiTheme: ThemeManager.getMuiTheme(RawTheme)
     };
   },
+
   getInitialState: function () {
     return {
       menuOpen: false,
@@ -37092,6 +37101,7 @@ var Application = React.createClass({
       regions: []
     };
   },
+
   createWaveSurfer: function () {
     try {
       this.props.wavesurfer = WaveSurfer.create({
@@ -37113,7 +37123,9 @@ var Application = React.createClass({
     this.props.wavesurfer.load('example/getlucky.mp3');
   },
 
-  /* Wavesurfer event handlers */
+  /* Wavesurfer event handlers
+   ****************************/
+
   handleReady: function () {
     this.setState({
       loading: false,
@@ -37126,25 +37138,30 @@ var Application = React.createClass({
     });
     // TODO: enable the ui.
   },
+
   handleAudioprocess: function (time) {
     this.setState({
       currentTime: time
     });
   },
+
   handleLoading: function (progress) {
     this.setState({
       loading: true,
       loadProgress: progress
     });
   },
+
   handleSeek: function (progress) {
     this.setState({
       currentTime: this.props.wavesurfer.getCurrentTime()
     });
   },
+
   handleError: function (err) {
     console.log(err);
   },
+
   handlePlay: function () {
     this.setState({
       playing: true,
@@ -37152,12 +37169,14 @@ var Application = React.createClass({
       finished: false
     });
   },
+
   handlePause: function () {
     this.setState({
       playing: false,
       paused: true
     });
   },
+
   handleFinish: function () {
     this.setState({
       playing: false,
@@ -37167,18 +37186,24 @@ var Application = React.createClass({
     });
   },
 
-  /* Menu Handlers */
+  /* Menu Handlers
+  *********************/
+
   handleTapMenuButton: function () {
     (this.state.menuOpen ? this.closeMenu : this.openMenu)();
   },
+
   openMenu: function () {
     this.setState({ menuOpen: true });
   },
+
   closeMenu: function () {
     this.setState({ menuOpen: false });
   },
 
-  /* Transport Handlers */
+  /* Transport Handlers
+  ***********************/
+
   handlePlayClick: function () {
     if (this.state.playing) {
       this.props.wavesurfer.pause();
@@ -37186,50 +37211,59 @@ var Application = React.createClass({
       this.props.wavesurfer.play(this.state.currentTime);
     }
   },
+
   handleSkipBackClick: function () {
     this.props.wavesurfer.skipBackward();
   },
+
   handleSkipFwdClick: function () {
     this.props.wavesurfer.skipForward();
   },
+
   handlePositionSliderChange: function (e, value) {
     var time = value * this.state.duration;
     this.setState({ currentTime: time });
   },
+
   handlePositionSliderDragStart: function () {
     if (this.state.playing) {
-      /* unsubscribe pause event to 'trick' app into thinking it's still playing */
+      /* unsubscribe pause event to 'trick' app
+         into thinking it's still playing */
       this.props.wavesurfer.un('pause');
       this.props.wavesurfer.pause();
       this.props.wavesurfer.on('pause', this.handlePause);
     }
   },
+
   handlePositionSliderDragStop: function () {
-    //this.props.wavesurfer.seekTo(this.state.currentTime);
     if (this.state.playing) this.props.wavesurfer.play(this.state.currentTime);
   },
 
-  /* Region Control Handlers */
+  /* Region Control Handlers
+  ****************************/
+
   handleAddRegionClick: function () {
     var start = this.props.wavesurfer.getCurrentTime();
     var regionOptions = { start: start };
     var newRegion = this.props.wavesurfer.addRegion(regionOptions);
+
     newRegion.update({ data: { title: 'Region ' + newRegion.id } });
     this.setState({ currentRegion: newRegion });
     this.updateRegionState();
   },
+
   handleSetRegionEndClick: function () {
-    this.state.currentRegion.update({
-      end: this.props.wavesurfer.getCurrentTime()
-    });
+    this.state.currentRegion.update({ end: this.props.wavesurfer.getCurrentTime() });
     this.updateRegionState();
   },
+
   handleRegionClick: function (region) {
     this.setState({
       currentRegion: region
     });
     this.props.wavesurfer.play(region.start);
   },
+
   handleRegionDeleteClick: function (region) {
     if (region.id === this.state.currentRegion.id) {
       this.setState({ currentRegion: null });
@@ -37237,23 +37271,28 @@ var Application = React.createClass({
     region.remove();
     this.updateRegionState();
   },
+
   handleNextRegionClick: function () {
     var newRegion = this.cycleCurrentRegion(1);
     if (this.state.currentRegion) {
       this.props.wavesurfer.play(newRegion.start);
     }
   },
+
   handlePrevRegionClick: function () {
     var newRegion = this.cycleCurrentRegion(-1);
     if (this.state.currentRegion) {
       this.props.wavesurfer.play(newRegion.start);
     }
   },
+
   cycleCurrentRegion: function (val) {
     /* val must be 1 or -1 (to cycle forward or backward) */
     var numRegions = this.state.regions.length;
     if (numRegions === 0) return;
+
     var _this = this;
+
     var isCurrentRegion = function (region) {
       return region.id === _this.state.currentRegion.id;
     };
@@ -37268,6 +37307,7 @@ var Application = React.createClass({
     this.setState({ currentRegion: newRegion });
     return newRegion;
   },
+
   handleRegionSliderLeftChange: function (e, value) {
     var reg = this.state.currentRegion;
     if (!reg) return;
@@ -37278,6 +37318,7 @@ var Application = React.createClass({
     }
     reg.update(options);
   },
+
   handleRegionSliderRightChange: function (e, value) {
     var reg = this.state.currentRegion;
     if (!reg) return;
@@ -37288,9 +37329,11 @@ var Application = React.createClass({
     }
     reg.update(options);
   },
+
   handleRegionSliderDragStop: function () {
     this.updateRegionState();
   },
+
   updateRegionState: function () {
     var stateChange = {
       regions: _.sortBy(_.values(this.props.wavesurfer.regions.list), function (region) {
@@ -37348,9 +37391,7 @@ var Application = React.createClass({
 module.exports = Application;
 
 },{"./AppMainMenu.react":297,"./AppToolbar.react":298,"./Transport.react":306,"./WaveformUI.react":307,"material-ui/lib/app-bar":2,"material-ui/lib/styles/raw-themes/light-raw-theme":38,"material-ui/lib/styles/theme-manager":40,"material-ui/lib/toggle":63,"react":294,"underscore":295}],300:[function(require,module,exports){
-// don't need this file
 var React = require('react');
-//var ReactDOM = require('react-dom');
 var _ = require('underscore');
 var SliderMixin = require('./mixins/SliderMixin');
 var PositionSliderHandle = require('./PositionSliderHandle.react');
@@ -37453,6 +37494,7 @@ var PositionSliderHandle = React.createClass({
       height: 48,
       verticalAlign: 'middle'
    },
+
    render: function () {
       return React.createElement(
          'svg',
@@ -37663,7 +37705,6 @@ var RegionSliderRight = React.createClass(_.extend(SliderMixin, {
     var percent = this.state.percent;
     if (percent > 1) percent = 1;else if (percent < 0) percent = 0;
     styles.handle.left = percent * 100 + '%';
-
     return React.createElement(
       'div',
       { style: styles.root },
@@ -37683,7 +37724,6 @@ var RegionSliderRight = React.createClass(_.extend(SliderMixin, {
       )
     );
   }
-
 }));
 
 module.exports = RegionSliderRight;
@@ -37698,21 +37738,24 @@ var List = require('material-ui/lib/lists/list.js');
 var ListItem = require('material-ui/lib/lists/list-item.js');
 
 var styles = {
-  /* Override the ListItem styling to accomodate extra button */
   itemDiv: {
+    /* Override the ListItem styling to accomodate extra button */
     paddingRight: 80
   }
 };
 
+/* Wrapper for the ListItem component */
 var RegionItem = React.createClass({
   displayName: 'RegionItem',
 
   handleClick: function () {
     this.props.onRegionClick(this.props.region);
   },
+
   handleClickDelete: function () {
     this.props.onRegionDeleteClick(this.props.region);
   },
+
   render: function () {
     return React.createElement(
       ListItem,
@@ -37728,9 +37771,7 @@ var RegionItem = React.createClass({
           ),
           React.createElement(
             IconButton,
-            {
-              onTouchTap: this.handleClickDelete
-            },
+            { onTouchTap: this.handleClickDelete },
             React.createElement(DeleteIcon, null)
           )
         )
@@ -37744,15 +37785,18 @@ var RegionItem = React.createClass({
   }
 });
 
+/* List component containing the list of regions */
 var RegionsPane = React.createClass({
   displayName: 'RegionsPane',
 
   handleRegionClick: function (region) {
     this.props.onRegionClick(region);
   },
+
   handleRegionDeleteClick: function (region) {
     this.props.onRegionDeleteClick(region);
   },
+
   mapRegionsToItems: function (region) {
     return React.createElement(RegionItem, {
       region: region,
@@ -37760,6 +37804,7 @@ var RegionsPane = React.createClass({
       onRegionDeleteClick: this.handleRegionDeleteClick
     });
   },
+
   render: function () {
     return React.createElement(
       List,
@@ -37790,6 +37835,7 @@ var SetRegionControls = React.createClass({
       open: false
     };
   },
+
   handleAddClick: function (event) {
     this.setState({
       open: true,
@@ -37797,13 +37843,16 @@ var SetRegionControls = React.createClass({
     });
     this.props.onAddRegionClick();
   },
+
   handleSetEndClick: function () {
     this.setState({ open: false });
     this.props.onSetRegionEndClick();
   },
+
   handleRequestClose: function () {
     this.setState({ open: false });
   },
+
   render: function () {
     return React.createElement(
       'span',
@@ -37886,7 +37935,8 @@ var Transport = React.createClass({
         { onClick: this.props.onSkipBackClick },
         React.createElement(AvFastRewind, null)
       ),
-      React.createElement(PlayButton, { onClick: this.props.onPlayClick,
+      React.createElement(PlayButton, {
+        onClick: this.props.onPlayClick,
         playing: this.props.playing
       }),
       React.createElement(
@@ -37912,7 +37962,6 @@ module.exports = Transport;
 
 },{"material-ui/lib/icon-button":10,"material-ui/lib/svg-icons/av/fast-forward":51,"material-ui/lib/svg-icons/av/fast-rewind":52,"material-ui/lib/svg-icons/av/loop":53,"material-ui/lib/svg-icons/av/pause":54,"material-ui/lib/svg-icons/av/play-arrow":55,"material-ui/lib/svg-icons/av/skip-next":56,"material-ui/lib/svg-icons/av/skip-previous":57,"react":294}],307:[function(require,module,exports){
 var React = require('react');
-//var SimpleSlider = require('./SimpleSlider.react');
 var PositionSlider = require('./PositionSlider.react');
 var RegionSliderLeft = require('./RegionSliderLeft.react');
 var RegionSliderRight = require('./RegionSliderRight.react');
@@ -37944,27 +37993,35 @@ var WaveformUI = React.createClass({
   componentDidMount: function () {
     this.props.onMount();
   },
+
   handlePositionSliderChange: function (e, value) {
     this.props.onPositionSliderChange(e, value);
   },
+
   handlePositionSliderDragStart: function () {
     this.props.onPositionSliderDragStart();
   },
+
   handlePositionSliderDragStop: function () {
     this.props.onPositionSliderDragStop();
   },
+
   handleRegionSliderLeftChange: function (e, value) {
     this.props.onRegionSliderLeftChange(e, value);
   },
+
   handleRegionSliderRightChange: function (e, value) {
     this.props.onRegionSliderRightChange(e, value);
   },
+
   handleRegionSliderDragStop: function () {
     this.props.onRegionSliderDragStop();
   },
+
   render: function () {
     var regionStart, regionEnd;
     var regionStyle = styles.regionSliderDiv;
+
     if (this.props.currentRegion) {
       regionStart = this.props.currentRegion.start;
       regionEnd = this.props.currentRegion.end;
@@ -37973,6 +38030,7 @@ var WaveformUI = React.createClass({
       regionEnd = 0.0;
       regionStyle = styles.regionSliderHidden;
     }
+
     return React.createElement(
       'div',
       { style: styles.container },
@@ -38011,6 +38069,12 @@ var WaveformUI = React.createClass({
 module.exports = WaveformUI;
 
 },{"./PositionSlider.react":300,"./RegionSliderLeft.react":302,"./RegionSliderRight.react":303,"react":294}],308:[function(require,module,exports){
+/* SliderMixin.js **************************************************
+   Most of the logic for this slider interface is borrowed from
+   the material-ui slider component code
+   http://www.material-ui.com/#/components/slider
+*******************************************************************/
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -38020,16 +38084,17 @@ var SliderMixin = {
       this.setValue(nextProps.value);
     }
   },
+
   setValue: function (i) {
-    // calculate percentage
+    /* calculate percentage */
     var percent = (i - this.props.min) / (this.props.max - this.props.min);
     if (isNaN(percent)) percent = 0;
-    // update state
     this.setState({
       value: i,
       percent: percent
     });
   },
+
   setPercent: function (percent, callback) {
     var value = this._alignValue(this._percentToValue(percent));
     var min = this.props.min;
@@ -38039,15 +38104,18 @@ var SliderMixin = {
       this.setState({ value: value, percent: alignedPercent }, callback);
     }
   },
+
   _alignValue: function (val) {
     var step = this.props.step;
     var min = this.props.min;
     var alignValue = Math.round((val - min) / step) * step + min;
     return parseFloat(alignValue.toFixed(5));
   },
+
   _getTrackLeft: function () {
     return ReactDOM.findDOMNode(this.refs.track).getBoundingClientRect().left;
   },
+
   _dragHandler: function (e) {
     var _this = this;
     if (this._dragRunning) {
@@ -38059,6 +38127,7 @@ var SliderMixin = {
       _this._dragRunning = false;
     });
   },
+
   _dragEndHandler: function (e) {
     if (document) {
       document.removeEventListener('mousemove', this._dragHandler, false);
@@ -38066,6 +38135,7 @@ var SliderMixin = {
     }
     this._onDragStop(e);
   },
+
   _onMouseDown: function (e) {
     if (this.props.disabled) return;
     if (document) {
@@ -38074,12 +38144,15 @@ var SliderMixin = {
     }
     this._onDragStart(e);
   },
+
   _onMouseLeave: function () {
     this.setState({ hovered: false });
   },
+
   _onMouseEnter: function () {
     this.setState({ hovered: true });
   },
+
   _onDragStart: function (e) {
     var handleRect = ReactDOM.findDOMNode(this.refs.handle).getBoundingClientRect();
     this.setState({
@@ -38089,6 +38162,7 @@ var SliderMixin = {
     });
     if (this.props.onDragStart) this.props.onDragStart(e);
   },
+
   _onDragStop: function (e) {
     this.setState({
       dragging: false,
@@ -38096,6 +38170,7 @@ var SliderMixin = {
     });
     if (this.props.onDragStop) this.props.onDragStop(e);
   },
+
   _onDragUpdate: function (e, pos) {
     if (!this.state.dragging) return;
     if (!this.props.disabled) this._dragX(e, pos);

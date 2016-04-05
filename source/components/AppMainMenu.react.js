@@ -5,8 +5,8 @@ var MenuItem = require('material-ui/lib/menus/menu-item');
 var AppMainMenu = React.createClass({
   handleRequestChange: function(open) {
     (open ? this.props.setMenuOpen : this.props.setMenuClosed)();
-    console.log('requestchange');
   },
+
   render: function() {
     return (
       <div>
