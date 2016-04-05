@@ -37220,6 +37220,13 @@ var Application = React.createClass({
     this.props.wavesurfer.skipForward();
   },
 
+  handleLoopClick: function () {
+    if (this.state.currentRegion) {
+      this.state.currentRegion.update({ loop: !this.state.looping });
+      this.setState({ looping: !this.state.looping });
+    }
+  },
+
   handlePositionSliderChange: function (e, value) {
     var time = value * this.state.duration;
     this.setState({ currentTime: time });
@@ -37265,7 +37272,7 @@ var Application = React.createClass({
   },
 
   handleRegionDeleteClick: function (region) {
-    if (region.id === this.state.currentRegion.id) {
+    if (this.state.currentRegion && region.id === this.state.currentRegion.id) {
       this.setState({ currentRegion: null });
     }
     region.remove();
@@ -37379,6 +37386,7 @@ var Application = React.createClass({
       React.createElement(Transport, {
         playing: this.state.playing,
         onPlayClick: this.handlePlayClick,
+        onLoopClick: this.handleLoopClick,
         onSkipFwdClick: this.handleSkipFwdClick,
         onSkipBackClick: this.handleSkipBackClick,
         onPrevRegionClick: this.handlePrevRegionClick,
@@ -37941,7 +37949,7 @@ var Transport = React.createClass({
       }),
       React.createElement(
         IconButton,
-        null,
+        { onClick: this.props.onLoopClick },
         React.createElement(AvLoop, null)
       ),
       React.createElement(

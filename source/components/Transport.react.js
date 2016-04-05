@@ -40,7 +40,7 @@ var Transport = React.createClass({
           onClick={this.props.onPlayClick}
           playing={this.props.playing}
         />
-        <IconButton>
+        <IconButton onClick={this.props.onLoopClick}>
           <AvLoop />
         </IconButton>
         <IconButton onClick={this.props.onSkipFwdClick}>
