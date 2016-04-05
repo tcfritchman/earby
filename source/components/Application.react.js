@@ -201,7 +201,9 @@ var Application = React.createClass({
   },
   updateRegionState: function() {
     var stateChange = {
-      regions: _.values(this.props.wavesurfer.regions.list),
+      regions:_.sortBy( _.values(this.props.wavesurfer.regions.list), function(region){
+        return region.start;
+      })
     };
     this.setState(stateChange);
   },
