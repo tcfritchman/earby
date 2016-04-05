@@ -36986,6 +36986,9 @@ var AppToolbar = React.createClass({
   handleRegionClick: function (region) {
     this.props.onRegionClick(region);
   },
+  handleRegionDeleteClick: function (region) {
+    this.props.onRegionDeleteClick(region);
+  },
   render: function () {
     return React.createElement(
       Toolbar,
@@ -37035,7 +37038,8 @@ var AppToolbar = React.createClass({
           },
           React.createElement(RegionsPane, {
             regions: this.props.regions,
-            onRegionClick: this.handleRegionClick
+            onRegionClick: this.handleRegionClick,
+            onRegionDeleteClick: this.handleRegionDeleteClick
           })
         )
       )
@@ -37225,6 +37229,13 @@ var Application = React.createClass({
       currentRegion: region
     });
   },
+  handleRegionDeleteClick: function (region) {
+    if (region.id === this.state.currentRegion.id) {
+      this.setState({ currentRegion: null });
+    }
+    region.remove();
+    this.updateRegionState();
+  },
   handleRegionSliderLeftChange: function (e, value) {
     var reg = this.state.currentRegion;
     if (!reg) return;
@@ -37273,6 +37284,7 @@ var Application = React.createClass({
         onAddRegionClick: this.handleAddRegionClick,
         onSetRegionEndClick: this.handleSetRegionEndClick,
         onRegionClick: this.handleRegionClick,
+        onRegionDeleteClick: this.handleRegionDeleteClick,
         regions: this.state.regions
       }),
       React.createElement(WaveformUI, {
@@ -37664,6 +37676,9 @@ var RegionItem = React.createClass({
   handleClick: function () {
     this.props.onRegionClick(this.props.region);
   },
+  handleClickDelete: function () {
+    this.props.onRegionDeleteClick(this.props.region);
+  },
   render: function () {
     return React.createElement(
       ListItem,
@@ -37679,7 +37694,9 @@ var RegionItem = React.createClass({
           ),
           React.createElement(
             IconButton,
-            null,
+            {
+              onTouchTap: this.handleClickDelete
+            },
             React.createElement(DeleteIcon, null)
           )
         )
@@ -37699,10 +37716,14 @@ var RegionsPane = React.createClass({
   handleRegionClick: function (region) {
     this.props.onRegionClick(region);
   },
+  handleRegionDeleteClick: function (region) {
+    this.props.onRegionDeleteClick(region);
+  },
   mapRegionsToItems: function (region) {
     return React.createElement(RegionItem, {
       region: region,
-      onRegionClick: this.handleRegionClick
+      onRegionClick: this.handleRegionClick,
+      onRegionDeleteClick: this.handleRegionDeleteClick
     });
   },
   render: function () {

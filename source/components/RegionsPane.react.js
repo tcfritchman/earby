@@ -17,6 +17,9 @@ var RegionItem = React.createClass({
   handleClick: function() {
     this.props.onRegionClick(this.props.region);
   },
+  handleClickDelete: function() {
+    this.props.onRegionDeleteClick(this.props.region);
+  },
   render: function() {
     return (
       <ListItem
@@ -24,7 +27,11 @@ var RegionItem = React.createClass({
         rightIconButton={
           <span>
             <IconButton><EditIcon /></IconButton>
-            <IconButton><DeleteIcon /></IconButton>
+            <IconButton
+              onTouchTap={this.handleClickDelete}
+            >
+              <DeleteIcon />
+            </IconButton>
           </span>
         }
       >
@@ -40,10 +47,14 @@ var RegionsPane = React.createClass({
   handleRegionClick: function(region) {
     this.props.onRegionClick(region);
   },
+  handleRegionDeleteClick: function(region) {
+    this.props.onRegionDeleteClick(region);
+  },
   mapRegionsToItems: function(region) {
     return <RegionItem
       region={region}
       onRegionClick={this.handleRegionClick}
+      onRegionDeleteClick={this.handleRegionDeleteClick}
     />;
   },
   render: function() {

@@ -46,6 +46,9 @@ var AppToolbar = React.createClass({
   handleRegionClick: function(region) {
     this.props.onRegionClick(region);
   },
+  handleRegionDeleteClick: function(region) {
+    this.props.onRegionDeleteClick(region);
+  },
   render: function() {
     return (
       <Toolbar>
@@ -86,6 +89,7 @@ var AppToolbar = React.createClass({
             <RegionsPane
               regions={this.props.regions}
               onRegionClick={this.handleRegionClick}
+              onRegionDeleteClick={this.handleRegionDeleteClick}
             />
           </Popover>
         </ToolbarGroup>

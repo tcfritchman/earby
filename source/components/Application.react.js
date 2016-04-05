@@ -176,6 +176,13 @@ var Application = React.createClass({
       currentRegion: region
     });
   },
+  handleRegionDeleteClick: function(region) {
+    if (region.id === this.state.currentRegion.id) {
+      this.setState({currentRegion: null});
+    }
+    region.remove();
+    this.updateRegionState();
+  },
   handleRegionSliderLeftChange: function(e, value) {
     var reg = this.state.currentRegion;
     if (!reg) return;
@@ -223,6 +230,7 @@ var Application = React.createClass({
           onAddRegionClick={this.handleAddRegionClick}
           onSetRegionEndClick={this.handleSetRegionEndClick}
           onRegionClick={this.handleRegionClick}
+          onRegionDeleteClick={this.handleRegionDeleteClick}
           regions={this.state.regions}
         />
         <WaveformUI
