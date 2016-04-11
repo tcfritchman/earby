@@ -1,5 +1,7 @@
 # Earby #
 
+_NOTE - Currently redeveloping the UI in React under the branch [react-ui](https://github.com/tcfritchman/earby/tree/react-ui)_
+
 A music player web app for musicians who learn songs by ear.
 
 [Live Demo](http://www.earby.tcfritchman.com)
