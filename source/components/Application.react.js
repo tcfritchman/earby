@@ -1,9 +1,9 @@
 var React = require('react');
 var _ = require('underscore');
-var Transport = require('./Transport.react');
 var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
 var AppMainMenu = require('./AppMainMenu.react');
+var EditRegionDialog = require('./EditRegionDialog.react');
 var ThemeManager = require('material-ui/lib/styles/theme-manager');
 var RawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
 var AppBar = require('material-ui/lib/app-bar');
@@ -24,6 +24,8 @@ var Application = React.createClass({
   getInitialState: function() {
     return {
       menuOpen: false,
+      editRegionDialogOpen: false,
+      editingRegion: null,
       loading: false,
       loadProgress: 0.0,
       duration: 0.0,
@@ -76,9 +78,14 @@ var Application = React.createClass({
   },
 
   handleAudioprocess: function(time) {
-    this.setState({
-      currentTime: time
-    });
+    /* Update frequency of the currentTime state is limited for improved
+    performance. For precise time values always reference the wavesurfer
+    object directly. */
+    if (Math.abs(time - this.state.currentTime) > 0.1) {
+      this.setState({
+        currentTime: time
+      });
+    }
   },
 
   handleLoading: function(progress) {
@@ -89,6 +96,7 @@ var Application = React.createClass({
   },
 
   handleSeek: function(progress) {
+    console.log('seek');
     this.setState({
       currentTime: this.props.wavesurfer.getCurrentTime()
     });
@@ -122,7 +130,7 @@ var Application = React.createClass({
       });
   },
 
-  /* Menu Handlers
+  /* Main Menu Handlers
   *********************/
 
   handleTapMenuButton: function() {
@@ -289,6 +297,22 @@ var Application = React.createClass({
     this.setState(stateChange);
   },
 
+  /* Edit Region Dialog Handlers
+  ****************************/
+  handleRegionEditClick: function(region) {
+    /* Use callback to ensure region gets set before dialog opens */
+    this.setState({editingRegion: region}, this.openEditRegionDialog);
+  },
+
+  openEditRegionDialog: function() {
+    this.setState({editRegionDialogOpen: true});
+  },
+
+  closeEditRegionDialog: function() {
+    this.setState({editRegionDialogOpen: false});
+  },
+
+
   render: function() {
     return (
       <div>
@@ -304,8 +328,16 @@ var Application = React.createClass({
           onAddRegionClick={this.handleAddRegionClick}
           onSetRegionEndClick={this.handleSetRegionEndClick}
           onRegionClick={this.handleRegionClick}
+          onRegionEditClick={this.handleRegionEditClick}
           onRegionDeleteClick={this.handleRegionDeleteClick}
           regions={this.state.regions}
+          playing={this.state.playing}
+          onPlayClick={this.handlePlayClick}
+          onLoopClick={this.handleLoopClick}
+          onSkipFwdClick={this.handleSkipFwdClick}
+          onSkipBackClick={this.handleSkipBackClick}
+          onPrevRegionClick={this.handlePrevRegionClick}
+          onNextRegionClick={this.handleNextRegionClick}
         />
         <WaveformUI
           onMount={this.createWaveSurfer}
@@ -321,14 +353,11 @@ var Application = React.createClass({
           onRegionSliderRightChange={this.handleRegionSliderRightChange}
           onRegionSliderDragStop={this.handleRegionSliderDragStop}
         />
-        <Transport
-          playing={this.state.playing}
-          onPlayClick={this.handlePlayClick}
-          onLoopClick={this.handleLoopClick}
-          onSkipFwdClick={this.handleSkipFwdClick}
-          onSkipBackClick={this.handleSkipBackClick}
-          onPrevRegionClick={this.handlePrevRegionClick}
-          onNextRegionClick={this.handleNextRegionClick}
+        <EditRegionDialog
+          open={this.state.editRegionDialogOpen}
+          onRequestClose={this.closeEditRegionDialog}
+          region={this.state.editingRegion}
+          duration={this.state.duration}
         />
       </div>
     );

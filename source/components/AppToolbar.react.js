@@ -1,6 +1,7 @@
 var React = require('react');
 var SetRegionControls = require('./SetRegionControls.react');
 var RegionsPane = require('./RegionsPane.react');
+var Transport = require('./Transport.react');
 var Toolbar = require('material-ui/lib/toolbar/toolbar');
 var ToolbarGroup = require ('material-ui/lib/toolbar/toolbar-group');
 var ToolbarSeparator = require('material-ui/lib/toolbar/toolbar-separator');
@@ -50,16 +51,32 @@ var AppToolbar = React.createClass({
 
   handleRegionClick: function(region) {
     this.props.onRegionClick(region);
+    this.setState({regionPaneOpen: false});
+  },
+
+  handleRegionEditClick: function(region) {
+    this.props.onRegionEditClick(region);
+    this.setState({regionPaneOpen: false});
   },
 
   handleRegionDeleteClick: function(region) {
     this.props.onRegionDeleteClick(region);
+    this.setState({regionPaneOpen: false});
   },
 
   render: function() {
     return (
       <Toolbar>
         <ToolbarGroup firstChild={true} float="left">
+          <Transport
+            playing={this.props.playing}
+            onPlayClick={this.props.onPlayClick}
+            onLoopClick={this.props.onLoopClick}
+            onSkipFwdClick={this.props.onSkipFwdClick}
+            onSkipBackClick={this.props.onSkipBackClick}
+            onPrevRegionClick={this.props.onPrevRegionClick}
+            onNextRegionClick={this.props.onNextRegionClick}
+          />
         </ToolbarGroup>
         <ToolbarGroup float="right">
           <ToolbarSeparator />
@@ -99,6 +116,7 @@ var AppToolbar = React.createClass({
             <RegionsPane
               regions={this.props.regions}
               onRegionClick={this.handleRegionClick}
+              onRegionEditClick={this.handleRegionEditClick}
               onRegionDeleteClick={this.handleRegionDeleteClick}
             />
           </Popover>

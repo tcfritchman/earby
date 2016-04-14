@@ -15,24 +15,28 @@ var styles = {
 
 /* Wrapper for the ListItem component */
 var RegionItem = React.createClass({
-  handleClick: function() {
+  handleRegionClick: function() {
     this.props.onRegionClick(this.props.region);
   },
 
-  handleClickDelete: function() {
+  handleRegionEditClick: function() {
+    this.props.onRegionEditClick(this.props.region);
+  },
+
+  handleRegionDeleteClick: function() {
     this.props.onRegionDeleteClick(this.props.region);
   },
 
   render: function() {
     return (
       <ListItem
-        onTouchTap={this.handleClick}
+        onTouchTap={this.handleRegionClick}
         rightIconButton={
           <span>
-            <IconButton>
+            <IconButton onTouchTap={this.handleRegionEditClick}>
               <EditIcon />
             </IconButton>
-            <IconButton onTouchTap={this.handleClickDelete}>
+            <IconButton onTouchTap={this.handleRegionDeleteClick}>
               <DeleteIcon />
             </IconButton>
           </span>
@@ -52,6 +56,10 @@ var RegionsPane = React.createClass({
     this.props.onRegionClick(region);
   },
 
+  handleRegionEditClick: function(region) {
+    this.props.onRegionEditClick(region);
+  },
+
   handleRegionDeleteClick: function(region) {
     this.props.onRegionDeleteClick(region);
   },
@@ -60,6 +68,7 @@ var RegionsPane = React.createClass({
     return <RegionItem
       region={region}
       onRegionClick={this.handleRegionClick}
+      onRegionEditClick={this.handleRegionEditClick}
       onRegionDeleteClick={this.handleRegionDeleteClick}
     />;
   },
