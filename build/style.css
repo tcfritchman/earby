@@ -11,3 +11,28 @@ body {
   font-size: 15px;
   line-height: 24px;
 }
+
+#root {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row;
+  flex-flow: row;
+}
+
+#main-view {
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  -webkit-order: 0;
+  order: 0;
+}
+
+#sidebar {
+  height: 100%;
+  -webkit-flex: 0 0 200px;
+  flex: 0 0 200px;
+  -webkit-order: 1;
+  order: 1;
+}

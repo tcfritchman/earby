@@ -1,5 +1,4 @@
 var React = require('react');
-var SetRegionControls = require('./SetRegionControls.react');
 var RegionsPane = require('./RegionsPane.react');
 var Transport = require('./Transport.react');
 var Toolbar = require('material-ui/lib/toolbar/toolbar');

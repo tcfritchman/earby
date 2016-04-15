@@ -8,6 +8,7 @@ var ThemeManager = require('material-ui/lib/styles/theme-manager');
 var RawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
 var AppBar = require('material-ui/lib/app-bar');
 var Toggle = require('material-ui/lib/toggle');
+var AppSidebar = require('./AppSidebar.react');
 
 var Application = React.createClass({
 
@@ -324,41 +325,59 @@ var Application = React.createClass({
           setMenuOpen={this.openMenu}
           setMenuClosed={this.closeMenu}
         />
-        <AppToolbar
+      <div id="root">
+        <div id="main-view">
+          {/*
+          <AppToolbar
+            onAddRegionClick={this.handleAddRegionClick}
+            onSetRegionEndClick={this.handleSetRegionEndClick}
+            onRegionClick={this.handleRegionClick}
+            onRegionEditClick={this.handleRegionEditClick}
+            onRegionDeleteClick={this.handleRegionDeleteClick}
+            regions={this.state.regions}
+            playing={this.state.playing}
+            onPlayClick={this.handlePlayClick}
+            onLoopClick={this.handleLoopClick}
+            onSkipFwdClick={this.handleSkipFwdClick}
+            onSkipBackClick={this.handleSkipBackClick}
+            onPrevRegionClick={this.handlePrevRegionClick}
+            onNextRegionClick={this.handleNextRegionClick}
+          />
+          */}
+          <WaveformUI
+            onMount={this.createWaveSurfer}
+            loading={this.state.loading}
+            loadProgress={this.state.loadProgress}
+            duration={this.state.duration}
+            currentTime={this.state.currentTime}
+            currentRegion={this.state.currentRegion}
+            onPositionSliderChange={this.handlePositionSliderChange}
+            onPositionSliderDragStart={this.handlePositionSliderDragStart}
+            onPositionSliderDragStop={this.handlePositionSliderDragStop}
+            onRegionSliderLeftChange={this.handleRegionSliderLeftChange}
+            onRegionSliderRightChange={this.handleRegionSliderRightChange}
+            onRegionSliderDragStop={this.handleRegionSliderDragStop}
+          />
+          <EditRegionDialog
+            open={this.state.editRegionDialogOpen}
+            onRequestClose={this.closeEditRegionDialog}
+            region={this.state.editingRegion}
+            duration={this.state.duration}
+          />
+        </div>
+        <AppSidebar id="sidebar"
+          currentTime={this.state.currentTime}
+          duration={this.state.duration}
+          title={"Get Lucky"}
+          playing={this.state.playing}
           onAddRegionClick={this.handleAddRegionClick}
           onSetRegionEndClick={this.handleSetRegionEndClick}
-          onRegionClick={this.handleRegionClick}
-          onRegionEditClick={this.handleRegionEditClick}
-          onRegionDeleteClick={this.handleRegionDeleteClick}
-          regions={this.state.regions}
-          playing={this.state.playing}
           onPlayClick={this.handlePlayClick}
           onLoopClick={this.handleLoopClick}
-          onSkipFwdClick={this.handleSkipFwdClick}
-          onSkipBackClick={this.handleSkipBackClick}
           onPrevRegionClick={this.handlePrevRegionClick}
           onNextRegionClick={this.handleNextRegionClick}
         />
-        <WaveformUI
-          onMount={this.createWaveSurfer}
-          loading={this.state.loading}
-          loadProgress={this.state.loadProgress}
-          duration={this.state.duration}
-          currentTime={this.state.currentTime}
-          currentRegion={this.state.currentRegion}
-          onPositionSliderChange={this.handlePositionSliderChange}
-          onPositionSliderDragStart={this.handlePositionSliderDragStart}
-          onPositionSliderDragStop={this.handlePositionSliderDragStop}
-          onRegionSliderLeftChange={this.handleRegionSliderLeftChange}
-          onRegionSliderRightChange={this.handleRegionSliderRightChange}
-          onRegionSliderDragStop={this.handleRegionSliderDragStop}
-        />
-        <EditRegionDialog
-          open={this.state.editRegionDialogOpen}
-          onRequestClose={this.closeEditRegionDialog}
-          region={this.state.editingRegion}
-          duration={this.state.duration}
-        />
+    </div>
       </div>
     );
   }
