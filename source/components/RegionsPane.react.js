@@ -2,16 +2,29 @@ var React = require('react');
 var EditIcon = require('material-ui/lib/svg-icons/editor/mode-edit');
 var DeleteIcon = require('material-ui/lib/svg-icons/action/delete');
 var IconButton = require('material-ui/lib/icon-button');
+var IconMenu = require('material-ui/lib/menus/icon-menu');
+var MenuItem = require('material-ui/lib/menus/menu-item');
+var MoreVertIcon = require('material-ui/lib/svg-icons/navigation/more-vert');
 var FlatButton = require('material-ui/lib/flat-button');
 var List = require('material-ui/lib/lists/list.js');
 var ListItem = require('material-ui/lib/lists/list-item.js');
+var MSM = require('../utils/MSM');
 
 var styles = {
-  itemDiv: {
-  /* Override the ListItem styling to accomodate extra button */
-    paddingRight: 80
-  }
+  listItem: {
+    width: '200px',
+  },
 };
+
+var iconButtonElement = (
+  <IconButton
+    touch={true}
+    tooltip="more"
+    tooltipPosition="bottom-left"
+  >
+    <MoreVertIcon />
+  </IconButton>
+);
 
 /* Wrapper for the ListItem component */
 var RegionItem = React.createClass({
@@ -27,25 +40,40 @@ var RegionItem = React.createClass({
     this.props.onRegionDeleteClick(this.props.region);
   },
 
+  formatTitleText: function(region) {
+    var startMSM = new MSM(region.start);
+    var endMSM = new MSM(region.end);
+    var startStr = startMSM.toString().split(':');
+    var endStr = endMSM.toString().split(':');
+    startStr = startStr[0] + ':' + startStr[1];
+    endStr = endStr[0] + ':' + endStr[1];
+    return startStr + ' - ' + endStr;
+  },
+
   render: function() {
     return (
       <ListItem
+        style={styles.listItem}
+        primaryText={this.formatTitleText(this.props.region)}
+        secondaryText={this.props.region.data.title}
         onTouchTap={this.handleRegionClick}
         rightIconButton={
-          <span>
-            <IconButton onTouchTap={this.handleRegionEditClick}>
-              <EditIcon />
-            </IconButton>
-            <IconButton onTouchTap={this.handleRegionDeleteClick}>
-              <DeleteIcon />
-            </IconButton>
-          </span>
+          <IconMenu iconButtonElement={iconButtonElement}>
+            <MenuItem
+              onTouchTap={this.handleRegionEditClick}
+              leftIcon={<EditIcon />}
+            >
+              Edit
+            </MenuItem>
+            <MenuItem
+              onTouchTap={this.handleRegionDeleteClick}
+              leftIcon={<DeleteIcon />}
+            >
+              Delete
+            </MenuItem>
+          </IconMenu>
         }
-      >
-        <div style={styles.itemDiv}>
-          {this.props.region.data.title}
-        </div>
-      </ListItem>
+      />
     );
   }
 });

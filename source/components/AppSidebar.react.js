@@ -1,9 +1,11 @@
 var React = require('react');
 var Transport = require('./Transport.react');
+var RegionsPane = require('./RegionsPane.react');
 var IconButton = require('material-ui/lib/icon-button');
 var ViewListIcon = require('material-ui/lib/svg-icons/action/view-list');
 var RaisedButton = require('material-ui/lib/raised-button');
 var Popover = require('material-ui/lib/popover/popover');
+var Divider = require('material-ui/lib/divider');
 var MSM = require('../utils/MSM');
 
 var AppSidebar = React.createClass({
@@ -14,7 +16,7 @@ var AppSidebar = React.createClass({
       textAlign: 'center'
     },
     timeText: {
-      fontSize: 'x-large',
+      fontSize: 'xx-large',
       textAlign: 'center',
     },
     totalTimeText: {
@@ -35,6 +37,7 @@ var AppSidebar = React.createClass({
     },
     regionButton: {
       display: 'inline-block',
+      padding: 20
     }
   },
 
@@ -55,6 +58,21 @@ var AppSidebar = React.createClass({
   handleSetEndClick: function() {
     this.setState({addRegionOpen: false});
     this.props.onSetRegionEndClick();
+  },
+
+  handleRegionClick: function(region) {
+    this.props.onRegionClick(region);
+    this.setState({regionPaneOpen: false});
+  },
+
+  handleRegionEditClick: function(region) {
+    this.props.onRegionEditClick(region);
+    this.setState({regionPaneOpen: false});
+  },
+
+  handleRegionDeleteClick: function(region) {
+    this.props.onRegionDeleteClick(region);
+    this.setState({regionPaneOpen: false});
   },
 
   handleRequestClose: function() {
@@ -86,6 +104,7 @@ var AppSidebar = React.createClass({
             onNextRegionClick={this.props.onNextRegionClick}
           />
         </div>
+        <Divider />
         <div style={this.styles.regionButton} >
           <RaisedButton
             label="Add Region"
@@ -108,6 +127,12 @@ var AppSidebar = React.createClass({
             />
           </div>
         </Popover>
+        <RegionsPane
+          regions={this.props.regions}
+          onRegionClick={this.handleRegionClick}
+          onRegionEditClick={this.handleRegionEditClick}
+          onRegionDeleteClick={this.handleRegionDeleteClick}
+        />
       </div>
     );
   }

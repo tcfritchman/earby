@@ -82,7 +82,7 @@ var Application = React.createClass({
     /* Update frequency of the currentTime state is limited for improved
     performance. For precise time values always reference the wavesurfer
     object directly. */
-    if (Math.abs(time - this.state.currentTime) > 0.1) {
+    if (Math.abs(time - this.state.currentTime) > 0.05) {
       this.setState({
         currentTime: time
       });
@@ -370,8 +370,12 @@ var Application = React.createClass({
           duration={this.state.duration}
           title={"Get Lucky"}
           playing={this.state.playing}
+          regions={this.state.regions}
           onAddRegionClick={this.handleAddRegionClick}
           onSetRegionEndClick={this.handleSetRegionEndClick}
+          onRegionClick={this.handleRegionClick}
+          onRegionEditClick={this.handleRegionEditClick}
+          onRegionDeleteClick={this.handleRegionDeleteClick}
           onPlayClick={this.handlePlayClick}
           onLoopClick={this.handleLoopClick}
           onPrevRegionClick={this.handlePrevRegionClick}
