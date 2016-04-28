@@ -36,9 +36,15 @@ var Application = React.createClass({
       finished: false,
       looping: false,
       volume: 1.0,
+      slow: false,
+      slowRate: 0.75,
       currentRegion: null,
       regions: []
     };
+  },
+
+  componentWillMount: function() {
+
   },
 
   createWaveSurfer: function() {
@@ -170,6 +176,10 @@ var Application = React.createClass({
       this.state.currentRegion.update({loop: !this.state.looping});
       this.setState({looping: !this.state.looping});
     }
+  },
+
+  handleSlowClick: function() {
+
   },
 
   handlePositionSliderChange: function(e, value) {
@@ -380,6 +390,7 @@ var Application = React.createClass({
           onLoopClick={this.handleLoopClick}
           onPrevRegionClick={this.handlePrevRegionClick}
           onNextRegionClick={this.handleNextRegionClick}
+          onSlowClick={this.handleSlowClick}
         />
     </div>
       </div>
