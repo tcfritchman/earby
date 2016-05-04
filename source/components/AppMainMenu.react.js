@@ -16,8 +16,7 @@ var AppMainMenu = React.createClass({
           open={this.props.open}
           onRequestChange = {this.handleRequestChange}
         >
-          <MenuItem onTouchTap={this.props.setMenuClosed}>Menu Item</MenuItem>
-          <MenuItem onTouchTap={this.props.setMenuClosed}>Menu Item 2</MenuItem>
+          <MenuItem onTouchTap={this.props.onLoadFileClick}>Load File</MenuItem>
         </LeftNav>
       </div>
     );

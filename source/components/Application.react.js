@@ -9,6 +9,7 @@ var RawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
 var AppBar = require('material-ui/lib/app-bar');
 var Toggle = require('material-ui/lib/toggle');
 var AppSidebar = require('./AppSidebar.react');
+var FilePickerDialog = require('./FilePickerDialog.react');
 
 var Application = React.createClass({
 
@@ -26,6 +27,7 @@ var Application = React.createClass({
     return {
       menuOpen: false,
       editRegionDialogOpen: false,
+      filePickerDialogOpen: false,
       editingRegion: null,
       loading: false,
       loadProgress: 0.0,
@@ -150,6 +152,17 @@ var Application = React.createClass({
 
   closeMenu: function() {
     this.setState({menuOpen: false});
+  },
+
+  handleLoadFileClick: function() {
+    this.setState({
+      filePickerDialogOpen: true,
+      menuOpen: false
+    });
+  },
+
+  closeFilePickerDialog: function() {
+    this.setState({filePickerDialogOpen: false});
   },
 
   /* Transport Handlers
@@ -327,13 +340,14 @@ var Application = React.createClass({
   render: function() {
     return (
       <div>
-        <AppBar title="earby"
+        <AppBar title="Earby"
           onLeftIconButtonTouchTap={this.handleTapMenuButton}
         />
         <AppMainMenu
           open={this.state.menuOpen}
           setMenuOpen={this.openMenu}
           setMenuClosed={this.closeMenu}
+          onLoadFileClick={this.handleLoadFileClick}
         />
       <div id="root">
         <div id="main-view">
@@ -368,6 +382,11 @@ var Application = React.createClass({
             onRegionSliderRightChange={this.handleRegionSliderRightChange}
             onRegionSliderDragStop={this.handleRegionSliderDragStop}
           />
+          <FilePickerDialog
+            open={this.state.filePickerDialogOpen}
+            onRequestClose={this.closeFilePickerDialog}
+          >
+          </FilePickerDialog>
           <EditRegionDialog
             open={this.state.editRegionDialogOpen}
             onRequestClose={this.closeEditRegionDialog}
