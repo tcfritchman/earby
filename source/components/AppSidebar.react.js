@@ -98,6 +98,7 @@ var AppSidebar = React.createClass({
             playing={this.props.playing}
             onPlayClick={this.props.onPlayClick}
             onLoopClick={this.props.onLoopClick}
+            onSlowClick={this.props.onSlowClick}
             onSkipFwdClick={this.props.onSkipFwdClick}
             onSkipBackClick={this.props.onSkipBackClick}
             onPrevRegionClick={this.props.onPrevRegionClick}

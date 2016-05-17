@@ -192,7 +192,13 @@ var Application = React.createClass({
   },
 
   handleSlowClick: function() {
-
+    if (this.state.slow) {
+      this.setState({slow: false});
+      this.props.wavesurfer.setPlaybackRate(1.0);
+    } else {
+      this.setState({slow: true});
+      this.props.wavesurfer.setPlaybackRate(0.5);
+    }
   },
 
   handlePositionSliderChange: function(e, value) {

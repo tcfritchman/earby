@@ -39760,6 +39760,7 @@ var AppSidebar = React.createClass({
           playing: this.props.playing,
           onPlayClick: this.props.onPlayClick,
           onLoopClick: this.props.onLoopClick,
+          onSlowClick: this.props.onSlowClick,
           onSkipFwdClick: this.props.onSkipFwdClick,
           onSkipBackClick: this.props.onSkipBackClick,
           onPrevRegionClick: this.props.onPrevRegionClick,
@@ -40145,7 +40146,15 @@ var Application = React.createClass({
     }
   },
 
-  handleSlowClick: function () {},
+  handleSlowClick: function () {
+    if (this.state.slow) {
+      this.setState({ slow: false });
+      this.props.wavesurfer.setPlaybackRate(1.0);
+    } else {
+      this.setState({ slow: true });
+      this.props.wavesurfer.setPlaybackRate(0.5);
+    }
+  },
 
   handlePositionSliderChange: function (e, value) {
     var time = value * this.state.duration;
@@ -41212,7 +41221,7 @@ var Transport = React.createClass({
         ),
         React.createElement(
           IconButton,
-          null,
+          { onClick: this.props.onSlowClick },
           React.createElement(AvSlowMotion, null)
         )
       )

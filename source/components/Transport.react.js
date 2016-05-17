@@ -86,7 +86,7 @@ var Transport = React.createClass({
           <IconButton onClick={this.props.onLoopClick}>
             <AvLoop />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={this.props.onSlowClick}>
             <AvSlowMotion />
           </IconButton>
         </div>
