@@ -336,6 +336,15 @@ var Application = React.createClass({
     this.setState({editRegionDialogOpen: false});
   },
 
+  saveRegionChanges: function(changes) {
+    this.state.currentRegion.update({
+      start: changes.start,
+      end: changes.end,
+      data: _.extend(this.state.currentRegion.data, {title: changes.title})
+    });
+    this.updateRegionState();
+  },
+
 
   render: function() {
     return (
@@ -390,6 +399,7 @@ var Application = React.createClass({
           <EditRegionDialog
             open={this.state.editRegionDialogOpen}
             onRequestClose={this.closeEditRegionDialog}
+            onSaveChanges={this.saveRegionChanges}
             region={this.state.editingRegion}
             duration={this.state.duration}
           />

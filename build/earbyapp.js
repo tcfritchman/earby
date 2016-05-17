@@ -11293,7 +11293,6 @@ exports.default = {
   desktopToolbarHeight: 56
 };
 module.exports = exports['default'];
-
 },{}],50:[function(require,module,exports){
 'use strict';
 
@@ -40286,11 +40285,20 @@ var Application = React.createClass({
     this.setState({ editRegionDialogOpen: false });
   },
 
+  saveRegionChanges: function (changes) {
+    this.state.currentRegion.update({
+      start: changes.start,
+      end: changes.end,
+      data: _.extend(this.state.currentRegion.data, { title: changes.title })
+    });
+    this.updateRegionState();
+  },
+
   render: function () {
     return React.createElement(
       'div',
       null,
-      React.createElement(AppBar, { title: 'EARBY',
+      React.createElement(AppBar, { title: 'Earby',
         onLeftIconButtonTouchTap: this.handleTapMenuButton
       }),
       React.createElement(AppMainMenu, {
@@ -40326,6 +40334,7 @@ var Application = React.createClass({
           React.createElement(EditRegionDialog, {
             open: this.state.editRegionDialogOpen,
             onRequestClose: this.closeEditRegionDialog,
+            onSaveChanges: this.saveRegionChanges,
             region: this.state.editingRegion,
             duration: this.state.duration
           })
@@ -40376,6 +40385,13 @@ var EditRegionDialog = React.createClass({
   actions: [],
 
   saveAndClose: function () {
+    if (this.state.title === "") return;
+    var changes = {
+      title: this.state.title,
+      start: this.state.start.toSeconds(),
+      end: this.state.end.toSeconds()
+    };
+    this.props.onSaveChanges(changes);
     this.props.onRequestClose();
   },
 
@@ -40427,6 +40443,10 @@ var EditRegionDialog = React.createClass({
   },
 
   render: function () {
+    var nameFieldError = "";
+    if (this.state.title === "") {
+      nameFieldError = 'Name is required';
+    }
     if (!this.props.region) {
       return React.createElement('div', null);
     } else {
@@ -40442,6 +40462,7 @@ var EditRegionDialog = React.createClass({
         React.createElement(TextField, {
           id: 'name-input',
           hintText: 'Name',
+          errorText: nameFieldError,
           value: this.state.title,
           onChange: this.handleTitleChange
         }),
@@ -40524,7 +40545,7 @@ var FilePickerDialog = React.createClass({
         React.createElement(
           'div',
           null,
-          'Drop files here.'
+          'Drop a file here.'
         )
       )
     );

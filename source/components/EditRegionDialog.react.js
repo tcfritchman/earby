@@ -17,6 +17,13 @@ var EditRegionDialog = React.createClass({
   actions: [],
 
   saveAndClose: function() {
+    if (this.state.title === "") return;
+    var changes = {
+      title: this.state.title,
+      start: this.state.start.toSeconds(),
+      end: this.state.end.toSeconds()
+    };
+    this.props.onSaveChanges(changes);
     this.props.onRequestClose();
   },
 
@@ -71,6 +78,10 @@ var EditRegionDialog = React.createClass({
   },
 
   render: function() {
+    var nameFieldError = "";
+    if (this.state.title === "") {
+      nameFieldError = 'Name is required';
+    }
     if (!this.props.region) {
       return (<div></div>);
     } else {
@@ -85,6 +96,7 @@ var EditRegionDialog = React.createClass({
           <TextField
             id="name-input"
             hintText="Name"
+            errorText={nameFieldError}
             value={this.state.title}
             onChange={this.handleTitleChange}
           />
