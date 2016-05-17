@@ -96,6 +96,7 @@ var AppSidebar = React.createClass({
         <div style={this.styles.transport}>
           <Transport
             playing={this.props.playing}
+            loading={this.props.loading}
             onPlayClick={this.props.onPlayClick}
             onLoopClick={this.props.onLoopClick}
             onSlowClick={this.props.onSlowClick}
@@ -111,6 +112,7 @@ var AppSidebar = React.createClass({
             label="Add Region"
             primary={true}
             onTouchTap={this.handleAddClick}
+            disabled={this.props.loading}
           />
         </div>
         <Popover

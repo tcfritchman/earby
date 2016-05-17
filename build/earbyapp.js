@@ -39758,6 +39758,7 @@ var AppSidebar = React.createClass({
         { style: this.styles.transport },
         React.createElement(Transport, {
           playing: this.props.playing,
+          loading: this.props.loading,
           onPlayClick: this.props.onPlayClick,
           onLoopClick: this.props.onLoopClick,
           onSlowClick: this.props.onSlowClick,
@@ -39774,7 +39775,8 @@ var AppSidebar = React.createClass({
         React.createElement(RaisedButton, {
           label: 'Add Region',
           primary: true,
-          onTouchTap: this.handleAddClick
+          onTouchTap: this.handleAddClick,
+          disabled: this.props.loading
         })
       ),
       React.createElement(
@@ -39986,7 +39988,7 @@ var Application = React.createClass({
       editRegionDialogOpen: false,
       filePickerDialogOpen: false,
       editingRegion: null,
-      loading: false,
+      loading: true,
       loadProgress: 0.0,
       duration: 0.0,
       currentTime: 0.0,
@@ -40008,7 +40010,9 @@ var Application = React.createClass({
     try {
       this.props.wavesurfer = WaveSurfer.create({
         container: '#wavesurfer',
-        waveColor: 'black'
+        waveColor: 'black',
+        hideScrollbar: true,
+        interact: false
       });
     } catch (e) {
       console.log(e);
@@ -40120,6 +40124,44 @@ var Application = React.createClass({
     this.setState({ filePickerDialogOpen: false });
   },
 
+  loadNewFile: function (file) {
+    this.resetState();
+    this.resetWavesurfer();
+    try {
+      this.props.wavesurfer.loadBlob(file);
+    } catch (e) {
+      // TODO: Add proper error message
+      console.error(e);
+    }
+  },
+
+  resetState: function () {
+    this.setState({
+      menuOpen: false,
+      editRegionDialogOpen: false,
+      filePickerDialogOpen: false,
+      editingRegion: null,
+      currentTime: 0.0,
+      playing: false,
+      paused: false,
+      finished: false,
+      looping: false,
+      slow: false,
+      currentRegion: null,
+      regions: []
+    });
+  },
+
+  resetWavesurfer: function () {
+    try {
+      this.props.wavesurfer.stop();
+      this.props.wavesurfer.setPlaybackRate(1);
+      this.props.wavesurfer.clearRegions();
+    } catch (e) {
+      // Continue anyway
+    }
+  },
+
   /* Transport Handlers
   ***********************/
 
@@ -40180,7 +40222,11 @@ var Application = React.createClass({
 
   handleAddRegionClick: function () {
     var start = this.props.wavesurfer.getCurrentTime();
-    var regionOptions = { start: start };
+    var regionOptions = {
+      start: start,
+      drag: true,
+      resize: false
+    };
     var newRegion = this.props.wavesurfer.addRegion(regionOptions);
 
     newRegion.update({ data: { title: 'Region ' + newRegion.id } });
@@ -40338,7 +40384,8 @@ var Application = React.createClass({
           }),
           React.createElement(FilePickerDialog, {
             open: this.state.filePickerDialogOpen,
-            onRequestClose: this.closeFilePickerDialog
+            onRequestClose: this.closeFilePickerDialog,
+            onFileSelected: this.loadNewFile
           }),
           React.createElement(EditRegionDialog, {
             open: this.state.editRegionDialogOpen,
@@ -40353,6 +40400,7 @@ var Application = React.createClass({
           duration: this.state.duration,
           title: "Get Lucky",
           playing: this.state.playing,
+          loading: this.state.loading,
           regions: this.state.regions,
           onAddRegionClick: this.handleAddRegionClick,
           onSetRegionEndClick: this.handleSetRegionEndClick,
@@ -40511,14 +40559,21 @@ var FilePickerDialog = React.createClass({
 
   actions: [],
 
-  handleClose: function () {
-    this.props.onRequestClose();
-  },
-
   handleFileChange: function (files) {
     this.setState({
       currentFile: files[0]
     });
+  },
+
+  saveAndClose: function () {
+    this.props.onFileSelected(this.state.currentFile);
+    this.props.onRequestClose();
+  },
+
+  getInitialState: function () {
+    return {
+      currentFile: null
+    };
   },
 
   componentWillMount: function () {
@@ -40530,11 +40585,19 @@ var FilePickerDialog = React.createClass({
       label: 'Choose',
       primary: true,
       keyboardFocused: true,
-      onTouchTap: this.saveAndClose
+      onTouchTap: this.saveAndClose,
+      disabled: this.state.currentFile !== null
     })];
   },
 
   render: function () {
+    var fileNameText;
+    if (this.state.currentFile !== null) {
+      fileNameText = 'Drop a file here. Current: ' + this.state.currentFile.name;
+    } else {
+      fileNameText = 'Drop a file here.';
+    }
+
     return React.createElement(
       Dialog,
       {
@@ -40554,7 +40617,7 @@ var FilePickerDialog = React.createClass({
         React.createElement(
           'div',
           null,
-          'Drop a file here.'
+          fileNameText
         )
       )
     );
@@ -41138,8 +41201,8 @@ var PlayButton = React.createClass({
         {
           onClick: this.props.onClick,
           style: this.props.style,
-          iconStyle: this.props.iconStyle
-        },
+          iconStyle: this.props.iconStyle,
+          disabled: this.props.loading },
         React.createElement(AvPause, {
           viewBox: this.props.viewBox
         })
@@ -41150,8 +41213,8 @@ var PlayButton = React.createClass({
         {
           onClick: this.props.onClick,
           style: this.props.style,
-          iconStyle: this.props.iconStyle
-        },
+          iconStyle: this.props.iconStyle,
+          disabled: this.props.loading },
         React.createElement(AvPlay, {
           viewBox: this.props.viewBox
         })
@@ -41195,7 +41258,9 @@ var Transport = React.createClass({
         { style: this.styles.upperButtonGroup },
         React.createElement(
           IconButton,
-          { onTouchTap: this.props.onPrevRegionClick },
+          {
+            onTouchTap: this.props.onPrevRegionClick,
+            disabled: this.props.loading },
           React.createElement(AvSkipPrevious, null)
         ),
         React.createElement(PlayButton, {
@@ -41203,11 +41268,14 @@ var Transport = React.createClass({
           iconStyle: this.styles.playButtonIcon,
           onClick: this.props.onPlayClick,
           playing: this.props.playing,
+          loading: this.props.loading,
           viewBox: '0 0 24 24'
         }),
         React.createElement(
           IconButton,
-          { onTouchTap: this.props.onNextRegionClick },
+          {
+            onTouchTap: this.props.onNextRegionClick,
+            disabled: this.props.loading },
           React.createElement(AvSkipNext, null)
         )
       ),
@@ -41216,12 +41284,16 @@ var Transport = React.createClass({
         { style: this.styles.lowerButtonGroup },
         React.createElement(
           IconButton,
-          { onClick: this.props.onLoopClick },
+          {
+            onClick: this.props.onLoopClick,
+            disabled: this.props.loading },
           React.createElement(AvLoop, null)
         ),
         React.createElement(
           IconButton,
-          { onClick: this.props.onSlowClick },
+          {
+            onClick: this.props.onSlowClick,
+            disabled: this.props.loading },
           React.createElement(AvSlowMotion, null)
         )
       )
@@ -41240,6 +41312,9 @@ var RegionSliderRight = require('./RegionSliderRight.react');
 var styles = {
   container: {
     margin: 20
+  },
+  containerHidden: {
+    visibility: 'hidden'
   },
   headerDiv: {},
   timeline: {
@@ -41290,8 +41365,13 @@ var WaveformUI = React.createClass({
   },
 
   render: function () {
+    var containerStyle = styles.container;
     var regionStart, regionEnd;
     var regionStyle = styles.regionSliderDiv;
+
+    if (this.props.loading) {
+      containerStyle = styles.containerHidden;
+    }
 
     if (this.props.currentRegion) {
       regionStart = this.props.currentRegion.start;
@@ -41304,7 +41384,7 @@ var WaveformUI = React.createClass({
 
     return React.createElement(
       'div',
-      { style: styles.container },
+      { style: containerStyle },
       React.createElement(
         'div',
         { style: styles.headerDiv },

@@ -29,7 +29,7 @@ var Application = React.createClass({
       editRegionDialogOpen: false,
       filePickerDialogOpen: false,
       editingRegion: null,
-      loading: false,
+      loading: true,
       loadProgress: 0.0,
       duration: 0.0,
       currentTime: 0.0,
@@ -53,7 +53,9 @@ var Application = React.createClass({
     try {
         this.props.wavesurfer = WaveSurfer.create({
           container: '#wavesurfer',
-          waveColor: 'black'
+          waveColor: 'black',
+          hideScrollbar: true,
+          interact: false
         });
     } catch(e) {
         console.log(e);
@@ -165,6 +167,44 @@ var Application = React.createClass({
     this.setState({filePickerDialogOpen: false});
   },
 
+  loadNewFile: function(file) {
+    this.resetState();
+    this.resetWavesurfer();
+    try {
+      this.props.wavesurfer.loadBlob(file);
+    } catch (e) {
+      // TODO: Add proper error message
+      console.error(e);
+    }
+  },
+
+  resetState: function() {
+    this.setState({
+      menuOpen: false,
+      editRegionDialogOpen: false,
+      filePickerDialogOpen: false,
+      editingRegion: null,
+      currentTime: 0.0,
+      playing: false,
+      paused: false,
+      finished: false,
+      looping: false,
+      slow: false,
+      currentRegion: null,
+      regions: []
+    });
+  },
+
+  resetWavesurfer: function() {
+    try {
+      this.props.wavesurfer.stop();
+      this.props.wavesurfer.setPlaybackRate(1);
+      this.props.wavesurfer.clearRegions();
+    } catch (e) {
+      // Continue anyway
+    }
+  },
+
   /* Transport Handlers
   ***********************/
 
@@ -225,7 +265,11 @@ var Application = React.createClass({
 
   handleAddRegionClick: function() {
     var start = this.props.wavesurfer.getCurrentTime();
-    var regionOptions = {start: start};
+    var regionOptions = {
+      start: start,
+      drag: true,
+      resize: false
+    };
     var newRegion = this.props.wavesurfer.addRegion(regionOptions);
 
     newRegion.update({data: {title: 'Region ' + newRegion.id}});
@@ -400,6 +444,7 @@ var Application = React.createClass({
           <FilePickerDialog
             open={this.state.filePickerDialogOpen}
             onRequestClose={this.closeFilePickerDialog}
+            onFileSelected={this.loadNewFile}
           >
           </FilePickerDialog>
           <EditRegionDialog
@@ -415,6 +460,7 @@ var Application = React.createClass({
           duration={this.state.duration}
           title={"Get Lucky"}
           playing={this.state.playing}
+          loading={this.state.loading}
           regions={this.state.regions}
           onAddRegionClick={this.handleAddRegionClick}
           onSetRegionEndClick={this.handleSetRegionEndClick}

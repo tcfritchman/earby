@@ -17,7 +17,7 @@ var PlayButton = React.createClass({
           onClick={this.props.onClick}
           style={this.props.style}
           iconStyle={this.props.iconStyle}
-        >
+          disabled={this.props.loading}>
           <AvPause
             viewBox={this.props.viewBox}
           />
@@ -29,7 +29,7 @@ var PlayButton = React.createClass({
           onClick={this.props.onClick}
           style={this.props.style}
           iconStyle={this.props.iconStyle}
-        >
+          disabled={this.props.loading}>
           <AvPlay
             viewBox={this.props.viewBox}
           />
@@ -68,7 +68,9 @@ var Transport = React.createClass({
     return (
       <div style={this.styles.root}>
         <div style={this.styles.upperButtonGroup}>
-          <IconButton onTouchTap={this.props.onPrevRegionClick}>
+          <IconButton
+            onTouchTap={this.props.onPrevRegionClick}
+            disabled={this.props.loading}>
             <AvSkipPrevious />
           </IconButton>
           <PlayButton
@@ -76,17 +78,24 @@ var Transport = React.createClass({
             iconStyle={this.styles.playButtonIcon}
             onClick={this.props.onPlayClick}
             playing={this.props.playing}
+            loading={this.props.loading}
             viewBox={'0 0 24 24'}
           />
-          <IconButton onTouchTap={this.props.onNextRegionClick}>
+          <IconButton
+            onTouchTap={this.props.onNextRegionClick}
+            disabled={this.props.loading}>
             <AvSkipNext />
           </IconButton>
         </div>
         <div style={this.styles.lowerButtonGroup}>
-          <IconButton onClick={this.props.onLoopClick}>
+          <IconButton
+            onClick={this.props.onLoopClick}
+            disabled={this.props.loading}>
             <AvLoop />
           </IconButton>
-          <IconButton onClick={this.props.onSlowClick}>
+          <IconButton
+            onClick={this.props.onSlowClick}
+            disabled={this.props.loading}>
             <AvSlowMotion />
           </IconButton>
         </div>

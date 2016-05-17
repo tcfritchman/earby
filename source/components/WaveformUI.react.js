@@ -7,6 +7,9 @@ var styles = {
   container: {
     margin: 20,
   },
+  containerHidden: {
+    visibility: 'hidden'
+  },
   headerDiv: {
   },
   timeline: {
@@ -56,8 +59,13 @@ var WaveformUI = React.createClass({
   },
 
   render: function() {
+    var containerStyle = styles.container;
     var regionStart, regionEnd;
     var regionStyle = styles.regionSliderDiv;
+
+    if (this.props.loading) {
+      containerStyle = styles.containerHidden;
+    }
 
     if (this.props.currentRegion) {
       regionStart = this.props.currentRegion.start;
@@ -69,7 +77,7 @@ var WaveformUI = React.createClass({
     }
 
     return (
-      <div style={styles.container}>
+      <div style={containerStyle}>
         <div style={styles.headerDiv}>
           <div id="wavesurfer-timeline" style={styles.timeline}></div>
           <div style={regionStyle}>

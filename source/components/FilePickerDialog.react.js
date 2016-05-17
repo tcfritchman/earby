@@ -6,14 +6,21 @@ var Dropzone = require('react-dropzone');
 var FilePickerDialog = React.createClass({
   actions: [],
 
-  handleClose: function() {
-    this.props.onRequestClose();
-  },
-
   handleFileChange: function(files) {
     this.setState({
       currentFile: files[0]
     });
+  },
+
+  saveAndClose: function() {
+    this.props.onFileSelected(this.state.currentFile);
+    this.props.onRequestClose();
+  },
+
+  getInitialState: function() {
+    return {
+      currentFile: null
+    };
   },
 
   componentWillMount: function() {
@@ -28,11 +35,19 @@ var FilePickerDialog = React.createClass({
         primary={true}
         keyboardFocused={true}
         onTouchTap={this.saveAndClose}
+        disabled={this.state.currentFile !== null}
       />
     ];
   },
 
   render: function() {
+    var fileNameText;
+    if (this.state.currentFile !== null) {
+      fileNameText = 'Drop a file here. Current: ' + this.state.currentFile.name;
+    } else {
+      fileNameText = 'Drop a file here.';
+    }
+
     return (
       <Dialog
         title="Pick a tune"
@@ -46,7 +61,7 @@ var FilePickerDialog = React.createClass({
           multiple={false}
           accept="audio"
         >
-          <div>Drop a file here.</div>
+          <div>{fileNameText}</div>
         </Dropzone>
       </Dialog>
     );
