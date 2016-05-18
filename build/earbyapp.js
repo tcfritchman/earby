@@ -40183,8 +40183,10 @@ var Application = React.createClass({
 
   handleLoopClick: function () {
     if (this.state.currentRegion) {
-      this.state.currentRegion.update({ loop: !this.state.looping });
-      this.setState({ looping: !this.state.looping });
+      var _state = this.state;
+      this.setState({ looping: !this.state.looping }, function () {
+        _state.currentRegion.update({ loop: !_state.looping });
+      });
     }
   },
 
@@ -40229,7 +40231,7 @@ var Application = React.createClass({
     };
     var newRegion = this.props.wavesurfer.addRegion(regionOptions);
 
-    newRegion.update({ data: { title: 'Region ' + newRegion.id } });
+    newRegion.update({ data: { title: '' } });
     this.setState({ currentRegion: newRegion });
     this.updateRegionState();
   },
@@ -40240,10 +40242,8 @@ var Application = React.createClass({
   },
 
   handleRegionClick: function (region) {
-    this.setState({
-      currentRegion: region
-    });
     this.props.wavesurfer.play(region.start);
+    this.setState({ currentRegion: region }, this.updateRegionState);
   },
 
   handleRegionDeleteClick: function (region) {
@@ -40286,7 +40286,7 @@ var Application = React.createClass({
       newIndex = 0;
     }
     var newRegion = this.state.regions[newIndex];
-    this.setState({ currentRegion: newRegion });
+    this.setState({ currentRegion: newRegion }, this.updateRegionState);
     return newRegion;
   },
 
@@ -40317,12 +40317,22 @@ var Application = React.createClass({
   },
 
   updateRegionState: function () {
-    var stateChange = {
-      regions: _.sortBy(_.values(this.props.wavesurfer.regions.list), function (region) {
-        return region.start;
-      })
-    };
-    this.setState(stateChange);
+    _state = this.state;
+
+    var regionList = _.sortBy(_.values(this.props.wavesurfer.regions.list), function (region) {
+      return region.start;
+    });
+
+    /* Make sure loop states are consistent with current region */
+    _.each(regionList, function (region) {
+      if (_state.looping && _state.currentRegion && region.id === _state.currentRegion.id) {
+        region.update({ loop: true });
+      } else {
+        region.update({ loop: false });
+      }
+    });
+
+    this.setState({ regions: regionList });
   },
 
   /* Edit Region Dialog Handlers
@@ -40341,10 +40351,10 @@ var Application = React.createClass({
   },
 
   saveRegionChanges: function (changes) {
-    this.state.currentRegion.update({
+    this.state.editingRegion.update({
       start: changes.start,
       end: changes.end,
-      data: _.extend(this.state.currentRegion.data, { title: changes.title })
+      data: _.extend(this.state.editingRegion.data, { title: changes.title })
     });
     this.updateRegionState();
   },
