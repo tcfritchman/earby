@@ -4,8 +4,8 @@ var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
 var AppMainMenu = require('./AppMainMenu.react');
 var EditRegionDialog = require('./EditRegionDialog.react');
-var ThemeManager = require('material-ui/lib/styles/theme-manager');
-var RawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
+var baseTheme = require('../styles/earbyBaseThemeLight');
+var getMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var AppBar = require('material-ui/lib/app-bar');
 var Toggle = require('material-ui/lib/toggle');
 var AppSidebar = require('./AppSidebar.react');
@@ -14,13 +14,11 @@ var FilePickerDialog = require('./FilePickerDialog.react');
 var Application = React.createClass({
 
   childContextTypes : {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object.isRequired
   },
 
   getChildContext: function() {
-    return {
-      muiTheme: ThemeManager.getMuiTheme(RawTheme),
-    };
+    return {muiTheme: getMuiTheme(baseTheme)};
   },
 
   getInitialState: function() {
