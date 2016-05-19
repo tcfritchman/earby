@@ -6,6 +6,7 @@ var ViewListIcon = require('material-ui/lib/svg-icons/action/view-list');
 var RaisedButton = require('material-ui/lib/raised-button');
 var Popover = require('material-ui/lib/popover/popover');
 var Divider = require('material-ui/lib/divider');
+var Paper = require('material-ui/lib/paper');
 var MSM = require('../utils/MSM');
 
 var AppSidebar = React.createClass({
@@ -83,7 +84,9 @@ var AppSidebar = React.createClass({
     var currentTimeMSM = new MSM(this.props.currentTime);
     var totalTimeMSM = new MSM(this.props.duration);
     return (
-      <div id={this.props.id} style={this.styles.root}>
+      <Paper
+        id={this.props.id}
+        style={this.styles.root}>
         <div style={this.styles.timeText}>
           {currentTimeMSM.toString()}
         </div>
@@ -136,7 +139,7 @@ var AppSidebar = React.createClass({
           onRegionEditClick={this.handleRegionEditClick}
           onRegionDeleteClick={this.handleRegionDeleteClick}
         />
-      </div>
+      </Paper>
     );
   }
 });

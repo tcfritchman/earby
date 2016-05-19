@@ -39657,6 +39657,7 @@ var ViewListIcon = require('material-ui/lib/svg-icons/action/view-list');
 var RaisedButton = require('material-ui/lib/raised-button');
 var Popover = require('material-ui/lib/popover/popover');
 var Divider = require('material-ui/lib/divider');
+var Paper = require('material-ui/lib/paper');
 var MSM = require('../utils/MSM');
 
 var AppSidebar = React.createClass({
@@ -39736,8 +39737,10 @@ var AppSidebar = React.createClass({
     var currentTimeMSM = new MSM(this.props.currentTime);
     var totalTimeMSM = new MSM(this.props.duration);
     return React.createElement(
-      'div',
-      { id: this.props.id, style: this.styles.root },
+      Paper,
+      {
+        id: this.props.id,
+        style: this.styles.root },
       React.createElement(
         'div',
         { style: this.styles.timeText },
@@ -39810,7 +39813,7 @@ var AppSidebar = React.createClass({
 
 module.exports = AppSidebar;
 
-},{"../utils/MSM":326,"./RegionsPane.react":321,"./Transport.react":323,"material-ui/lib/divider":12,"material-ui/lib/icon-button":18,"material-ui/lib/popover/popover":38,"material-ui/lib/raised-button":39,"material-ui/lib/svg-icons/action/view-list":60,"react":308}],313:[function(require,module,exports){
+},{"../utils/MSM":326,"./RegionsPane.react":321,"./Transport.react":323,"material-ui/lib/divider":12,"material-ui/lib/icon-button":18,"material-ui/lib/paper":36,"material-ui/lib/popover/popover":38,"material-ui/lib/raised-button":39,"material-ui/lib/svg-icons/action/view-list":60,"react":308}],313:[function(require,module,exports){
 var React = require('react');
 var RegionsPane = require('./RegionsPane.react');
 var Transport = require('./Transport.react');
