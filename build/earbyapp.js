@@ -40672,7 +40672,12 @@ var styles = {
 var EditRegionDialog = React.createClass({
   displayName: 'EditRegionDialog',
 
+  styles: {},
   actions: [],
+
+  contextTypes: {
+    muiTheme: React.PropTypes.object.isRequired
+  },
 
   saveAndClose: function () {
     if (this.state.title === "") return;
@@ -40686,6 +40691,13 @@ var EditRegionDialog = React.createClass({
   },
 
   componentWillMount: function () {
+    this.styles = {
+      dialog: {
+        color: this.context.muiTheme.baseTheme.palette.textColor,
+        width: '350px'
+      }
+    };
+
     this.actions = [React.createElement(FlatButton, {
       label: 'Cancel',
       secondary: true,
@@ -40747,7 +40759,8 @@ var EditRegionDialog = React.createClass({
           actions: this.actions,
           modal: false,
           open: this.props.open,
-          onRequestClose: this.props.onRequestClose
+          onRequestClose: this.props.onRequestClose,
+          contentStyle: this.styles.dialog
         },
         React.createElement(TextField, {
           id: 'name-input',
@@ -41843,8 +41856,8 @@ exports.default = {
     clockCircleColor: colorManipulator.fade(colors.fullWhite, 0.12),
     shadowColor: colors.fullBlack,
     mainViewColor: '#202020',
-    slowToggleColor: colors.yellow300,
-    loopToggleColor: colors.lightGreen300,
+    slowToggleColor: colors.yellow500,
+    loopToggleColor: colors.lightGreen500,
     wavePrimaryColor: colors.grey800,
     waveSecondaryColor: colors.fullBlack
   }

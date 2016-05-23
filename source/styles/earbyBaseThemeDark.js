@@ -18,8 +18,8 @@ exports.default = {
     clockCircleColor: colorManipulator.fade(colors.fullWhite, 0.12),
     shadowColor: colors.fullBlack,
     mainViewColor: '#202020',
-    slowToggleColor: colors.yellow300,
-    loopToggleColor: colors.lightGreen300,
+    slowToggleColor: colors.yellow500,
+    loopToggleColor: colors.lightGreen500,
     wavePrimaryColor: colors.grey800,
     waveSecondaryColor: colors.fullBlack
   }

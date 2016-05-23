@@ -14,7 +14,12 @@ var styles = {
 };
 
 var EditRegionDialog = React.createClass({
+  styles: {},
   actions: [],
+
+  contextTypes: {
+    muiTheme: React.PropTypes.object.isRequired
+  },
 
   saveAndClose: function() {
     if (this.state.title === "") return;
@@ -28,6 +33,13 @@ var EditRegionDialog = React.createClass({
   },
 
   componentWillMount: function() {
+    this.styles = {
+      dialog: {
+        color: this.context.muiTheme.baseTheme.palette.textColor,
+        width: '350px',
+      }
+    };
+
     this.actions = [
       <FlatButton
         label="Cancel"
@@ -92,6 +104,7 @@ var EditRegionDialog = React.createClass({
           modal={false}
           open={this.props.open}
           onRequestClose={this.props.onRequestClose}
+          contentStyle={this.styles.dialog}
         >
           <TextField
             id="name-input"
