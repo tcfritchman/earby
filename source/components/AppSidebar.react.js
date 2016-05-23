@@ -10,36 +10,44 @@ var Paper = require('material-ui/lib/paper');
 var MSM = require('../utils/MSM');
 
 var AppSidebar = React.createClass({
-  styles: {
-    root: {
-      backgroundColor: "#f5f5f5",
-      padding: 20,
-      textAlign: 'center'
-    },
-    timeText: {
-      fontSize: 'xx-large',
-      textAlign: 'center',
-    },
-    totalTimeText: {
-      marginLeft: 30,
-      fontSize: 'small',
-      textAlign: 'center'
-    },
-    titleText: {
-      textAlign: 'center',
-      margin: '10px auto'
-    },
-    transport: {
-      width: 144,
-      margin: '12px auto'
-    },
-    popover: {
-      padding: 20,
-    },
-    regionButton: {
-      display: 'inline-block',
-      padding: 20
-    }
+  styles: {},
+
+  contextTypes: {
+    muiTheme: React.PropTypes.object.isRequired
+  },
+
+  componentWillMount: function() {
+    this.styles = {
+      root: {
+        padding: 20,
+        textAlign: 'center',
+        color: this.context.muiTheme.baseTheme.palette.textColor
+      },
+      timeText: {
+        fontSize: 'xx-large',
+        textAlign: 'center',
+      },
+      totalTimeText: {
+        marginLeft: 30,
+        fontSize: 'small',
+        textAlign: 'center'
+      },
+      titleText: {
+        textAlign: 'center',
+        margin: '10px auto'
+      },
+      transport: {
+        width: 144,
+        margin: '12px auto'
+      },
+      popover: {
+        padding: 20,
+      },
+      regionButton: {
+        display: 'inline-block',
+        padding: 20
+      }
+    };
   },
 
   getInitialState: function() {
@@ -86,6 +94,7 @@ var AppSidebar = React.createClass({
     return (
       <Paper
         id={this.props.id}
+        rounded={false}
         style={this.styles.root}>
         <div style={this.styles.timeText}>
           {currentTimeMSM.toString()}
@@ -99,6 +108,8 @@ var AppSidebar = React.createClass({
         <div style={this.styles.transport}>
           <Transport
             playing={this.props.playing}
+            looping={this.props.looping}
+            slow={this.props.slow}
             loading={this.props.loading}
             onPlayClick={this.props.onPlayClick}
             onLoopClick={this.props.onLoopClick}

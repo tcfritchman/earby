@@ -4,17 +4,20 @@ var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
 var AppMainMenu = require('./AppMainMenu.react');
 var EditRegionDialog = require('./EditRegionDialog.react');
-var baseTheme = require('../styles/earbyBaseThemeLight');
+var baseTheme = require('../styles/earbyBaseThemeDark');
 var getMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var AppBar = require('material-ui/lib/app-bar');
 var Toggle = require('material-ui/lib/toggle');
 var AppSidebar = require('./AppSidebar.react');
 var FilePickerDialog = require('./FilePickerDialog.react');
+var colorManipulator = require('material-ui/lib/utils/color-manipulator');
 
 var Application = React.createClass({
-
   childContextTypes : {
     muiTheme: React.PropTypes.object.isRequired
+  },
+
+  componentWillMount: function() {
   },
 
   getChildContext: function() {
@@ -43,15 +46,12 @@ var Application = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-
-  },
-
   createWaveSurfer: function() {
     try {
         this.props.wavesurfer = WaveSurfer.create({
           container: '#wavesurfer',
-          waveColor: 'black',
+          waveColor: baseTheme.palette.wavePrimaryColor,
+          progressColor: baseTheme.palette.waveSecondaryColor,
           hideScrollbar: true,
           interact: false
         });
@@ -81,7 +81,11 @@ var Application = React.createClass({
     this.props.timeline = Object.create(WaveSurfer.Timeline);
     this.props.timeline.init({
       wavesurfer: this.props.wavesurfer,
-      container: '#wavesurfer-timeline'
+      container: '#wavesurfer-timeline',
+      primaryColor: baseTheme.palette.accent1Color,
+      secondaryColor: baseTheme.palette.wavePrimaryColor,
+      primaryFontColor: baseTheme.palette.textColor,
+      secondaryFontColor: baseTheme.palette.alternateTextColor,
     });
     // TODO: enable the ui.
   },
@@ -268,7 +272,8 @@ var Application = React.createClass({
     var regionOptions = {
       start: start,
       drag: true,
-      resize: false
+      resize: false,
+      color: colorManipulator.fade(baseTheme.palette.primary3Color, 0.4)
     };
     var newRegion = this.props.wavesurfer.addRegion(regionOptions);
 
@@ -403,6 +408,12 @@ var Application = React.createClass({
     this.updateRegionState();
   },
 
+  styles: {
+    mainView: {
+      backgroundColor: baseTheme.palette.mainViewColor
+    }
+  },
+
   render: function() {
     return (
       <div>
@@ -416,7 +427,7 @@ var Application = React.createClass({
           onLoadFileClick={this.handleLoadFileClick}
         />
       <div id="root">
-        <div id="main-view">
+        <div id="main-view" style={this.styles.mainView}>
           {/*
           <AppToolbar
             onAddRegionClick={this.handleAddRegionClick}
@@ -467,6 +478,8 @@ var Application = React.createClass({
           duration={this.state.duration}
           title={"Get Lucky"}
           playing={this.state.playing}
+          looping={this.state.looping}
+          slow={this.state.slow}
           loading={this.state.loading}
           regions={this.state.regions}
           onAddRegionClick={this.handleAddRegionClick}

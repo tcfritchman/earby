@@ -17,6 +17,7 @@ var PlayButton = React.createClass({
           onClick={this.props.onClick}
           style={this.props.style}
           iconStyle={this.props.iconStyle}
+          disableTouchRipple={true}
           disabled={this.props.loading}>
           <AvPause
             viewBox={this.props.viewBox}
@@ -29,6 +30,7 @@ var PlayButton = React.createClass({
           onClick={this.props.onClick}
           style={this.props.style}
           iconStyle={this.props.iconStyle}
+          disableTouchRipple={true}
           disabled={this.props.loading}>
           <AvPlay
             viewBox={this.props.viewBox}
@@ -40,31 +42,41 @@ var PlayButton = React.createClass({
 });
 
 var Transport = React.createClass({
-  styles: {
-    root: {
-    },
-    upperButtonGroup: {
-      margin: '0 auto'
-    },
-    lowerButtonGroup: {
-      width: 96,
-      display: 'block',
-      margin: '0 auto'
-    },
-    playButton: {
-      right: 0,
-      top: 24
-    },
-    playButtonIcon: {
-      position: 'relative',
-      right: 12,
-      bottom: 12,
-      width: 48,
-      height: 48,
-    }
+  styles: {},
+
+  contextTypes: {
+    muiTheme: React.PropTypes.object.isRequired
+  },
+
+  componentWillMount: function() {
+    this.styles = {
+      root: {},
+      upperButtonGroup: {
+        margin: '0 auto'
+      },
+      lowerButtonGroup: {
+        width: 96,
+        display: 'block',
+        margin: '0 auto'
+      },
+      playButton: {
+        right: 0,
+        top: 24
+      },
+      playButtonIcon: {
+        position: 'relative',
+        right: 12,
+        bottom: 12,
+        width: 48,
+        height: 48,
+      }
+    };
   },
 
   render: function() {
+    var loopColor = this.props.looping ? this.context.muiTheme.baseTheme.palette.loopToggleColor : undefined;
+    var slowColor = this.props.slow ? this.context.muiTheme.baseTheme.palette.slowToggleColor : undefined;
+
     return (
       <div style={this.styles.root}>
         <div style={this.styles.upperButtonGroup}>
@@ -91,12 +103,12 @@ var Transport = React.createClass({
           <IconButton
             onClick={this.props.onLoopClick}
             disabled={this.props.loading}>
-            <AvLoop />
+            <AvLoop color={loopColor}/>
           </IconButton>
           <IconButton
             onClick={this.props.onSlowClick}
             disabled={this.props.loading}>
-            <AvSlowMotion />
+            <AvSlowMotion color={slowColor}/>
           </IconButton>
         </div>
       </div>
