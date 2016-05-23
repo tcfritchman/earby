@@ -10,10 +10,16 @@ body, h1, h2, h3, h4, h5, h6 {
 body {
   font-size: 15px;
   line-height: 24px;
+  height: 100%;
+}
+
+html, body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #root {
-  height: 100%;
   margin: 0px;
   padding: 0px;
   display: -webkit-flex;
@@ -30,7 +36,6 @@ body {
 }
 
 #sidebar {
-  height: 100%;
   -webkit-flex: 0 0 240px;
   flex: 0 0 240px;
   -webkit-order: 1;

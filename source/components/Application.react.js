@@ -1,16 +1,17 @@
 var React = require('react');
 var _ = require('underscore');
+var getMuiTheme = require('material-ui/lib/styles/getMuiTheme');
+var AppBar = require('material-ui/lib/app-bar');
+var Toggle = require('material-ui/lib/toggle');
+var colorManipulator = require('material-ui/lib/utils/color-manipulator');
+var LinearProgress = require('material-ui/lib/linear-progress');
 var WaveformUI = require('./WaveformUI.react');
 var AppToolbar = require('./AppToolbar.react');
 var AppMainMenu = require('./AppMainMenu.react');
 var EditRegionDialog = require('./EditRegionDialog.react');
-var baseTheme = require('../styles/earbyBaseThemeDark');
-var getMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var AppBar = require('material-ui/lib/app-bar');
-var Toggle = require('material-ui/lib/toggle');
 var AppSidebar = require('./AppSidebar.react');
 var FilePickerDialog = require('./FilePickerDialog.react');
-var colorManipulator = require('material-ui/lib/utils/color-manipulator');
+var baseTheme = require('../styles/earbyBaseThemeDark');
 
 var Application = React.createClass({
   childContextTypes : {
@@ -411,10 +412,18 @@ var Application = React.createClass({
   styles: {
     mainView: {
       backgroundColor: baseTheme.palette.mainViewColor
+    },
+    progressBar: {
+      margin: '100px auto',
+      width: '80%'
+    },
+    progressHidden: {
+      display: 'none'
     }
   },
 
   render: function() {
+    var progressBarStyle = this.state.loading ? this.styles.progressBar : this.styles.progressHidden;
     return (
       <div>
         <AppBar title="Earby"
@@ -445,10 +454,14 @@ var Application = React.createClass({
             onNextRegionClick={this.handleNextRegionClick}
           />
           */}
+          <LinearProgress
+            mode="indeterminate"
+            style={progressBarStyle}
+            value={this.state.loadProgress}
+          />
           <WaveformUI
             onMount={this.createWaveSurfer}
             loading={this.state.loading}
-            loadProgress={this.state.loadProgress}
             duration={this.state.duration}
             currentTime={this.state.currentTime}
             currentRegion={this.state.currentRegion}
