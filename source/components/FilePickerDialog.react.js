@@ -4,7 +4,12 @@ var FlatButton = require('material-ui/lib/flat-button');
 var Dropzone = require('react-dropzone');
 
 var FilePickerDialog = React.createClass({
+  styles: {},
   actions: [],
+
+  contextTypes: {
+    muiTheme: React.PropTypes.object.isRequired
+  },
 
   handleFileChange: function(files) {
     this.setState({
@@ -38,6 +43,18 @@ var FilePickerDialog = React.createClass({
         disabled={this.state.currentFile !== null}
       />
     ];
+
+    this.styles = {
+      dropZone: {
+        width: '90%',
+        height: '150px',
+        margin: '15px auto',
+        border: '2px dashed ' + this.context.muiTheme.baseTheme.palette.textColor,
+        padding: '20px 0px',
+        textAlign: 'center',
+        color: this.context.muiTheme.baseTheme.palette.textColor
+      }
+    };
   },
 
   render: function() {
@@ -60,6 +77,7 @@ var FilePickerDialog = React.createClass({
           onDrop={this.handleFileChange}
           multiple={false}
           accept="audio"
+          style={this.styles.dropZone}
         >
           <div>{fileNameText}</div>
         </Dropzone>

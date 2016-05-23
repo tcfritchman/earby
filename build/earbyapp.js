@@ -40557,6 +40557,13 @@ var Application = React.createClass({
     },
     progressHidden: {
       display: 'none'
+    },
+    loadPercent: {
+      margin: '8px 0px',
+      fontSize: 16,
+      fontFamily: baseTheme.palette.fontFamily,
+      textAlign: 'center',
+      color: baseTheme.palette.textColor
     }
   },
 
@@ -40580,11 +40587,19 @@ var Application = React.createClass({
         React.createElement(
           'div',
           { id: 'main-view', style: this.styles.mainView },
-          React.createElement(LinearProgress, {
-            mode: 'indeterminate',
-            style: progressBarStyle,
-            value: this.state.loadProgress
-          }),
+          React.createElement(
+            'div',
+            { style: progressBarStyle },
+            React.createElement(LinearProgress, {
+              mode: 'indeterminate'
+            }),
+            React.createElement(
+              'div',
+              { style: this.styles.loadPercent },
+              this.state.loadProgress,
+              '%'
+            )
+          ),
           React.createElement(WaveformUI, {
             onMount: this.createWaveSurfer,
             loading: this.state.loading,
@@ -40775,7 +40790,12 @@ var Dropzone = require('react-dropzone');
 var FilePickerDialog = React.createClass({
   displayName: 'FilePickerDialog',
 
+  styles: {},
   actions: [],
+
+  contextTypes: {
+    muiTheme: React.PropTypes.object.isRequired
+  },
 
   handleFileChange: function (files) {
     this.setState({
@@ -40806,6 +40826,18 @@ var FilePickerDialog = React.createClass({
       onTouchTap: this.saveAndClose,
       disabled: this.state.currentFile !== null
     })];
+
+    this.styles = {
+      dropZone: {
+        width: '90%',
+        height: '150px',
+        margin: '15px auto',
+        border: '2px dashed ' + this.context.muiTheme.baseTheme.palette.textColor,
+        padding: '20px 0px',
+        textAlign: 'center',
+        color: this.context.muiTheme.baseTheme.palette.textColor
+      }
+    };
   },
 
   render: function () {
@@ -40830,7 +40862,8 @@ var FilePickerDialog = React.createClass({
         {
           onDrop: this.handleFileChange,
           multiple: false,
-          accept: 'audio'
+          accept: 'audio',
+          style: this.styles.dropZone
         },
         React.createElement(
           'div',

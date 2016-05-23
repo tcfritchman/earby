@@ -415,10 +415,17 @@ var Application = React.createClass({
     },
     progressBar: {
       margin: '100px auto',
-      width: '80%'
+      width: '80%',
     },
     progressHidden: {
       display: 'none'
+    },
+    loadPercent: {
+      margin: '8px 0px',
+      fontSize: 16,
+      fontFamily: baseTheme.palette.fontFamily,
+      textAlign: 'center',
+      color: baseTheme.palette.textColor,
     }
   },
 
@@ -454,11 +461,12 @@ var Application = React.createClass({
             onNextRegionClick={this.handleNextRegionClick}
           />
           */}
-          <LinearProgress
-            mode="indeterminate"
-            style={progressBarStyle}
-            value={this.state.loadProgress}
-          />
+          <div style={progressBarStyle}>
+            <LinearProgress
+              mode="indeterminate"
+            />
+            <div style={this.styles.loadPercent}>{this.state.loadProgress}%</div>
+          </div>
           <WaveformUI
             onMount={this.createWaveSurfer}
             loading={this.state.loading}
