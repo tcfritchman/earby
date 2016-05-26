@@ -2,26 +2,26 @@
   "name": "earby",
   "description": "A web application to aid musicians in learning music by ear.",
   "dependencies": {
-    "bootstrap": "^3.3.6",
-    "material-ui": "^0.14.4",
-    "mustache": "^2.2.0",
+    "bootstrap": "3.3.6",
+    "material-ui": "0.14.4",
+    "mustache": "2.2.0",
     "pitch-shift": "0.0.0",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7",
-    "react-dropzone": "^3.4.0",
-    "react-tap-event-plugin": "^0.2.2",
-    "underscore": "^1.8.3",
-    "wavesurfer.js": "^1.0.58"
+    "react": "0.14.7",
+    "react-dom": "0.14.7",
+    "react-dropzone": "3.4.0",
+    "react-tap-event-plugin": "0.2.2",
+    "underscore": "1.8.3",
+    "wavesurfer.js": "1.0.58"
   },
   "devDependencies": {
-    "babel-preset-react": "^6.5.0",
-    "babelify": "^7.2.0",
-    "browserify": "^13.0.0",
-    "express": "^4.13.3",
-    "gulp": "^3.9.1",
+    "babel-preset-react": "6.5.0",
+    "babelify": "7.2.0",
+    "browserify": "13.0.0",
+    "express": "4.13.3",
+    "gulp": "3.9.1",
     "jshint": "latest",
     "uglify-js": "latest",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "1.1.0"
   },
   "scripts": {
     "env": "env",

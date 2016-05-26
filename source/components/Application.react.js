@@ -47,7 +47,7 @@ var Application = React.createClass({
 
   createWaveSurfer: function() {
     try {
-        this.props.wavesurfer = WaveSurfer.create({
+        this.wavesurfer = WaveSurfer.create({
           container: '#wavesurfer',
           waveColor: baseTheme.palette.wavePrimaryColor,
           progressColor: baseTheme.palette.waveSecondaryColor,
@@ -58,15 +58,15 @@ var Application = React.createClass({
         console.log(e);
         return;
     }
-    this.props.wavesurfer.on('finish', this.handleFinish);
-    this.props.wavesurfer.on('play', this.handlePlay);
-    this.props.wavesurfer.on('pause', this.handlePause);
-    this.props.wavesurfer.on('ready', this.handleReady);
-    this.props.wavesurfer.on('audioprocess', this.handleAudioprocess);
-    this.props.wavesurfer.on('loading', this.handleLoading);
-    this.props.wavesurfer.on('seek', this.handleSeek);
-    this.props.wavesurfer.on('error', this.handleError);
-    this.props.wavesurfer.load('example/EarbyDemo.mp3');
+    this.wavesurfer.on('finish', this.handleFinish);
+    this.wavesurfer.on('play', this.handlePlay);
+    this.wavesurfer.on('pause', this.handlePause);
+    this.wavesurfer.on('ready', this.handleReady);
+    this.wavesurfer.on('audioprocess', this.handleAudioprocess);
+    this.wavesurfer.on('loading', this.handleLoading);
+    this.wavesurfer.on('seek', this.handleSeek);
+    this.wavesurfer.on('error', this.handleError);
+    this.wavesurfer.load('example/EarbyDemo.mp3');
   },
 
   /* Wavesurfer event handlers
@@ -75,11 +75,11 @@ var Application = React.createClass({
   handleReady: function() {
     this.setState({
       loading: false,
-      duration: this.props.wavesurfer.getDuration()
+      duration: this.wavesurfer.getDuration()
     });
-    this.props.timeline = Object.create(WaveSurfer.Timeline);
-    this.props.timeline.init({
-      wavesurfer: this.props.wavesurfer,
+    this.timeline = Object.create(WaveSurfer.Timeline);
+    this.timeline.init({
+      wavesurfer: this.wavesurfer,
       container: '#wavesurfer-timeline',
       primaryColor: baseTheme.palette.accent1Color,
       secondaryColor: baseTheme.palette.wavePrimaryColor,
@@ -110,7 +110,7 @@ var Application = React.createClass({
   handleSeek: function(progress) {
     console.log('seek');
     this.setState({
-      currentTime: this.props.wavesurfer.getCurrentTime()
+      currentTime: this.wavesurfer.getCurrentTime()
     });
   },
 
@@ -172,7 +172,7 @@ var Application = React.createClass({
     this.resetState();
     this.resetWavesurfer();
     try {
-      this.props.wavesurfer.loadBlob(file);
+      this.wavesurfer.loadBlob(file);
       this.setState({songTitle: file.name});
     } catch (e) {
       // TODO: Add proper error message
@@ -199,9 +199,9 @@ var Application = React.createClass({
 
   resetWavesurfer: function() {
     try {
-      this.props.wavesurfer.stop();
-      this.props.wavesurfer.setPlaybackRate(1);
-      this.props.wavesurfer.clearRegions();
+      this.wavesurfer.stop();
+      this.wavesurfer.setPlaybackRate(1);
+      this.wavesurfer.clearRegions();
     } catch (e) {
       // Continue anyway
     }
@@ -212,18 +212,18 @@ var Application = React.createClass({
 
   handlePlayClick: function() {
     if (this.state.playing) {
-      this.props.wavesurfer.pause();
+      this.wavesurfer.pause();
     } else {
-      this.props.wavesurfer.play(this.state.currentTime);
+      this.wavesurfer.play(this.state.currentTime);
     }
   },
 
   handleSkipBackClick: function() {
-    this.props.wavesurfer.skipBackward();
+    this.wavesurfer.skipBackward();
   },
 
   handleSkipFwdClick: function() {
-    this.props.wavesurfer.skipForward();
+    this.wavesurfer.skipForward();
   },
 
   handleLoopClick: function() {
@@ -238,10 +238,10 @@ var Application = React.createClass({
   handleSlowClick: function() {
     if (this.state.slow) {
       this.setState({slow: false});
-      this.props.wavesurfer.setPlaybackRate(1.0);
+      this.wavesurfer.setPlaybackRate(1.0);
     } else {
       this.setState({slow: true});
-      this.props.wavesurfer.setPlaybackRate(0.5);
+      this.wavesurfer.setPlaybackRate(0.5);
     }
   },
 
@@ -254,28 +254,28 @@ var Application = React.createClass({
     if (this.state.playing) {
       /* unsubscribe pause event to 'trick' app
          into thinking it's still playing */
-      this.props.wavesurfer.un('pause');
-      this.props.wavesurfer.pause();
-      this.props.wavesurfer.on('pause', this.handlePause);
+      this.wavesurfer.un('pause');
+      this.wavesurfer.pause();
+      this.wavesurfer.on('pause', this.handlePause);
     }
   },
 
   handlePositionSliderDragStop: function() {
-    if (this.state.playing) this.props.wavesurfer.play(this.state.currentTime);
+    if (this.state.playing) this.wavesurfer.play(this.state.currentTime);
   },
 
   /* Region Control Handlers
   ****************************/
 
   handleAddRegionClick: function() {
-    var start = this.props.wavesurfer.getCurrentTime();
+    var start = this.wavesurfer.getCurrentTime();
     var regionOptions = {
       start: start,
       drag: true,
       resize: false,
       color: colorManipulator.fade(baseTheme.palette.primary3Color, 0.4)
     };
-    var newRegion = this.props.wavesurfer.addRegion(regionOptions);
+    var newRegion = this.wavesurfer.addRegion(regionOptions);
 
     newRegion.update({data: {title: ''}});
     this.setState({currentRegion: newRegion});
@@ -283,12 +283,12 @@ var Application = React.createClass({
   },
 
   handleSetRegionEndClick: function() {
-    this.state.currentRegion.update({end: this.props.wavesurfer.getCurrentTime()});
+    this.state.currentRegion.update({end: this.wavesurfer.getCurrentTime()});
     this.updateRegionState();
   },
 
   handleRegionClick: function(region) {
-    this.props.wavesurfer.play(region.start);
+    this.wavesurfer.play(region.start);
     this.setState({currentRegion: region}, this.updateRegionState);
   },
 
@@ -303,14 +303,14 @@ var Application = React.createClass({
   handleNextRegionClick: function() {
     var newRegion = this.cycleCurrentRegion(1);
     if (this.state.currentRegion) {
-      this.props.wavesurfer.play(newRegion.start);
+      this.wavesurfer.play(newRegion.start);
     }
   },
 
   handlePrevRegionClick: function() {
     var newRegion = this.cycleCurrentRegion(-1);
     if (this.state.currentRegion) {
-      this.props.wavesurfer.play(newRegion.start);
+      this.wavesurfer.play(newRegion.start);
     }
   },
 
@@ -368,7 +368,7 @@ var Application = React.createClass({
   updateRegionState: function() {
     _state = this.state;
 
-    var regionList = _.sortBy( _.values(this.props.wavesurfer.regions.list), function(region) {
+    var regionList = _.sortBy( _.values(this.wavesurfer.regions.list), function(region) {
         return region.start;
     });
 
@@ -427,6 +427,9 @@ var Application = React.createClass({
       color: baseTheme.palette.textColor,
     }
   },
+
+  wavesurfer: null,
+  timeline: null,
 
   render: function() {
     var progressBarStyle = this.state.loading ? this.styles.progressBar : this.styles.progressHidden;

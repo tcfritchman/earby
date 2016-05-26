@@ -133,7 +133,7 @@ var AppSidebar = React.createClass({
           open={this.state.addRegionOpen}
           anchorEl={this.state.anchorEl}
           anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-          targetOrigin={{horizontal: 'center', vertical: 'top'}}
+          targetOrigin={{horizontal: 'middle', vertical: 'top'}}
           onRequestClose={this.handleRequestClose}
         >
           <div style={this.styles.popover}>
