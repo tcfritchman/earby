@@ -41600,7 +41600,9 @@ var RegionSliderRight = require('./RegionSliderRight.react');
 
 var styles = {
   container: {
-    margin: 20
+    marginLeft: 30,
+    marginRight: 30,
+    marginTop: 36
   },
   containerHidden: {
     visibility: 'hidden'

@@ -18,9 +18,6 @@ var Application = React.createClass({
     muiTheme: React.PropTypes.object.isRequired
   },
 
-  componentWillMount: function() {
-  },
-
   getChildContext: function() {
     return {muiTheme: getMuiTheme(baseTheme)};
   },
@@ -177,7 +174,7 @@ var Application = React.createClass({
       this.props.wavesurfer.loadBlob(file);
     } catch (e) {
       // TODO: Add proper error message
-      console.error(e);
+      console.log(e);
     }
   },
 
@@ -442,79 +439,62 @@ var Application = React.createClass({
           setMenuClosed={this.closeMenu}
           onLoadFileClick={this.handleLoadFileClick}
         />
-      <div id="root">
-        <div id="main-view" style={this.styles.mainView}>
-          {/*
-          <AppToolbar
+        <div id="root">
+          <div id="main-view" style={this.styles.mainView}>
+            <div style={progressBarStyle}>
+              <LinearProgress
+                mode="indeterminate"
+              />
+              <div style={this.styles.loadPercent}>{this.state.loadProgress}%</div>
+            </div>
+            <WaveformUI
+              onMount={this.createWaveSurfer}
+              loading={this.state.loading}
+              duration={this.state.duration}
+              currentTime={this.state.currentTime}
+              currentRegion={this.state.currentRegion}
+              onPositionSliderChange={this.handlePositionSliderChange}
+              onPositionSliderDragStart={this.handlePositionSliderDragStart}
+              onPositionSliderDragStop={this.handlePositionSliderDragStop}
+              onRegionSliderLeftChange={this.handleRegionSliderLeftChange}
+              onRegionSliderRightChange={this.handleRegionSliderRightChange}
+              onRegionSliderDragStop={this.handleRegionSliderDragStop}
+            />
+            <FilePickerDialog
+              open={this.state.filePickerDialogOpen}
+              onRequestClose={this.closeFilePickerDialog}
+              onFileSelected={this.loadNewFile}
+            >
+            </FilePickerDialog>
+            <EditRegionDialog
+              open={this.state.editRegionDialogOpen}
+              onRequestClose={this.closeEditRegionDialog}
+              onSaveChanges={this.saveRegionChanges}
+              region={this.state.editingRegion}
+              duration={this.state.duration}
+            />
+          </div>
+          <AppSidebar id="sidebar"
+            currentTime={this.state.currentTime}
+            duration={this.state.duration}
+            title={"Get Lucky"}
+            playing={this.state.playing}
+            looping={this.state.looping}
+            slow={this.state.slow}
+            loading={this.state.loading}
+            regions={this.state.regions}
             onAddRegionClick={this.handleAddRegionClick}
             onSetRegionEndClick={this.handleSetRegionEndClick}
             onRegionClick={this.handleRegionClick}
             onRegionEditClick={this.handleRegionEditClick}
             onRegionDeleteClick={this.handleRegionDeleteClick}
-            regions={this.state.regions}
-            playing={this.state.playing}
             onPlayClick={this.handlePlayClick}
             onLoopClick={this.handleLoopClick}
-            onSkipFwdClick={this.handleSkipFwdClick}
-            onSkipBackClick={this.handleSkipBackClick}
             onPrevRegionClick={this.handlePrevRegionClick}
             onNextRegionClick={this.handleNextRegionClick}
-          />
-          */}
-          <div style={progressBarStyle}>
-            <LinearProgress
-              mode="indeterminate"
-            />
-            <div style={this.styles.loadPercent}>{this.state.loadProgress}%</div>
-          </div>
-          <WaveformUI
-            onMount={this.createWaveSurfer}
-            loading={this.state.loading}
-            duration={this.state.duration}
-            currentTime={this.state.currentTime}
-            currentRegion={this.state.currentRegion}
-            onPositionSliderChange={this.handlePositionSliderChange}
-            onPositionSliderDragStart={this.handlePositionSliderDragStart}
-            onPositionSliderDragStop={this.handlePositionSliderDragStop}
-            onRegionSliderLeftChange={this.handleRegionSliderLeftChange}
-            onRegionSliderRightChange={this.handleRegionSliderRightChange}
-            onRegionSliderDragStop={this.handleRegionSliderDragStop}
-          />
-          <FilePickerDialog
-            open={this.state.filePickerDialogOpen}
-            onRequestClose={this.closeFilePickerDialog}
-            onFileSelected={this.loadNewFile}
-          >
-          </FilePickerDialog>
-          <EditRegionDialog
-            open={this.state.editRegionDialogOpen}
-            onRequestClose={this.closeEditRegionDialog}
-            onSaveChanges={this.saveRegionChanges}
-            region={this.state.editingRegion}
-            duration={this.state.duration}
+            onSlowClick={this.handleSlowClick}
           />
         </div>
-        <AppSidebar id="sidebar"
-          currentTime={this.state.currentTime}
-          duration={this.state.duration}
-          title={"Get Lucky"}
-          playing={this.state.playing}
-          looping={this.state.looping}
-          slow={this.state.slow}
-          loading={this.state.loading}
-          regions={this.state.regions}
-          onAddRegionClick={this.handleAddRegionClick}
-          onSetRegionEndClick={this.handleSetRegionEndClick}
-          onRegionClick={this.handleRegionClick}
-          onRegionEditClick={this.handleRegionEditClick}
-          onRegionDeleteClick={this.handleRegionDeleteClick}
-          onPlayClick={this.handlePlayClick}
-          onLoopClick={this.handleLoopClick}
-          onPrevRegionClick={this.handlePrevRegionClick}
-          onNextRegionClick={this.handleNextRegionClick}
-          onSlowClick={this.handleSlowClick}
-        />
-    </div>
       </div>
     );
   }

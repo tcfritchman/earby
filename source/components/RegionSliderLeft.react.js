@@ -4,6 +4,7 @@ var SliderMixin = require('./mixins/SliderMixin');
 
 var RegionSliderLeft = React.createClass(_.extend(SliderMixin, {
   styles: {},
+
   contextTypes: {
     muiTheme: React.PropTypes.object.isRequired
   },
