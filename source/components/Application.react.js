@@ -27,6 +27,7 @@ var Application = React.createClass({
       menuOpen: false,
       editRegionDialogOpen: false,
       filePickerDialogOpen: false,
+      songTitle: "EarbyDemo.mp3",
       editingRegion: null,
       loading: true,
       loadProgress: 0.0,
@@ -65,7 +66,7 @@ var Application = React.createClass({
     this.props.wavesurfer.on('loading', this.handleLoading);
     this.props.wavesurfer.on('seek', this.handleSeek);
     this.props.wavesurfer.on('error', this.handleError);
-    this.props.wavesurfer.load('example/getlucky.mp3');
+    this.props.wavesurfer.load('example/EarbyDemo.mp3');
   },
 
   /* Wavesurfer event handlers
@@ -172,6 +173,7 @@ var Application = React.createClass({
     this.resetWavesurfer();
     try {
       this.props.wavesurfer.loadBlob(file);
+      this.setState({songTitle: file.name});
     } catch (e) {
       // TODO: Add proper error message
       console.log(e);
@@ -477,7 +479,7 @@ var Application = React.createClass({
           <AppSidebar id="sidebar"
             currentTime={this.state.currentTime}
             duration={this.state.duration}
-            title={"Get Lucky"}
+            title={this.state.songTitle}
             playing={this.state.playing}
             looping={this.state.looping}
             slow={this.state.slow}

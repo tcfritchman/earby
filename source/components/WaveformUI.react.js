@@ -10,6 +10,9 @@ var styles = {
     marginTop: 36
   },
   containerHidden: {
+    marginLeft: 30,
+    marginRight: 30,
+    marginTop: 36,
     visibility: 'hidden'
   },
   headerDiv: {
