@@ -1,0 +1,44 @@
+html {
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+body {
+  font-size: 15px;
+  line-height: 24px;
+  height: 100%;
+  background-color: #202020;
+}
+
+html, body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  margin: 0px;
+  padding: 0px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row;
+  flex-flow: row;
+}
+
+#main-view {
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  -webkit-order: 0;
+  order: 0;
+}
+
+#sidebar {
+  -webkit-flex: 0 0 240px;
+  flex: 0 0 240px;
+  -webkit-order: 1;
+  order: 1;
+}
